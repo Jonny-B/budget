@@ -7,5 +7,5 @@ https://github.com/Jonny-B/budget
 ## Usage
 
 ```js
-Hello World
+
 ```
