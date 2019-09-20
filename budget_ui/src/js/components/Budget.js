@@ -1,17 +1,49 @@
 import React, {Component} from 'react'
 import MaterialTable from 'material-table'
-import {Grid, Modal, Card, Typography} from '@material-ui/core'
+import {Grid, Dialog, DialogTitle, Typography} from '@material-ui/core'
 import {Add, Create} from "@material-ui/icons";
+import {withStyles} from '@material-ui/core/styles';
+import EditCard from "./EditCard";
 
 class Budget extends Component {
     constructor(props) {
         super(props);
-        this.state = {open: false};
-        this.handleOpen = this.handleOpen.bind(this);
+        this.state = {
+            open: false,
+            incomeData: [
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+            ],
+            expensesData: [
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+            ],
+            savingsData: [
+                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+            ]
+        };
+        this.handleEdit = this.handleEdit.bind(this);
+        this.handleAdd = this.handleAdd.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
 
-    handleOpen() {
+    handleEdit = (type, rowData, event) => {
+        this.setState({open: true})
+    };
+
+    handleAdd = (type, rowData, event) => {
         this.setState({open: true})
     };
 
@@ -39,7 +71,7 @@ class Budget extends Component {
                                     },
                                     tooltip: 'Edit Transaction',
                                     onClick: (event, rowData) => {
-                                        this.handleOpen("income")
+                                        this.handleEdit("income", rowData, event)
                                     }
                                 },
                                 {
@@ -49,14 +81,11 @@ class Budget extends Component {
                                     tooltip: 'Add Transaction',
                                     isFreeAction: true,
                                     onClick: (event, rowData) => {
-                                        this.handleOpen("addIncome")
+                                        this.handleAdd("addIncome")
                                     }
                                 }
                             ]}
-                            data={[
-                                {category: 'TEST1', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                            ]}/>
+                            data={this.state.incomeData}/>
                     </Grid>
                     <Grid item>
                         <MaterialTable
@@ -74,7 +103,7 @@ class Budget extends Component {
                                     },
                                     tooltip: 'Edit Transaction',
                                     onClick: (event, rowData) => {
-                                        this.handleOpen("expenses")
+                                        this.handleEdit("expenses", rowData, event)
                                     }
                                 },
                                 {
@@ -84,33 +113,11 @@ class Budget extends Component {
                                     tooltip: 'Add Transaction',
                                     isFreeAction: true,
                                     onClick: (event, rowData) => {
-                                        this.handleOpen("addExpenses")
+                                        this.handleAdd("addExpenses")
                                     }
                                 }
                             ]}
-                            data={[
-                                {category: 'TEST1', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00},
-                            ]}/>
+                            data={this.state.expensesData}/>
                     </Grid>
                     <Grid item>
                         <MaterialTable
@@ -129,7 +136,7 @@ class Budget extends Component {
                                     },
                                     tooltip: 'Edit Transaction',
                                     onClick: (event, rowData) => {
-                                        this.handleOpen('savings')
+                                        this.handleEdit('savings', rowData, event)
                                     }
                                 },
                                 {
@@ -139,48 +146,24 @@ class Budget extends Component {
                                     tooltip: 'Add Transaction',
                                     isFreeAction: true,
                                     onClick: (event, rowData) => {
-                                        this.handleOpen("addSavings")
+                                        this.handleAdd("addSavings")
                                     }
                                 }
                             ]}
-                            data={[
-                                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                                {category: 'TEST2', budget: 0.00, actual: 0.00, bucketTotal: 0.00},
-                            ]}/>
+                            data={this.state.savingsData}/>
                     </Grid>
                 </Grid>
-
-                <Modal
-                    aria-labelledby="simple-modal-title"
-                    aria-describedby="simple-modal-description"
-                    open={this.state.open}
-                    onClose={this.handleClose}
-                >
-                    <Card>
-                        <Typography>Editing</Typography>
-                    </Card>
-                </Modal>
+                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
+                    <DialogTitle id="simple-dialog-title">Budget Item</DialogTitle>
+                    <EditCard/>
+                </Dialog>
             </div>
         )
     }
 }
 
+const styles = theme => ({
 
-export default Budget
+});
+
+export default withStyles(styles)(Budget)

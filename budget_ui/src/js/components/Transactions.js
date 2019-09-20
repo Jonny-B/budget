@@ -1,22 +1,48 @@
 import React, {Component} from 'react'
-import {Select, MenuItem, Modal, Card, Typography} from '@material-ui/core'
+import {Select, Dialog, DialogTitle, Typography, MenuItem} from '@material-ui/core'
 import {Create, Add} from '@material-ui/icons'
 import MaterialTable from "material-table";
+import {withStyles} from '@material-ui/core/styles';
+import EditCard from "./EditCard";
 
 class Transactions extends Component {
     constructor(props) {
         super(props);
-        this.state = {open: false};
+        this.state = {
+            open: false,
+            editRowData: null,
+            data: [
+                {
+                    date: '01/01/19',
+                    description: 'Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum',
+                    charge: 0.00,
+                    hidden: false,
+                    id: 1
+                },
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
+
+            ]
+        };
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
 
-    handleOpen() {
-        this.setState({open: true})
+    handleOpen = (type, rowData, event) => {
+        this.setState({open: true, editRowData: rowData})
     };
 
     handleClose() {
-        this.setState({open: false})
+        this.setState({open: false, editRowData: null})
     };
 
     render() {
@@ -27,7 +53,7 @@ class Transactions extends Component {
                     options={{search: false, paging: false, actionsColumnIndex: -1}}
                     columns={[
                         {
-                            title: 'Category', field: 'category', render: rowData =>
+                            title: 'Category', field: 'assignCategory', render: rowData =>
                                 <Select value={'TEST1'}>
                                     <MenuItem value={'TEST1'}>TEST1</MenuItem>
                                     <MenuItem value={'TEST2'}>TEST2</MenuItem>
@@ -37,7 +63,6 @@ class Transactions extends Component {
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},
                         {title: 'Charge', field: 'charge', type: 'currency'},
-                        {title: 'Charge', field: 'charge', type: 'currency'},
                     ]}
                     actions={[
                         {
@@ -46,7 +71,7 @@ class Transactions extends Component {
                             },
                             tooltip: 'Edit Transaction',
                             onClick: (event, rowData) => {
-                                this.handleOpen('transaction')
+                                this.handleOpen('addTransaction', rowData, event)
                             }
                         },
                         {
@@ -60,47 +85,18 @@ class Transactions extends Component {
                             }
                         }
                     ]}
-                    data={[
-                        {
-                            date: '01/01/19',
-                            description: 'Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum',
-                            budget: 0.00,
-                            actual: 0.00
-                        },
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                        {date: '02/01/19', description: 'Lorem Ipsum', budget: 0.00, actual: 0.00},
-                    ]}/>
+                    data={this.state.data}/>
 
-                <Modal
-                    aria-labelledby="simple-modal-title"
-                    aria-describedby="simple-modal-description"
-                    open={this.state.open}
-                    onClose={this.handleClose}
-                >
-                    <Card>
-                        <Typography>Editing</Typography>
-                    </Card>
-                </Modal>
+                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
+                    <DialogTitle id="simple-dialog-title">Transaction Item</DialogTitle>
+                    <EditCard data={this.state.editRowData}/>
+                </Dialog>
             </div>
         )
     }
 }
 
-export default Transactions
+const styles = theme => ({
+});
+
+export default withStyles(styles)(Transactions)

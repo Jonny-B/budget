@@ -37,7 +37,7 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
       t.belongs_to :categories
       t.string :description
       t.decimal :charge
-      t.boolean :ignore
+      t.boolean :hidden
       t.datetime :date
       t.timestamp :updated_at
       t.timestamp :created_at
