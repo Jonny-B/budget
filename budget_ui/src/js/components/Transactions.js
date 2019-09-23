@@ -4,6 +4,7 @@ import {Create, Add} from '@material-ui/icons'
 import MaterialTable from "material-table";
 import {withStyles} from '@material-ui/core/styles';
 import EditCard from "./EditCard";
+import CategoryDropdown from "./CategoryDropdown"
 
 class Transactions extends Component {
     constructor(props) {
@@ -119,18 +120,6 @@ class Transactions extends Component {
         )
     }
 }
-
-const CategoryDropdown = (props) => {
-    return (
-        <div id={'categoryDropdown'}>
-            <Select value={'Category1'}>
-                {props.categories.map((category) => {
-                    return <MenuItem value={category}>{category}</MenuItem>
-                })}
-            </Select>
-        </div>)
-};
-
 const styles = theme => ({});
 
 export default withStyles(styles)(Transactions)
