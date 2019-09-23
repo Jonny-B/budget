@@ -11,34 +11,61 @@ class Transactions extends Component {
         this.state = {
             open: false,
             editRowData: null,
+            categories: ['Category1', 'Category2', 'Category3'],
             data: [
                 {
+                    assignCategory: 'Category1',
                     date: '01/01/19',
-                    description: 'Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum',
-                    charge: 0.00,
+                    description: 'Lorem Ipsum',
+                    charge: 0,
                     hidden: false,
                     id: 1
                 },
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-                {date: '02/01/19', description: 'Lorem Ipsum', charge: 0, hidden: false, id: 1},
-
+                {
+                    assignCategory: 'Category1',
+                    date: '01/01/19',
+                    description: 'Lorem Ipsum',
+                    charge: 0,
+                    hidden: false,
+                    id: 1
+                },
+                {
+                    assignCategory: 'Category1',
+                    date: '01/01/19',
+                    description: 'Lorem Ipsum',
+                    charge: 0,
+                    hidden: false,
+                    id: 1
+                },
+                {
+                    assignCategory: 'Category1',
+                    date: '01/01/19',
+                    description: 'Lorem Ipsum',
+                    charge: 0,
+                    hidden: false,
+                    id: 1
+                },
+                {
+                    assignCategory: 'Category1',
+                    date: '01/01/19',
+                    description: 'Lorem Ipsum',
+                    charge: 0,
+                    hidden: false,
+                    id: 1
+                },
             ]
         };
-        this.handleOpen = this.handleOpen.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+        this.handleAdd = this.handleAdd.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
 
-    handleOpen = (type, rowData, event) => {
+    handleEdit = (type, rowData, event) => {
         this.setState({open: true, editRowData: rowData})
+    };
+
+    handleAdd = (type, rowData, event) => {
+        this.setState({open: true, editRowData: {add: true}})
     };
 
     handleClose() {
@@ -53,12 +80,9 @@ class Transactions extends Component {
                     options={{search: false, paging: false, actionsColumnIndex: -1}}
                     columns={[
                         {
-                            title: 'Category', field: 'assignCategory', render: rowData =>
-                                <Select value={'TEST1'}>
-                                    <MenuItem value={'TEST1'}>TEST1</MenuItem>
-                                    <MenuItem value={'TEST2'}>TEST2</MenuItem>
-                                </Select>
-
+                            title: 'Category',
+                            field: 'assignCategory',
+                            render: rowData => <CategoryDropdown categories={this.state.categories}/>
                         },
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},
@@ -71,7 +95,7 @@ class Transactions extends Component {
                             },
                             tooltip: 'Edit Transaction',
                             onClick: (event, rowData) => {
-                                this.handleOpen('addTransaction', rowData, event)
+                                this.handleEdit('addTransaction', rowData, event)
                             }
                         },
                         {
@@ -81,7 +105,7 @@ class Transactions extends Component {
                             tooltip: 'Add Transaction',
                             isFreeAction: true,
                             onClick: (event, rowData) => {
-                                this.handleOpen('addTransaction')
+                                this.handleAdd('addTransaction')
                             }
                         }
                     ]}
@@ -96,7 +120,17 @@ class Transactions extends Component {
     }
 }
 
-const styles = theme => ({
-});
+const CategoryDropdown = (props) => {
+    return (
+        <div id={'categoryDropdown'}>
+            <Select value={'Category1'}>
+                {props.categories.map((category) => {
+                    return <MenuItem value={category}>{category}</MenuItem>
+                })}
+            </Select>
+        </div>)
+};
+
+const styles = theme => ({});
 
 export default withStyles(styles)(Transactions)

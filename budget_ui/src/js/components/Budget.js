@@ -10,28 +10,31 @@ class Budget extends Component {
         super(props);
         this.state = {
             open: false,
+            editRowData: null,
             incomeData: [
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
             ],
             expensesData: [
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+
             ],
             savingsData: [
-                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
-                {category: 'TEST1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
             ]
         };
         this.handleEdit = this.handleEdit.bind(this);
@@ -40,15 +43,15 @@ class Budget extends Component {
     }
 
     handleEdit = (type, rowData, event) => {
-        this.setState({open: true})
+        this.setState({open: true, editRowData: rowData})
     };
 
     handleAdd = (type, rowData, event) => {
-        this.setState({open: true})
+        this.setState({open: true, editRowData: {add: true, type: type}})
     };
 
     handleClose() {
-        this.setState({open: false})
+        this.setState({open: false, editRowData: null})
     };
 
     render() {
@@ -81,7 +84,7 @@ class Budget extends Component {
                                     tooltip: 'Add Transaction',
                                     isFreeAction: true,
                                     onClick: (event, rowData) => {
-                                        this.handleAdd("addIncome")
+                                        this.handleAdd("income")
                                     }
                                 }
                             ]}
@@ -113,7 +116,7 @@ class Budget extends Component {
                                     tooltip: 'Add Transaction',
                                     isFreeAction: true,
                                     onClick: (event, rowData) => {
-                                        this.handleAdd("addExpenses")
+                                        this.handleAdd("expenses")
                                     }
                                 }
                             ]}
@@ -146,7 +149,7 @@ class Budget extends Component {
                                     tooltip: 'Add Transaction',
                                     isFreeAction: true,
                                     onClick: (event, rowData) => {
-                                        this.handleAdd("addSavings")
+                                        this.handleAdd("savings")
                                     }
                                 }
                             ]}
@@ -155,7 +158,7 @@ class Budget extends Component {
                 </Grid>
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                     <DialogTitle id="simple-dialog-title">Budget Item</DialogTitle>
-                    <EditCard/>
+                    <EditCard data={this.state.editRowData}/>
                 </Dialog>
             </div>
         )
