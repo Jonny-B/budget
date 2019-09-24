@@ -12,7 +12,6 @@ class Transactions extends Component {
         this.state = {
             open: false,
             editRowData: null,
-            categories: ['Category1', 'Category2', 'Category3'],
             data: [
                 {
                     assignCategory: 'Category1',
@@ -28,7 +27,7 @@ class Transactions extends Component {
                     description: 'Lorem Ipsum',
                     charge: 0,
                     hidden: false,
-                    id: 1
+                    id: 2
                 },
                 {
                     assignCategory: 'Category1',
@@ -36,7 +35,7 @@ class Transactions extends Component {
                     description: 'Lorem Ipsum',
                     charge: 0,
                     hidden: false,
-                    id: 1
+                    id: 3
                 },
                 {
                     assignCategory: 'Category1',
@@ -44,7 +43,7 @@ class Transactions extends Component {
                     description: 'Lorem Ipsum',
                     charge: 0,
                     hidden: false,
-                    id: 1
+                    id: 4
                 },
                 {
                     assignCategory: 'Category1',
@@ -52,13 +51,14 @@ class Transactions extends Component {
                     description: 'Lorem Ipsum',
                     charge: 0,
                     hidden: false,
-                    id: 1
+                    id: 5
                 },
             ]
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
 
     handleEdit = (type, rowData, event) => {
@@ -73,6 +73,14 @@ class Transactions extends Component {
         this.setState({open: false, editRowData: null})
     };
 
+    handleDropdownChange = id => event => {
+        let data = this.state.data;
+        data.forEach((row)=>{if (row.id === id) row.assignCategory = event.target.value});
+        this.setState({data: data})
+
+        // Update assigned budget item in DB here and setState for updated data item.
+    };
+
     render() {
         return (
             <div>
@@ -83,7 +91,7 @@ class Transactions extends Component {
                         {
                             title: 'Category',
                             field: 'assignCategory',
-                            render: rowData => <CategoryDropdown categories={this.state.categories}/>
+                            render: rowData => <CategoryDropdown id={rowData.id} assignedCategory={rowData.assignCategory} handleDropdownChange={this.handleDropdownChange}/>
                         },
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},

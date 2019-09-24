@@ -1,5 +1,8 @@
 import React, {Component} from 'react'
+import {TextField, Button, Typography} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
+import {Lock} from '@material-ui/icons'
+import CategoryDropdown from "./CategoryDropdown";
 
 class EditCard extends Component {
     constructor(props) {
@@ -32,29 +35,34 @@ class EditCard extends Component {
                 {chargeCol}
                 {hide}
                 {add}
+                <Button>Update</Button>
             </div>
         )
     }
 }
 
 const CategoryCol = (props) => {
-    return (<div id={'categoryCol'}> Category </div>)
+    return (<TextField
+        id={'categoryCol'}
+        label={'Category Name'}
+        defaultValue={props.data.category}
+    />)
 };
 
 const BudgetCol = (props) => {
-    return (<div id={'budgetCol'}> Budget </div>)
+    return (<Typography id={'budgetCol'}>{`Budget: $${props.data.budget}`} <Lock/></Typography>)
 };
 
 const Actual = (props) => {
-    return (<div id={'actual'}>Actual</div>)
+    return (<Typography id={'actual'}>{`Actual: $${props.data.actual}`} <Lock/></Typography>)
 };
 
 const BucketTotal = (props) => {
-    return (<div id={'savingsBucket'}>Savings Bucket</div>)
+    return (<Typography id={'savingsBucket'}>{`Savings Bucket: $${props.data.bucketTotal}`} <Lock/></Typography>)
 };
 
 const AssignCategoryCol = (props) => {
-    return (<div id={'assignCategoryCol'}>Ass Cat</div>)
+    return (<CategoryDropdown id={props.data.id} assignedCategory={props.data.assignCategory} handleDropdownChange={() => {}}/>)
 
 };
 
@@ -65,7 +73,6 @@ const DateCol = (props) => {
 
 const DescriptionCol = (props) => {
     return (<div id={'descriptionCol'}>Description</div>)
-
 };
 
 const ChargeCol = (props) => {
@@ -79,7 +86,7 @@ const Hide = (props) => {
 };
 
 const Add = (props) => {
-    if (props.data.type !== undefined){
+    if (props.data.type !== undefined) {
         return (<div id={'add'}>{`Add ${props.data.type}`}</div>)
     }
     return (<div id={'add'}>Add Transaction</div>)
