@@ -73,7 +73,7 @@ class Transactions extends Component {
         this.setState({open: false, editRowData: null})
     };
 
-    handleDropdownChange = id => event => {
+    handleDropdownChange(id, event) {
         let data = this.state.data;
         data.forEach((row)=>{if (row.id === id) row.assignCategory = event.target.value});
         this.setState({data: data})
@@ -91,7 +91,7 @@ class Transactions extends Component {
                         {
                             title: 'Category',
                             field: 'assignCategory',
-                            render: rowData => <CategoryDropdown id={rowData.id} assignedCategory={rowData.assignCategory} handleDropdownChange={this.handleDropdownChange}/>
+                            render: rowData => <CategoryDropdown id={rowData.id} assignedCategory={rowData.assignCategory} callback={this.handleDropdownChange}/>
                         },
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},

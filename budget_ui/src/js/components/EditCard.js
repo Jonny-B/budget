@@ -1,44 +1,55 @@
-import React, {Component} from 'react'
+import React, {useState} from 'react'
 import {TextField, Button, Typography} from '@material-ui/core';
-import {withStyles} from '@material-ui/core/styles';
-import {Lock} from '@material-ui/icons'
+import {makeStyles} from '@material-ui/core/styles';
+import {Lock, Visibility, VisibilityOff} from '@material-ui/icons'
 import CategoryDropdown from "./CategoryDropdown";
 
-class EditCard extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {data: this.props.data};
-    }
+export default function EditCard(props) {
+    const [data, setData] = useState(props.data);
 
-    render() {
-        let {data} = this.state;
+    const handleChange = () => event => {
+        let d = data;
+        d.assignCategory = event.target.value;
+        setData(d);
+    };
 
-        let categoryCol = data.category !== undefined ? <CategoryCol data={data}/> : <></>;
-        let budgetCol = data.budget !== undefined ? <BudgetCol data={data}/> : <></>;
-        let actual = data.actual !== undefined ? <Actual data={data}/> : <></>;
-        let bucketTotal = data.bucketTotal !== undefined ? <BucketTotal data={data}/> : <></>;
-        let assignCategoryCol = data.assignCategory !== undefined ? <AssignCategoryCol data={data}/> : <></>;
-        let dateCol = data.date !== undefined ? <DateCol data={data}/> : <></>;
-        let descriptionCol = data.date !== undefined ? <DescriptionCol data={data}/> : <></>;
-        let chargeCol = data.date !== undefined ? <ChargeCol data={data}/> : <></>;
-        let hide = data.date !== undefined ? <Hide data={data}/> : <></>;
-        let add = data.add !== undefined ? <Add data={data}/> : <></>;
-        return (
-            <div>
-                {categoryCol}
-                {budgetCol}
-                {actual}
-                {bucketTotal}
-                {assignCategoryCol}
-                {dateCol}
-                {descriptionCol}
-                {chargeCol}
-                {hide}
-                {add}
-                <Button>Update</Button>
-            </div>
-        )
-    }
+    const handleUpdate = () => {
+        // update db
+    };
+
+    const toggleHide = () => {
+        let d = data;
+        d.hide = !d.hide;
+        setData(d);
+    };
+
+    let categoryCol = data.category !== undefined ? <CategoryCol data={data}/> : <></>;
+    let budgetCol = data.budget !== undefined ? <BudgetCol data={data}/> : <></>;
+    let actual = data.actual !== undefined ? <Actual data={data}/> : <></>;
+    let bucketTotal = data.bucketTotal !== undefined ? <BucketTotal data={data}/> : <></>;
+    let assignCategoryCol = data.assignCategory !== undefined ?
+        <AssignCategoryCol data={data} handleChange={handleChange}/> : <></>;
+    let dateCol = data.date !== undefined ? <DateCol data={data}/> : <></>;
+    let descriptionCol = data.date !== undefined ? <DescriptionCol data={data}/> : <></>;
+    let chargeCol = data.date !== undefined ? <ChargeCol data={data}/> : <></>;
+    let hide = data.date !== undefined ? <Hide toggleHide={toggleHide} data={data}/> : <></>;
+    let add = data.add !== undefined ? <Add data={data}/> : <></>;
+
+    return (
+        <div>
+            {categoryCol}
+            {budgetCol}
+            {actual}
+            {bucketTotal}
+            {assignCategoryCol}
+            {dateCol}
+            {descriptionCol}
+            {chargeCol}
+            {hide}
+            {add}
+            <Button>Update</Button>
+        </div>
+    )
 }
 
 const CategoryCol = (props) => {
@@ -62,26 +73,27 @@ const BucketTotal = (props) => {
 };
 
 const AssignCategoryCol = (props) => {
-    return (<CategoryDropdown id={props.data.id} assignedCategory={props.data.assignCategory} handleDropdownChange={() => {}}/>)
-
+    return (
+        <CategoryDropdown id={props.data.id} assignedCategory={props.data.assignCategory}
+                          callback={props.handleChange}/>)
 };
 
 const DateCol = (props) => {
-    return (<div id={'dateCol'}>Date</div>)
+    return (<Typography id={'dateCol'}>{props.data.date}</Typography>)
 
 };
 
 const DescriptionCol = (props) => {
-    return (<div id={'descriptionCol'}>Description</div>)
+    return (<Typography id={'descriptionCol'}>{props.data.description}</Typography>)
 };
 
 const ChargeCol = (props) => {
-    return (<div id={'chargeCol'}>Charge</div>)
-
+    return (<Typography id={'chargeCol'}>{props.data.charge}</Typography>)
 };
 
 const Hide = (props) => {
-    return (<div id={'hideCol'}>Hide</div>)
+    let hide = props.data.hide === true ? <VisibilityOff/> : <Visibility/>;
+    return (<Button onClick={props.toggleHide()} id={'hideCol'}>{hide}</Button>)
 
 };
 
@@ -93,6 +105,4 @@ const Add = (props) => {
 
 };
 
-const styles = theme => ({});
-
-export default withStyles(styles)(EditCard)
+const useStyles = makeStyles(theme => ({}));
