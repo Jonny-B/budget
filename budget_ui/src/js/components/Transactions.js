@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Select, Dialog, DialogTitle, Typography, MenuItem} from '@material-ui/core'
-import {Create, Add} from '@material-ui/icons'
+import {Create, Add, Visibility, VisibilityOff} from '@material-ui/icons'
 import MaterialTable from "material-table";
 import {withStyles} from '@material-ui/core/styles';
 import EditCard from "./EditCard";
@@ -115,6 +115,16 @@ class Transactions extends Component {
                             isFreeAction: true,
                             onClick: (event, rowData) => {
                                 this.handleAdd('addTransaction')
+                            }
+                        },
+                        {
+                            icon: () => {
+                                return <VisibilityOff/>
+                            },
+                            tooltip: 'Show Hidden',
+                            isFreeAction: true,
+                            onClick: (event, rowData) => {
+                                // this.handleAdd('addTransaction')
                             }
                         }
                     ]}
