@@ -7,7 +7,7 @@ import CategoryDropdown from "./CategoryDropdown";
 export default function EditCard(props) {
     const [data, setData] = useState(props.data);
 
-    const handleChange = () => event => {
+    const handleChange = (id, event) => {
         let d = data;
         d.assignCategory = event.target.value;
         setData(d);
@@ -27,8 +27,7 @@ export default function EditCard(props) {
     let budgetCol = data.budget !== undefined ? <BudgetCol data={data}/> : <></>;
     let actual = data.actual !== undefined ? <Actual data={data}/> : <></>;
     let bucketTotal = data.bucketTotal !== undefined ? <BucketTotal data={data}/> : <></>;
-    let assignCategoryCol = data.assignCategory !== undefined ?
-        <AssignCategoryCol data={data} handleChange={handleChange}/> : <></>;
+    let assignCategoryCol = data.assignCategory !== undefined ? <AssignCategoryCol data={data} handleChange={handleChange}/> : <></>;
     let dateCol = data.date !== undefined ? <DateCol data={data}/> : <></>;
     let descriptionCol = data.date !== undefined ? <DescriptionCol data={data}/> : <></>;
     let chargeCol = data.date !== undefined ? <ChargeCol data={data}/> : <></>;
@@ -73,9 +72,7 @@ const BucketTotal = (props) => {
 };
 
 const AssignCategoryCol = (props) => {
-    return (
-        <CategoryDropdown id={props.data.id} assignedCategory={props.data.assignCategory}
-                          callback={props.handleChange}/>)
+    return (<CategoryDropdown id={props.data.id} assignedCategory={props.data.assignCategory} callback={props.handleChange}/>)
 };
 
 const DateCol = (props) => {

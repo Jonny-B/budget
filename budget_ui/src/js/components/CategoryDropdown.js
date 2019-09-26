@@ -15,18 +15,20 @@ class CategoryDropdown extends Component {
     }
 
 
-    handleDropdownChange = id => event => {
+    handleDropdownChange = event => {
         this.setState({assignedCategory: event.target.value});
 
         this.props.callback(this.props.id, event)
     };
 
     render() {
+        let count = 0;
         return (
             <div id={'categoryDropdown'}>
-                <Select onChange={this.handleDropdownChange()} value={this.state.assignedCategory}>
+                <Select onChange={this.handleDropdownChange} value={this.state.assignedCategory}>
                     {this.state.categories.map((category) => {
-                        return <MenuItem value={category}>{category}</MenuItem>
+                        count += 1;
+                        return <MenuItem key={`${this.props.id}${count}`} value={category}>{category}</MenuItem>
                     })}
                 </Select>
             </div>
