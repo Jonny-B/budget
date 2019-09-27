@@ -9,7 +9,7 @@ import CategoryDropdown from "./CategoryDropdown";
 export default function EditCard(props) {
     const [data, setData] = useState(props.data);
 
-    const handleCategoryChange = (id, event) => {
+    const handleCategoryDropdownChange = (id, event) => {
         let d = {...data};
         d.assignCategory = event.target.value;
         setData(d);
@@ -33,6 +33,12 @@ export default function EditCard(props) {
         setData(d);
     };
 
+    const handleCategoryChange = (event) => {
+        let d = {...data};
+        d.category = event.target.value;
+        setData(d);
+    };
+
     const handleUpdate = () => {
         props.callback(data)
     };
@@ -43,12 +49,12 @@ export default function EditCard(props) {
         setData(d);
     };
 
-    let categoryCol = data.category !== undefined ? <CategoryCol data={data}/> : <></>;
+    let categoryCol = data.category !== undefined ? <CategoryCol data={data} handleCategoryChange={handleCategoryChange}/> : <></>;
     let budgetCol = data.budget !== undefined ? <BudgetCol data={data}/> : <></>;
     let actual = data.actual !== undefined ? <Actual data={data}/> : <></>;
     let bucketTotal = data.bucketTotal !== undefined ? <BucketTotal data={data}/> : <></>;
     let assignCategoryCol = data.assignCategory !== undefined ?
-        <AssignCategoryCol data={data} handleCategoryChange={handleCategoryChange}/> : <></>;
+        <AssignCategoryCol data={data} handleCategoryChange={handleCategoryDropdownChange}/> : <></>;
     let dateCol = data.date !== undefined ? <DateCol data={data} handleDateChange={handleDateChange}/> : <></>;
     let descriptionCol = data.description !== undefined ? <DescriptionCol data={data} handleDescriptionChange={handleDescriptionChange}/> : <></>;
     let chargeCol = data.charge !== undefined ? <ChargeCol data={data} handleChargeChange={handleChargeChange}/> : <></>;
@@ -73,7 +79,7 @@ export default function EditCard(props) {
 }
 
 const CategoryCol = (props) => {
-    return (<TextField id={'categoryCol'} label={'Category Name'} defaultValue={props.data.category}/>)
+    return (<TextField id={'categoryCol'} label={'Category Name'} onChange={props.handleCategoryChange} defaultValue={props.data.category}/>)
 };
 
 const BudgetCol = (props) => {
@@ -93,7 +99,7 @@ const AssignCategoryCol = (props) => {
         <div>
             <Typography>Edit Category</Typography>
             <CategoryDropdown id={props.data.id} assignedCategory={props.data.assignCategory}
-                              callback={props.handleCategoryChange}/>
+                              callback={props.handleCategoryDropdownChange}/>
         </div>
     )
 };

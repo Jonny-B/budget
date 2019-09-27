@@ -12,33 +12,31 @@ class Budget extends Component {
             open: false,
             editRowData: null,
             incomeData: [
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 0},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 2},
             ],
             expensesData: [
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, id: 1},
-
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 0},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 2},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 3},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 4},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 5},
             ],
             savingsData: [
-                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, bucketTotal: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 0},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 1},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 2},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 3},
+                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 4},
+
             ]
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
 
@@ -49,6 +47,22 @@ class Budget extends Component {
     handleAdd = (type, rowData, event) => {
         this.setState({open: true, editRowData: {add: true, type: type}})
     };
+
+    handleUpdate = (updatedRowData) => {
+        let data = [...this.state[`${updatedRowData.type}Data`]];
+        data.forEach((row)=> {
+            if (row.id === updatedRowData.id){
+                row.category = updatedRowData.category;
+            }
+        });
+        this.setState({open: false, editRowData: null});
+        this.setState({data: data});
+        this.updateDatabase(data);
+    };
+
+    updateDatabase(data){
+        // Update assigned budget item in DB here and setState for updated data item.
+    }
 
     handleClose() {
         this.setState({open: false, editRowData: null})
@@ -158,7 +172,7 @@ class Budget extends Component {
                 </Grid>
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                     <DialogTitle id="simple-dialog-title">Budget Item</DialogTitle>
-                    <EditCard data={this.state.editRowData}/>
+                    <EditCard data={this.state.editRowData} callback={this.handleUpdate}/>
                 </Dialog>
             </div>
         )
