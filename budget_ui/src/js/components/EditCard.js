@@ -44,9 +44,10 @@ export default function EditCard(props) {
     };
 
     const toggleHide = () => {
-        let d = data;
+        let d = {...data};
         d.hidden = !d.hidden;
         setData(d);
+        let x;
     };
 
     let categoryCol = data.category !== undefined ? <CategoryCol data={data} handleCategoryChange={handleCategoryChange}/> : <></>;
@@ -58,7 +59,7 @@ export default function EditCard(props) {
     let dateCol = data.date !== undefined ? <DateCol data={data} handleDateChange={handleDateChange}/> : <></>;
     let descriptionCol = data.description !== undefined ? <DescriptionCol data={data} handleDescriptionChange={handleDescriptionChange}/> : <></>;
     let chargeCol = data.charge !== undefined ? <ChargeCol data={data} handleChargeChange={handleChargeChange}/> : <></>;
-    let hide = data.hide !== undefined ? <Hide toggleHide={toggleHide} data={data}/> : <></>;
+    let hide = data.hidden !== undefined ? <Hide toggleHide={toggleHide} data={data}/> : <></>;
     let add = data.add !== undefined ? <Add data={data}/> : <></>;
 
     return (
@@ -131,8 +132,8 @@ const ChargeCol = (props) => {
 };
 
 const Hide = (props) => {
-    let hide = props.data.hide === true ? <VisibilityOff/> : <Visibility/>;
-    return (<Button onClick={props.toggleHide()} id={'hideCol'}>{hide}</Button>)
+    let hide = props.data.hidden === true ? <VisibilityOff/> : <Visibility/>;
+    return (<Button onClick={props.toggleHide} id={'hideCol'}>{hide}</Button>)
 
 };
 

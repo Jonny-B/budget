@@ -12,6 +12,7 @@ class Transactions extends Component {
         super(props);
         this.state = {
             open: false,
+            showAll: false,
             editRowData: null,
             data: [
                 {
@@ -19,7 +20,7 @@ class Transactions extends Component {
                     date: '01/01/19',
                     description: 'Lorem Ipsum',
                     charge: 0,
-                    hidden: false,
+                    hidden: true,
                     id: 1
                 },
                 {
@@ -59,9 +60,12 @@ class Transactions extends Component {
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
+        this.handleShowAll = this.handleShowAll.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.updateDatabase = this.updateDatabase.bind(this);
+        this.removeHiddenRows = this.removeHiddenRows.bind(this);
+        this.updateTransactionsVisibility = this.updateTransactionsVisibility.bind(this);
     }
 
     handleEdit = (type, rowData, event) => {
@@ -77,7 +81,7 @@ class Transactions extends Component {
         data.forEach((row)=> {
             if (row.id === updatedRowData.id){
                 row.assignCategory = updatedRowData.assignCategory;
-                row.date = lightFormat(updatedRowData.date, 'MM/dd/yyyy');
+                row.date = lightFormat(new Date(updatedRowData.date), 'MM/dd/yyyy');
                 row.description = updatedRowData.description;
                 row.charge = updatedRowData.charge;
                 row.hidden = updatedRowData.hidden;
@@ -86,6 +90,10 @@ class Transactions extends Component {
         this.setState({open: false, editRowData: null});
         this.setState({data: data});
         this.updateDatabase(data);
+    };
+
+    handleShowAll() {
+        this.setState({showAll: !this.state.showAll})
     };
 
     handleClose() {
@@ -103,7 +111,18 @@ class Transactions extends Component {
         // Update assigned budget item in DB here and setState for updated data item.
     }
 
+    removeHiddenRows(data){
+        // let d = data.map(row => {if (!row.hidden) return row});
+        // this.setState({notHiddenData: d})
+    };
+
+    updateTransactionsVisibility(){
+        this.setState({showAll: !this.state.showAll})
+    }
+
     render() {
+        let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> : <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
+        let data = this.state.showAll ? this.state.data : this.state.data.filter(row => {if (!row.hidden) return row});
         return (
             <div>
                 <MaterialTable
@@ -141,16 +160,16 @@ class Transactions extends Component {
                         },
                         {
                             icon: () => {
-                                return <VisibilityOff/>
+                                return showAllIcon
                             },
                             tooltip: 'Show Hidden',
                             isFreeAction: true,
-                            onClick: (event, rowData) => {
-                                // this.handleAdd('addTransaction')
+                            onClick: () => {
+                                this.handleShowAll()
                             }
                         }
                     ]}
-                    data={this.state.data}/>
+                    data={data}/>
 
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                     <DialogTitle id="simple-dialog-title">Transaction Item</DialogTitle>
@@ -160,6 +179,8 @@ class Transactions extends Component {
         )
     }
 }
+
+
 const styles = theme => ({});
 
 export default withStyles(styles)(Transactions)
