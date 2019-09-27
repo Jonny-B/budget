@@ -7,6 +7,7 @@ import {Lock, Visibility, VisibilityOff} from '@material-ui/icons'
 import CategoryDropdown from "./CategoryDropdown";
 
 export default function EditCard(props) {
+    //todo material table has an editable feature. Implement that because it makes me have to write less code.
     const [data, setData] = useState(props.data);
 
     const handleCategoryDropdownChange = (id, event) => {
@@ -60,7 +61,6 @@ export default function EditCard(props) {
     let descriptionCol = data.description !== undefined ? <DescriptionCol data={data} handleDescriptionChange={handleDescriptionChange}/> : <></>;
     let chargeCol = data.charge !== undefined ? <ChargeCol data={data} handleChargeChange={handleChargeChange}/> : <></>;
     let hide = data.hidden !== undefined ? <Hide toggleHide={toggleHide} data={data}/> : <></>;
-    let add = data.add !== undefined ? <Add data={data}/> : <></>;
 
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -73,7 +73,6 @@ export default function EditCard(props) {
             {descriptionCol}
             {chargeCol}
             {hide}
-            {add}
             <Button onClick={handleUpdate}>Update</Button>
         </MuiPickersUtilsProvider>
     )
@@ -140,9 +139,6 @@ const Hide = (props) => {
 const Add = (props) => {
     if (props.data.type !== undefined) {
         return (<div id={'add'}>{`Add ${props.data.type}`}</div>)
-    }
-    return (<div id={'add'}>Add Transaction</div>)
-
 };
 
 const useStyles = makeStyles(theme => ({}));

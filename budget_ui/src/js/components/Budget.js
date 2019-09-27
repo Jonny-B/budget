@@ -105,6 +105,9 @@ class Budget extends Component {
                             data={this.state.incomeData}/>
                     </Grid>
                     <Grid item>
+                        <Typography>Income Total: $1000</Typography>
+                    </Grid>
+                    <Grid item>
                         <MaterialTable
                             title={"Expenses"}
                             options={{search: false, paging: false}}
@@ -135,6 +138,9 @@ class Budget extends Component {
                                 }
                             ]}
                             data={this.state.expensesData}/>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Expenses Total: $1000</Typography>
                     </Grid>
                     <Grid item>
                         <MaterialTable
@@ -168,6 +174,12 @@ class Budget extends Component {
                                 }
                             ]}
                             data={this.state.savingsData}/>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Savings Total: $1000</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Transfer to Savings: $1000</Typography>
                     </Grid>
                 </Grid>
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
