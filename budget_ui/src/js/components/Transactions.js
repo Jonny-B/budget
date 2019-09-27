@@ -3,6 +3,7 @@ import {Select, Dialog, DialogTitle, Typography, MenuItem} from '@material-ui/co
 import {Create, Add, Visibility, VisibilityOff} from '@material-ui/icons'
 import MaterialTable from "material-table";
 import {withStyles} from '@material-ui/core/styles';
+import lightFormat from 'date-fns/lightFormat'
 import EditCard from "./EditCard";
 import CategoryDropdown from "./CategoryDropdown"
 
@@ -57,8 +58,10 @@ class Transactions extends Component {
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
+        this.updateDatabase = this.updateDatabase.bind(this);
     }
 
     handleEdit = (type, rowData, event) => {
@@ -69,17 +72,36 @@ class Transactions extends Component {
         this.setState({open: true, editRowData: {add: true}})
     };
 
+    handleUpdate = (updatedRowData) => {
+        let data = [...this.state.data];
+        data.forEach((row)=> {
+            if (row.id === updatedRowData.id){
+                row.assignCategory = updatedRowData.assignCategory;
+                row.date = lightFormat(updatedRowData.date, 'MM/dd/yyyy');
+                row.description = updatedRowData.description;
+                row.charge = updatedRowData.charge;
+                row.hidden = updatedRowData.hidden;
+            }
+        });
+        this.setState({open: false, editRowData: null});
+        this.setState({data: data});
+        this.updateDatabase(data);
+    };
+
     handleClose() {
         this.setState({open: false, editRowData: null})
     };
 
     handleDropdownChange(id, event) {
-        let data = this.state.data;
+        let data = [...this.state.data];
         data.forEach((row)=>{if (row.id === id) row.assignCategory = event.target.value});
-        this.setState({data: data})
-
-        // Update assigned budget item in DB here and setState for updated data item.
+        this.setState({data: data});
+        this.updateDatabase(data)
     };
+
+    updateDatabase(data){
+        // Update assigned budget item in DB here and setState for updated data item.
+    }
 
     render() {
         return (
@@ -132,7 +154,7 @@ class Transactions extends Component {
 
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                     <DialogTitle id="simple-dialog-title">Transaction Item</DialogTitle>
-                    <EditCard data={this.state.editRowData}/>
+                    <EditCard data={this.state.editRowData} callback={this.handleUpdate}/>
                 </Dialog>
             </div>
         )

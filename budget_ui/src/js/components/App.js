@@ -1,36 +1,47 @@
 import React from 'react';
 import {Grid, Typography, Select, MenuItem, Button} from '@material-ui/core';
+import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import ShowChart from '@material-ui/icons/ShowChart';
 import Budget from './Budget'
 import Transactions from './Transactions'
+import DateFnsUtils from "@date-io/date-fns";
 
 class App extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {selectedDate: "2015-01-02"};
+
+        this.handleDateChange = this.handleDateChange.bind(this)
+    }
+
+    handleDateChange = date => {
+        this.setState({selectedDate: date})
+    };
+
 
     render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <Grid container spacing={3} className="App">
-                    <Grid item xs={6}> <Typography> Budget </Typography> </Grid>
-                    <Grid item xs={6}> <Button><ShowChart/></Button> </Grid>
-                    <Grid item xs={12}>
-                        <Select value={'January'}>
-                            <MenuItem value={'January'}>January</MenuItem>
-                            <MenuItem value={'February'}>February</MenuItem>
-                            <MenuItem value={'March'}>March</MenuItem>
-                            <MenuItem value={'April'}>April</MenuItem>
-                        </Select>
-                        <Select value={'2019'}>
-                            <MenuItem value={'2015'}>2015</MenuItem>
-                            <MenuItem value={'2016'}>2016</MenuItem>
-                            <MenuItem value={'2017'}>2017</MenuItem>
-                            <MenuItem value={'2018'}>2018</MenuItem>
-                            <MenuItem value={'2019'}>2019</MenuItem>
-                        </Select>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container spacing={3} className="App">
+                        <Grid item xs={6}> <Typography> Budget </Typography> </Grid>
+                        <Grid item xs={6}> <Button><ShowChart/></Button> </Grid>
+                        <Grid item xs={12}>
+                            <DatePicker
+                                views={["year", "month"]}
+                                label="Budget Date"
+                                helperText="Choose Month/Year"
+                                minDate={new Date("2000-01-01")}
+                                value={this.state.selectedDate}
+                                onChange={this.handleDateChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}> <Budget/> </Grid>
+                        <Grid item xs={6}> <Transactions/> </Grid>
                     </Grid>
-                    <Grid item xs={6}> <Budget/> </Grid>
-                    <Grid item xs={6}> <Transactions/> </Grid>
-                </Grid>
+                </MuiPickersUtilsProvider>
             </MuiThemeProvider>
         )
     }

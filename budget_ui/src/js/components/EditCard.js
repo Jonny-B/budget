@@ -9,7 +9,7 @@ import CategoryDropdown from "./CategoryDropdown";
 export default function EditCard(props) {
     const [data, setData] = useState(props.data);
 
-    const handleChange = (id, event) => {
+    const handleCategoryChange = (id, event) => {
         let d = {...data};
         d.assignCategory = event.target.value;
         setData(d);
@@ -21,13 +21,25 @@ export default function EditCard(props) {
         setData(d);
     };
 
+    const handleDescriptionChange = (event) => {
+        let d = {...data};
+        d.description = event.target.value;
+        setData(d);
+    };
+
+    const handleChargeChange = (event) => {
+        let d = {...data};
+        d.charge = parseFloat(event.target.value.replace('$', ''));
+        setData(d);
+    };
+
     const handleUpdate = () => {
-        // update db
+        props.callback(data)
     };
 
     const toggleHide = () => {
         let d = data;
-        d.hide = !d.hide;
+        d.hidden = !d.hidden;
         setData(d);
     };
 
@@ -36,11 +48,11 @@ export default function EditCard(props) {
     let actual = data.actual !== undefined ? <Actual data={data}/> : <></>;
     let bucketTotal = data.bucketTotal !== undefined ? <BucketTotal data={data}/> : <></>;
     let assignCategoryCol = data.assignCategory !== undefined ?
-        <AssignCategoryCol data={data} handleChange={handleChange}/> : <></>;
+        <AssignCategoryCol data={data} handleCategoryChange={handleCategoryChange}/> : <></>;
     let dateCol = data.date !== undefined ? <DateCol data={data} handleDateChange={handleDateChange}/> : <></>;
-    let descriptionCol = data.date !== undefined ? <DescriptionCol data={data}/> : <></>;
-    let chargeCol = data.date !== undefined ? <ChargeCol data={data}/> : <></>;
-    let hide = data.date !== undefined ? <Hide toggleHide={toggleHide} data={data}/> : <></>;
+    let descriptionCol = data.description !== undefined ? <DescriptionCol data={data} handleDescriptionChange={handleDescriptionChange}/> : <></>;
+    let chargeCol = data.charge !== undefined ? <ChargeCol data={data} handleChargeChange={handleChargeChange}/> : <></>;
+    let hide = data.hide !== undefined ? <Hide toggleHide={toggleHide} data={data}/> : <></>;
     let add = data.add !== undefined ? <Add data={data}/> : <></>;
 
     return (
@@ -49,13 +61,13 @@ export default function EditCard(props) {
             {budgetCol}
             {actual}
             {bucketTotal}
-            {assignCategoryCol}
+            {/*{assignCategoryCol}*/}
             {dateCol}
             {descriptionCol}
             {chargeCol}
             {hide}
             {add}
-            <Button>Update</Button>
+            <Button onClick={handleUpdate}>Update</Button>
         </MuiPickersUtilsProvider>
     )
 }
@@ -81,7 +93,7 @@ const AssignCategoryCol = (props) => {
         <div>
             <Typography>Edit Category</Typography>
             <CategoryDropdown id={props.data.id} assignedCategory={props.data.assignCategory}
-                              callback={props.handleChange}/>
+                              callback={props.handleCategoryChange}/>
         </div>
     )
 };
@@ -89,7 +101,6 @@ const AssignCategoryCol = (props) => {
 const DateCol = (props) => {
     return (
         <KeyboardDatePicker
-            disableToolbar
             variant="inline"
             format="MM/dd/yyyy"
             margin="normal"
@@ -106,11 +117,11 @@ const DateCol = (props) => {
 };
 
 const DescriptionCol = (props) => {
-    return (<TextField id={'descriptionCol'} label={'Description'} defaultValue={props.data.description}/>)
+    return (<TextField id={'descriptionCol'} label={'Description'} onChange={props.handleDescriptionChange} defaultValue={props.data.description}/>)
 };
 
 const ChargeCol = (props) => {
-    return (<TextField id={'chargeCol'} label={'Description'} defaultValue={`$${props.data.charge}`}/>)
+    return (<TextField id={'chargeCol'} label={'Charge'} onChange={props.handleChargeChange} defaultValue={`$${props.data.charge}`}/>)
 };
 
 const Hide = (props) => {
