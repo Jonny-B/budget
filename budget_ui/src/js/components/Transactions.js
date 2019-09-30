@@ -64,7 +64,6 @@ class Transactions extends Component {
         this.handleClose = this.handleClose.bind(this);
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.updateDatabase = this.updateDatabase.bind(this);
-        this.removeHiddenRows = this.removeHiddenRows.bind(this);
         this.updateTransactionsVisibility = this.updateTransactionsVisibility.bind(this);
     }
 
@@ -72,14 +71,14 @@ class Transactions extends Component {
         this.setState({open: true, editRowData: rowData})
     };
 
-    handleAdd = (type, rowData, event) => {
-        this.setState({open: true, editRowData: {add: true}})
+    handleAdd = () => {
+
     };
 
     handleUpdate = (updatedRowData) => {
         let data = [...this.state.data];
-        data.forEach((row)=> {
-            if (row.id === updatedRowData.id){
+        data.forEach((row) => {
+            if (row.id === updatedRowData.id) {
                 row.assignCategory = updatedRowData.assignCategory;
                 row.date = lightFormat(new Date(updatedRowData.date), 'MM/dd/yyyy');
                 row.description = updatedRowData.description;
@@ -102,27 +101,27 @@ class Transactions extends Component {
 
     handleDropdownChange(id, event) {
         let data = [...this.state.data];
-        data.forEach((row)=>{if (row.id === id) row.assignCategory = event.target.value});
+        data.forEach((row) => {
+            if (row.id === id) row.assignCategory = event.target.value
+        });
         this.setState({data: data});
         this.updateDatabase(data)
     };
 
-    updateDatabase(data){
+    updateDatabase(data) {
         // Update assigned budget item in DB here and setState for updated data item.
     }
 
-    removeHiddenRows(data){
-        // let d = data.map(row => {if (!row.hidden) return row});
-        // this.setState({notHiddenData: d})
-    };
-
-    updateTransactionsVisibility(){
+    updateTransactionsVisibility() {
         this.setState({showAll: !this.state.showAll})
     }
 
     render() {
-        let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> : <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
-        let data = this.state.showAll ? this.state.data : this.state.data.filter(row => {if (!row.hidden) return row});
+        let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> :
+            <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
+        let data = this.state.showAll ? this.state.data : this.state.data.filter(row => {
+            if (!row.hidden) return row
+        });
         return (
             <div>
                 <MaterialTable
@@ -132,11 +131,21 @@ class Transactions extends Component {
                         {
                             title: 'Category',
                             field: 'assignCategory',
-                            render: rowData => <CategoryDropdown id={rowData.id} assignedCategory={rowData.assignCategory} callback={this.handleDropdownChange}/>
+                            render: rowData => <CategoryDropdown id={rowData.id}
+                                                                 assignedCategory={rowData.assignCategory}
+                                                                 callback={this.handleDropdownChange}/>,
+                            editComponent: () => (<CategoryDropdown assignedCategory={'SelectOne'}
+                                                                       callback={this.handleDropdownChange}/>)
                         },
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},
-                        {title: 'Charge', field: 'charge', type: 'currency'},
+                        {
+                            title: 'Charge',
+                            field: 'charge',
+                            type: 'currency',
+                            editComponent: props => (<input type="numeric" value={props.value}
+                                                            onChange={e => props.onChange(e.target.value)}/>)
+                        },
                     ]}
                     actions={[
                         {
@@ -150,16 +159,6 @@ class Transactions extends Component {
                         },
                         {
                             icon: () => {
-                                return <Add/>
-                            },
-                            tooltip: 'Add Transaction',
-                            isFreeAction: true,
-                            onClick: (event, rowData) => {
-                                this.handleAdd('addTransaction')
-                            }
-                        },
-                        {
-                            icon: () => {
                                 return showAllIcon
                             },
                             tooltip: 'Show Hidden',
@@ -169,6 +168,33 @@ class Transactions extends Component {
                             }
                         }
                     ]}
+                    editable={{
+                        onRowAdd: newData =>
+                            new Promise((resolve) => {
+                                setTimeout(() => {
+                                    {
+                                        const data = this.state.data;
+                                        data.push(newData);
+                                        this.updateDatabase(newData);
+                                        this.setState({data}, () => resolve());
+                                    }
+                                    resolve()
+                                }, 1000)
+                            }),
+                        onRowDelete: oldData =>
+                            new Promise((resolve) => {
+                                setTimeout(() => {
+                                    {
+                                        let data = this.state.data;
+                                        const index = data.indexOf(oldData);
+                                        data.splice(index, 1);
+                                        this.updateDatabase(oldData);
+                                        this.setState({ data }, () => resolve());
+                                    }
+                                    resolve();
+                                }, 1000);
+                            })
+                    }}
                     data={data}/>
 
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>

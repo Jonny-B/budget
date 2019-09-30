@@ -26,7 +26,7 @@ class App extends React.Component {
             <MuiThemeProvider theme={theme}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container spacing={3} className="App">
-                        <Grid item xs={6}> <Typography> Budget </Typography> </Grid>
+                        <Grid item xs={6}> <Typography> PRACTICE CRUD APP and HOOKS </Typography> </Grid>
                         <Grid item xs={6}> <Button><ShowChart/></Button> </Grid>
                         <Grid item xs={12}>
                             <DatePicker

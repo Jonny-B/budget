@@ -48,7 +48,6 @@ export default function EditCard(props) {
         let d = {...data};
         d.hidden = !d.hidden;
         setData(d);
-        let x;
     };
 
     let categoryCol = data.category !== undefined ? <CategoryCol data={data} handleCategoryChange={handleCategoryChange}/> : <></>;
@@ -134,11 +133,6 @@ const Hide = (props) => {
     let hide = props.data.hidden === true ? <VisibilityOff/> : <Visibility/>;
     return (<Button onClick={props.toggleHide} id={'hideCol'}>{hide}</Button>)
 
-};
-
-const Add = (props) => {
-    if (props.data.type !== undefined) {
-        return (<div id={'add'}>{`Add ${props.data.type}`}</div>)
 };
 
 const useStyles = makeStyles(theme => ({}));
