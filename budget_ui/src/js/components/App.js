@@ -11,13 +11,61 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {selectedDate: "2015-01-02"};
+        this.state = {
+            selectedDate: "2015-01-02",
+            data: [
+                {
+                    budgetData:
+                        [
+                            {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger', charge: 59.99, hidden: true, id: 1},
+                            {assignCategory: 'Category2', date: '01/01/19', description: 'Nation Star', charge: 1500.00, hidden: false, id: 2},
+                            {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger Gas', charge: 32.00, hidden: false, id: 3},
+                            {assignCategory: 'Category3', date: '01/01/19', description: 'Bath and Body Works', charge: 1000000, hidden: false, id: 4},
+                            {assignCategory: 'Select One', date: '01/01/19', description: 'Lorem Ipsum', charge: 20.33, hidden: false, id: 5},
+                        ]
+                },
+                {
+                    transactionData:
+                        {
+                            incomeData: [
+                                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 0},
+                                {category: 'Category2', budget: 0.00, actual: 0.00, type: 'income', id: 1},
+                                {category: 'Category3', budget: 0.00, actual: 0.00, type: 'income', id: 2},
+                            ],
+                            expensesData: [
+                                {category: 'Category4', budget: 0.00, actual: 0.00, type: 'expenses', id: 0},
+                                {category: 'Category5', budget: 0.00, actual: 0.00, type: 'expenses', id: 1},
+                                {category: 'Category6', budget: 0.00, actual: 0.00, type: 'expenses', id: 2},
+                                {category: 'Category7', budget: 0.00, actual: 0.00, type: 'expenses', id: 3},
+                                {category: 'Category8', budget: 0.00, actual: 0.00, type: 'expenses', id: 4},
+                                {category: 'Category9', budget: 0.00, actual: 0.00, type: 'expenses', id: 5},
+                            ],
+                            savingsData: [
+                                {category: 'Category10', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 0},
+                                {category: 'Category11', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 1},
+                                {category: 'Category12', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 2},
+                                {category: 'Category13', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 3},
+                                {category: 'Category14', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 4},
 
-        this.handleDateChange = this.handleDateChange.bind(this)
+                            ]
+                        }
+                }
+            ]
+        };
+
+        this.handleDateChange = this.handleDateChange.bind(this);
+        this.handleUpdateCategory = this.handleUpdateCategory.bind(this);
     }
 
     handleDateChange = date => {
         this.setState({selectedDate: date})
+    };
+
+    handleUpdateCategory = (type, id, charge) => {
+        // Keep in mind that in the DB these links are handled by foreign key relationships and will resync after refresh.
+        // I do this here to improve performance by removing the need to wait for DB updates to complete.
+
+
     };
 
 
@@ -38,8 +86,8 @@ class App extends React.Component {
                                 onChange={this.handleDateChange}
                             />
                         </Grid>
-                        <Grid item xs={6}> <Budget selectedMonth={this.state.selectedDate}/> </Grid>
-                        <Grid item xs={6}> <Transactions selectedMonth={this.state.selectedDate}/> </Grid>
+                        <Grid item xs={6}> <Budget selectedMonth={this.state.selectedDate} data={this.state.data[0].budgetData}/> </Grid>
+                        <Grid item xs={6}> <Transactions selectedMonth={this.state.selectedDate} data={this.state.data[1].transactionData} handleUpdateCategory={this.handleUpdateCategory}/> </Grid>
                     </Grid>
                 </MuiPickersUtilsProvider>
             </MuiThemeProvider>

@@ -14,48 +14,7 @@ class Transactions extends Component {
             open: false,
             showAll: false,
             editRowData: null,
-            data: [
-                {
-                    assignCategory: 'Category1',
-                    date: '01/01/19',
-                    description: 'Kroger',
-                    charge: 59.99,
-                    hidden: true,
-                    id: 1
-                },
-                {
-                    assignCategory: 'Category2',
-                    date: '01/01/19',
-                    description: 'Nation Star',
-                    charge: 1500.00,
-                    hidden: false,
-                    id: 2
-                },
-                {
-                    assignCategory: 'Category1',
-                    date: '01/01/19',
-                    description: 'Kroger Gas',
-                    charge: 32.00,
-                    hidden: false,
-                    id: 3
-                },
-                {
-                    assignCategory: 'Category3',
-                    date: '01/01/19',
-                    description: 'Bath and Body Works',
-                    charge: 1000000,
-                    hidden: false,
-                    id: 4
-                },
-                {
-                    assignCategory: 'Select One',
-                    date: '01/01/19',
-                    description: 'Lorem Ipsum',
-                    charge: 20.33,
-                    hidden: false,
-                    id: 5
-                },
-            ]
+            data: this.props.data.transactionData
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
@@ -117,6 +76,7 @@ class Transactions extends Component {
     }
 
     render() {
+        return (<Typography>Loading...</Typography>);
         let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> :
             <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
         let data = this.state.showAll ? this.state.data : this.state.data.filter(row => {

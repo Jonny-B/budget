@@ -11,27 +11,9 @@ class Budget extends Component {
         this.state = {
             open: false,
             editRowData: null,
-            incomeData: [
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 0},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 2},
-            ],
-            expensesData: [
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 0},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 2},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 3},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 4},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'expenses', id: 5},
-            ],
-            savingsData: [
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 0},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 1},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 2},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 3},
-                {category: 'Category1', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 4},
-
-            ]
+            incomeData: this.props.data.incomeData,
+            expensesData: this.props.data.expensesData,
+            savingsData: this.props.data.savingsData
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
