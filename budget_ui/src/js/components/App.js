@@ -38,8 +38,8 @@ class App extends React.Component {
                                 onChange={this.handleDateChange}
                             />
                         </Grid>
-                        <Grid item xs={6}> <Budget/> </Grid>
-                        <Grid item xs={6}> <Transactions/> </Grid>
+                        <Grid item xs={6}> <Budget selectedMonth={this.state.selectedDate}/> </Grid>
+                        <Grid item xs={6}> <Transactions selectedMonth={this.state.selectedDate}/> </Grid>
                     </Grid>
                 </MuiPickersUtilsProvider>
             </MuiThemeProvider>

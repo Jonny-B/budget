@@ -68,6 +68,10 @@ class Budget extends Component {
         this.setState({open: false, editRowData: null})
     };
 
+    componentWillMount() {
+        //Get Data for selected month using this.props.selectedMonth
+    }
+
     render() {
         return (
             <div>
