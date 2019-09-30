@@ -1,11 +1,12 @@
 import React from 'react';
-import {Grid, Typography, Select, MenuItem, Button} from '@material-ui/core';
+import {Grid, Typography, Select, MenuItem, Button, Dialog, DialogTitle} from '@material-ui/core';
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import ShowChart from '@material-ui/icons/ShowChart';
 import Budget from './Budget'
 import Transactions from './Transactions'
 import DateFnsUtils from "@date-io/date-fns";
+import PlaidLink from 'react-plaid-link'
 
 class App extends React.Component {
 
@@ -13,6 +14,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             selectedDate: "2015-01-02",
+            plaidModalOpen: false,
             data: [
                 {
                     budgetData:
@@ -55,6 +57,9 @@ class App extends React.Component {
 
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleUpdateCategory = this.handleUpdateCategory.bind(this);
+        this.handleOpenClosePlaid = this.handleOpenClosePlaid.bind(this);
+        this.handleOnSuccess = this.handleOnSuccess.bind(this);
+        this.handleOnExit = this.handleOnExit.bind(this);
     }
 
     handleDateChange = date => {
@@ -64,10 +69,18 @@ class App extends React.Component {
     handleUpdateCategory = (type, id, charge) => {
         // Keep in mind that in the DB these links are handled by foreign key relationships and will resync after refresh.
         // I do this here to improve performance by removing the need to wait for DB updates to complete.
-
-
     };
 
+    handleOpenClosePlaid = () => {
+        // this.setState({plaidModalOpen: !this.state.plaidModalOpen})
+    };
+
+    handleOnSuccess(token, metadata) {
+        // send token to client server
+    }
+
+    handleOnExit() {
+    }
 
     render() {
         return (
@@ -75,7 +88,18 @@ class App extends React.Component {
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container spacing={3} className="App">
                         <Grid item xs={6}> <Typography> PRACTICE CRUD APP and HOOKS </Typography> </Grid>
-                        <Grid item xs={6}> <Button><ShowChart/></Button> </Grid>
+                        <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
+                        <Grid item xs={3}>
+                            <PlaidLink
+                                clientName="Budget"
+                                env="sandbox"
+                                product={["auth", "transactions"]}
+                                publicKey="b6eae93fa88deb27355f14563287d5"
+                                onExit={this.handleOnExit}
+                                onSuccess={this.handleOnSuccess}>
+                                Open Link and connect your bank!
+                            </PlaidLink>
+                        </Grid>
                         <Grid item xs={12}>
                             <DatePicker
                                 views={["year", "month"]}
