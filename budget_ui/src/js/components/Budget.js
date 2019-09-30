@@ -50,8 +50,8 @@ class Budget extends Component {
 
     handleUpdate = (updatedRowData) => {
         let data = [...this.state[`${updatedRowData.type}Data`]];
-        data.forEach((row)=> {
-            if (row.id === updatedRowData.id){
+        data.forEach((row) => {
+            if (row.id === updatedRowData.id) {
                 row.category = updatedRowData.category;
             }
         });
@@ -60,7 +60,7 @@ class Budget extends Component {
         this.updateDatabase(data);
     };
 
-    updateDatabase(data){
+    updateDatabase(data) {
         // Update assigned budget item in DB here and setState for updated data item.
     }
 
@@ -78,8 +78,19 @@ class Budget extends Component {
                             options={{search: false, paging: false}}
                             columns={[
                                 {title: 'Category', field: 'category'},
-                                {title: 'Budget', field: 'budget', type: 'currency'},
-                                {title: 'Actual', field: 'actual', type: 'currency'}
+                                {
+                                    title: 'Budget',
+                                    field: 'budget',
+                                    type: 'currency',
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                },
+                                {
+                                    title: 'Actual',
+                                    field: 'actual',
+                                    type: 'currency',
+                                    editComponent: props => (<></>)
+                                }
                             ]}
                             actions={[
                                 {
@@ -90,18 +101,35 @@ class Budget extends Component {
                                     onClick: (event, rowData) => {
                                         this.handleEdit("income", rowData, event)
                                     }
-                                },
-                                {
-                                    icon: () => {
-                                        return <Add/>
-                                    },
-                                    tooltip: 'Add Transaction',
-                                    isFreeAction: true,
-                                    onClick: (event, rowData) => {
-                                        this.handleAdd("income")
-                                    }
                                 }
                             ]}
+                            editable={{
+                                onRowAdd: newData =>
+                                    new Promise((resolve) => {
+                                        setTimeout(() => {
+                                            {
+                                                const data = this.state.incomeData;
+                                                data.push(newData);
+                                                this.updateDatabase(newData);
+                                                this.setState({data}, () => resolve());
+                                            }
+                                            resolve()
+                                        }, 1000)
+                                    }),
+                                onRowDelete: oldData =>
+                                    new Promise((resolve) => {
+                                        setTimeout(() => {
+                                            {
+                                                let data = this.state.incomeData;
+                                                const index = data.indexOf(oldData);
+                                                data.splice(index, 1);
+                                                this.updateDatabase(oldData);
+                                                this.setState({data}, () => resolve());
+                                            }
+                                            resolve();
+                                        }, 1000);
+                                    })
+                            }}
                             data={this.state.incomeData}/>
                     </Grid>
                     <Grid item>
@@ -113,8 +141,20 @@ class Budget extends Component {
                             options={{search: false, paging: false}}
                             columns={[
                                 {title: 'Category', field: 'category'},
-                                {title: 'Budget', field: 'budget', type: 'currency'},
-                                {title: 'Actual', field: 'actual', type: 'currency'}
+                                {
+                                    title: 'Budget',
+                                    field: 'budget',
+                                    type: 'currency',
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                },
+                                {
+                                    title: 'Actual',
+                                    field: 'actual',
+                                    type: 'currency',
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                }
                             ]}
                             actions={[
                                 {
@@ -125,18 +165,35 @@ class Budget extends Component {
                                     onClick: (event, rowData) => {
                                         this.handleEdit("expenses", rowData, event)
                                     }
-                                },
-                                {
-                                    icon: () => {
-                                        return <Add/>
-                                    },
-                                    tooltip: 'Add Transaction',
-                                    isFreeAction: true,
-                                    onClick: (event, rowData) => {
-                                        this.handleAdd("expenses")
-                                    }
                                 }
                             ]}
+                            editable={{
+                                onRowAdd: newData =>
+                                    new Promise((resolve) => {
+                                        setTimeout(() => {
+                                            {
+                                                const data = this.state.expensesData;
+                                                data.push(newData);
+                                                this.updateDatabase(newData);
+                                                this.setState({data}, () => resolve());
+                                            }
+                                            resolve()
+                                        }, 1000)
+                                    }),
+                                onRowDelete: oldData =>
+                                    new Promise((resolve) => {
+                                        setTimeout(() => {
+                                            {
+                                                let data = this.state.expensesData;
+                                                const index = data.indexOf(oldData);
+                                                data.splice(index, 1);
+                                                this.updateDatabase(oldData);
+                                                this.setState({data}, () => resolve());
+                                            }
+                                            resolve();
+                                        }, 1000);
+                                    })
+                            }}
                             data={this.state.expensesData}/>
                     </Grid>
                     <Grid item>
@@ -148,9 +205,27 @@ class Budget extends Component {
                             options={{search: false, paging: false}}
                             columns={[
                                 {title: 'Category', field: 'category'},
-                                {title: 'Budget', field: 'budget', type: 'currency'},
-                                {title: 'Actual', field: 'actual', type: 'currency'},
-                                {title: 'Bucket Total', field: 'bucketTotal', type: 'currency'}
+                                {
+                                    title: 'Budget',
+                                    field: 'budget',
+                                    type: 'currency',
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                },
+                                {
+                                    title: 'Actual',
+                                    field: 'actual',
+                                    type: 'currency',
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                },
+                                {
+                                    title: 'Bucket Total',
+                                    field: 'bucketTotal',
+                                    type: 'currency',
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                }
                             ]}
                             actions={[
                                 {
@@ -161,18 +236,35 @@ class Budget extends Component {
                                     onClick: (event, rowData) => {
                                         this.handleEdit('savings', rowData, event)
                                     }
-                                },
-                                {
-                                    icon: () => {
-                                        return <Add/>
-                                    },
-                                    tooltip: 'Add Transaction',
-                                    isFreeAction: true,
-                                    onClick: (event, rowData) => {
-                                        this.handleAdd("savings")
-                                    }
                                 }
                             ]}
+                            editable={{
+                                onRowAdd: newData =>
+                                    new Promise((resolve) => {
+                                        setTimeout(() => {
+                                            {
+                                                const data = this.state.savingsData;
+                                                data.push(newData);
+                                                this.updateDatabase(newData);
+                                                this.setState({data}, () => resolve());
+                                            }
+                                            resolve()
+                                        }, 1000)
+                                    }),
+                                onRowDelete: oldData =>
+                                    new Promise((resolve) => {
+                                        setTimeout(() => {
+                                            {
+                                                let data = this.state.savingsData;
+                                                const index = data.indexOf(oldData);
+                                                data.splice(index, 1);
+                                                this.updateDatabase(oldData);
+                                                this.setState({data}, () => resolve());
+                                            }
+                                            resolve();
+                                        }, 1000);
+                                    })
+                            }}
                             data={this.state.savingsData}/>
                     </Grid>
                     <Grid item>
@@ -191,8 +283,6 @@ class Budget extends Component {
     }
 }
 
-const styles = theme => ({
-
-});
+const styles = theme => ({});
 
 export default withStyles(styles)(Budget)
