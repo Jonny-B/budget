@@ -18,16 +18,6 @@ class App extends React.Component {
             data: [
                 {
                     budgetData:
-                        [
-                            {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger', charge: 59.99, hidden: true, id: 1},
-                            {assignCategory: 'Category2', date: '01/01/19', description: 'Nation Star', charge: 1500.00, hidden: false, id: 2},
-                            {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger Gas', charge: 32.00, hidden: false, id: 3},
-                            {assignCategory: 'Category3', date: '01/01/19', description: 'Bath and Body Works', charge: 1000000, hidden: false, id: 4},
-                            {assignCategory: 'Select One', date: '01/01/19', description: 'Lorem Ipsum', charge: 20.33, hidden: false, id: 5},
-                        ]
-                },
-                {
-                    transactionData:
                         {
                             incomeData: [
                                 {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 0},
@@ -51,6 +41,17 @@ class App extends React.Component {
 
                             ]
                         }
+
+                },
+                {
+                    transactionData:
+                        [
+                            {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger', charge: 59.99, hidden: true, id: 1},
+                            {assignCategory: 'Category2', date: '01/01/19', description: 'Nation Star', charge: 1500.00, hidden: false, id: 2},
+                            {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger Gas', charge: 32.00, hidden: false, id: 3},
+                            {assignCategory: 'Category3', date: '01/01/19', description: 'Bath and Body Works', charge: 1000000, hidden: false, id: 4},
+                            {assignCategory: 'Select One', date: '01/01/19', description: 'Lorem Ipsum', charge: 20.33, hidden: false, id: 5},
+                        ]
                 }
             ]
         };

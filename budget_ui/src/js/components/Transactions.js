@@ -14,7 +14,7 @@ class Transactions extends Component {
             open: false,
             showAll: false,
             editRowData: null,
-            data: this.props.data.transactionData
+            data: this.props.data
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
@@ -76,7 +76,7 @@ class Transactions extends Component {
     }
 
     render() {
-        return (<Typography>Loading...</Typography>);
+        if (this.state.data === undefined || this.state.data === null || this.state.data.length === 0) return (<Typography>Loading...</Typography>);
         let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> :
             <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
         let data = this.state.showAll ? this.state.data : this.state.data.filter(row => {
