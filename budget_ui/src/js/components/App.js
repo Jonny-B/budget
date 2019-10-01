@@ -7,6 +7,7 @@ import Budget from './Budget'
 import Transactions from './Transactions'
 import DateFnsUtils from "@date-io/date-fns";
 import PlaidLink from 'react-plaid-link'
+import NavBar from "./NavBar";
 
 class App extends React.Component {
 
@@ -88,6 +89,7 @@ class App extends React.Component {
             <MuiThemeProvider theme={theme}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container spacing={3} className="App">
+                        <Grid item xs={12}> <NavBar/> </Grid>
                         <Grid item xs={6}> <Typography> PRACTICE CRUD APP and HOOKS </Typography> </Grid>
                         <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
                         <Grid item xs={3}>
