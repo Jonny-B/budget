@@ -1,8 +1,7 @@
 class CreateBudgetItems < ActiveRecord::Migration[5.2]
   def change
     create_table :users do |t|
-      t.string :access_token
-      t.string :item_id
+      t.string :user_id
       t.datetime :date
       t.timestamp :updated_at
       t.timestamp :created_at
