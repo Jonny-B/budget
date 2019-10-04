@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Grid, Typography, Select, MenuItem, Button, Dialog, DialogTitle} from '@material-ui/core';
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
@@ -57,8 +57,30 @@ export default function App(props) {
         }
     ]);
 
+    useEffect(()=> {
+        createUserIfNecessary();
+        getTransactionData();
+        getBudgetData();
+    });
+
+    const createUserIfNecessary = () => {
+
+    };
+
+    const getTransactionData = () => {
+
+    };
+
+    const getBudgetData = () => {
+
+    };
+
     const handleDateChange = date => {
         setSelectedDate(date);
+    };
+
+    const updateCateogry = () => {
+
     };
 
     const handleUpdateCategory = (type, id, charge) => {
