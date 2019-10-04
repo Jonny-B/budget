@@ -72,7 +72,7 @@ export default function App(props) {
         axios.get('/transactions/get', {id: userId, access_token: userAccessToken})
     };
 
-    const getBudgetData = (userId) => {
+    const getBudgetData = (userId, userAccessToken) => {
         axios.get('/budgets/get', {id: userId, access_token: userAccessToken})
     };
 

@@ -24,8 +24,8 @@ default: &default
 development:
   <<: *default
   database: budget_development
-  username: budget
-  password: Ostate87!
+  username: postgres
+  password: ostate87
   # Old postgres 10 un
   # postgres
   # Old postgres10 pw
