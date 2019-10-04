@@ -9,6 +9,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import PlaidLink from 'react-plaid-link'
 import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
+import axios from 'axios'
 
 export default function App(props) {
 
@@ -63,16 +64,16 @@ export default function App(props) {
         getBudgetData();
     });
 
-    const createUserIfNecessary = () => {
-
+    const createUserIfNecessary = (userId) => {
+        axios.post('/users/create', {id: userId})
     };
 
-    const getTransactionData = () => {
-
+    const getTransactionData = (userId, userAccessToken) => {
+        axios.get('/transactions/get', {id: userId, access_token: userAccessToken})
     };
 
-    const getBudgetData = () => {
-
+    const getBudgetData = (userId) => {
+        axios.get('/budgets/get', {id: userId, access_token: userAccessToken})
     };
 
     const handleDateChange = date => {
