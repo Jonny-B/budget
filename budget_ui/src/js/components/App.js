@@ -58,7 +58,7 @@ export default function App(props) {
     ]);
 
     const handleDateChange = date => {
-        this.setState({selectedDate: date})
+        setSelectedDate(date);
     };
 
     const handleUpdateCategory = (type, id, charge) => {
@@ -71,6 +71,7 @@ export default function App(props) {
     };
 
     const handleOnSuccess = (token, metadata) => {
+        let x = 0;
         // send token to client server
     };
 
