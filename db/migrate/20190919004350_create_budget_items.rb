@@ -9,10 +9,10 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
       t.timestamp :created_at
     end
 
-    create_table :user_access_tokens, id: false do |t|
+    create_table :user_access_tokens do |t|
       t.belongs_to :users
       # This comes from plaid when a user signs in
-      t.string :token, null: false
+      t.string :token
       t.timestamp :updated_at
       t.timestamp :created_at
     end

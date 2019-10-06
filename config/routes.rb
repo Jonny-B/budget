@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
-  post '/user/create', to: 'users#create'
+  get '/transactions', to: 'transactions#get'
+  get '/budgets', to: 'budgets#get'
 
-  get '/transactions/get', to: 'transactions#create'
-  get '/budgets/get', to: 'budgets#create'
+  post '/user/create', to: 'users#create'
+  post '/transations/create', to: 'transactions#create'
+  post '/budgets/create', to: 'budgets#create'
 end
