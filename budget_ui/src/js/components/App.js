@@ -64,16 +64,16 @@ export default function App(props) {
         getBudgetData();
     });
 
-    const createUserIfNecessary = (userId) => {
-        axios.post('/users/create', {id: userId})
+    const createUserIfNecessary = () => {
+        if (user) axios.post('/users/create', {id: user.sub})
     };
 
     const getTransactionData = (userId, userAccessToken) => {
-        axios.get('/transactions/get', {id: userId, access_token: userAccessToken})
+        axios.get('/transactions', {id: userId, access_token: userAccessToken})
     };
 
     const getBudgetData = (userId, userAccessToken) => {
-        axios.get('/budgets/get', {id: userId, access_token: userAccessToken})
+        axios.get('/budgets', {id: userId, access_token: userAccessToken})
     };
 
     const handleDateChange = date => {
@@ -106,7 +106,7 @@ export default function App(props) {
         <MuiThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Grid container spacing={3} className="App">
-                    <Grid item xs={12}> <NavBar/> </Grid>
+                    <Grid item xs={12}> <NavBar isAuthenticated={isAuthenticated} loginWithRedirect={loginWithRedirect} logout={logout} user={user}/> </Grid>
                     <Grid item xs={6}> <Typography> PRACTICE CRUD APP and HOOKS </Typography> </Grid>
                     <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
                     <Grid item xs={3}>

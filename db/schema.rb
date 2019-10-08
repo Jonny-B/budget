@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_19_004350) do
+ActiveRecord::Schema.define(version: 2019_10_08_193907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,9 +101,7 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
     t.index ["users_id"], name: "index_user_access_tokens_on_users_id"
   end
 
-  create_table "users", id: false, force: :cascade do |t|
-    t.string "id", null: false
-    t.string "user_access_token"
+  create_table "users", force: :cascade do |t|
     t.datetime "date"
     t.datetime "updated_at"
     t.datetime "created_at"
