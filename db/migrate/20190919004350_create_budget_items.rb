@@ -1,16 +1,14 @@
 class CreateBudgetItems < ActiveRecord::Migration[5.2]
   def change
-    create_table :users, id: false do |t|
+    create_table :users do |t|
       # This id comes from Auth0
-      t.string :id, null: false
-      t.string :user_access_token
       t.datetime :date
       t.timestamp :updated_at
       t.timestamp :created_at
     end
 
-    create_table :user_access_tokens do |t|
-      t.belongs_to :users
+    create_table :user_tokens do |t|
+      t.belongs_to :user
       # This comes from plaid when a user signs in
       t.string :token
       t.timestamp :updated_at
@@ -18,7 +16,7 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     end
 
     create_table :incomes do |t|
-      t.belongs_to :users
+      t.belongs_to :user
       t.decimal :total
       t.datetime :date
       t.timestamp :updated_at
@@ -26,7 +24,7 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     end
 
     create_table :expenses do |t|
-      t.belongs_to :users
+      t.belongs_to :user
       t.decimal :total
       t.datetime :date
       t.timestamp :updated_at
@@ -34,7 +32,7 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     end
 
     create_table :savings do |t|
-      t.belongs_to :users
+      t.belongs_to :user
       t.decimal :total
       t.datetime :date
       t.timestamp :updated_at
@@ -42,9 +40,9 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     end
 
     create_table :categories do |t|
-      t.belongs_to :incomes
-      t.belongs_to :expenses
-      t.belongs_to :savings
+      t.belongs_to :income
+      t.belongs_to :expense
+      t.belongs_to :saving
       t.decimal :budgeted
       t.decimal :spent
       t.datetime :effective_date
@@ -54,8 +52,8 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     end
 
     create_table :transactions, id: false do |t|
-      t.belongs_to :users
-      t.belongs_to :categories
+      t.belongs_to :user
+      t.belongs_to :category
       t.string :description
       t.string :transaction_id, null: false
       t.boolean :hidden

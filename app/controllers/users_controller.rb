@@ -1,13 +1,21 @@
 class UsersController < ApplicationController
   def create
-    unless User.find_by(user_access_token: params["userToken"])
-      user_access_token = UserAccessToken.new(token: params["userToken"])
-      user_access_token.save
-      user = User.new(user_access_token: user_access_token.id)
+    access_token = UserToken.find_by(token: params["userToken"])
+    if !access_token
+      user = User.new(date: Date.new)
       user.save
-      render json: "user created"
+
+      ua_token = UserToken.new(user_id: user.id, token: params["userToken"])
+      ua_token.save
+
     else
       render json: "user already exists"
     end
+  end
+
+  def get
+    user = User.find_by(user_access_token: params["userToken"])
+
+    render json: user.to_json
   end
 end

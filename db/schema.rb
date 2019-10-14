@@ -10,42 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_08_193907) do
+ActiveRecord::Schema.define(version: 2019_09_19_004350) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "categories", force: :cascade do |t|
-    t.bigint "incomes_id"
-    t.bigint "expenses_id"
-    t.bigint "savings_id"
+    t.bigint "income_id"
+    t.bigint "expense_id"
+    t.bigint "saving_id"
     t.decimal "budgeted"
     t.decimal "spent"
     t.datetime "effective_date"
     t.datetime "expiry_date"
     t.datetime "updated_at"
     t.datetime "created_at"
-    t.index ["expenses_id"], name: "index_categories_on_expenses_id"
-    t.index ["incomes_id"], name: "index_categories_on_incomes_id"
-    t.index ["savings_id"], name: "index_categories_on_savings_id"
+    t.index ["expense_id"], name: "index_categories_on_expense_id"
+    t.index ["income_id"], name: "index_categories_on_income_id"
+    t.index ["saving_id"], name: "index_categories_on_saving_id"
   end
 
   create_table "expenses", force: :cascade do |t|
-    t.bigint "users_id"
+    t.bigint "user_id"
     t.decimal "total"
     t.datetime "date"
     t.datetime "updated_at"
     t.datetime "created_at"
-    t.index ["users_id"], name: "index_expenses_on_users_id"
+    t.index ["user_id"], name: "index_expenses_on_user_id"
   end
 
   create_table "incomes", force: :cascade do |t|
-    t.bigint "users_id"
+    t.bigint "user_id"
     t.decimal "total"
     t.datetime "date"
     t.datetime "updated_at"
     t.datetime "created_at"
-    t.index ["users_id"], name: "index_incomes_on_users_id"
+    t.index ["user_id"], name: "index_incomes_on_user_id"
   end
 
   create_table "remember_charge", force: :cascade do |t|
@@ -56,12 +56,12 @@ ActiveRecord::Schema.define(version: 2019_10_08_193907) do
   end
 
   create_table "savings", force: :cascade do |t|
-    t.bigint "users_id"
+    t.bigint "user_id"
     t.decimal "total"
     t.datetime "date"
     t.datetime "updated_at"
     t.datetime "created_at"
-    t.index ["users_id"], name: "index_savings_on_users_id"
+    t.index ["user_id"], name: "index_savings_on_user_id"
   end
 
   create_table "savings_bucket", force: :cascade do |t|
@@ -82,23 +82,23 @@ ActiveRecord::Schema.define(version: 2019_10_08_193907) do
   end
 
   create_table "transactions", id: false, force: :cascade do |t|
-    t.bigint "users_id"
-    t.bigint "categories_id"
+    t.bigint "user_id"
+    t.bigint "category_id"
     t.string "description"
     t.string "transaction_id", null: false
     t.boolean "hidden"
     t.datetime "updated_at"
     t.datetime "created_at"
-    t.index ["categories_id"], name: "index_transactions_on_categories_id"
-    t.index ["users_id"], name: "index_transactions_on_users_id"
+    t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
-  create_table "user_access_tokens", force: :cascade do |t|
-    t.bigint "users_id"
+  create_table "user_tokens", force: :cascade do |t|
+    t.bigint "user_id"
     t.string "token"
     t.datetime "updated_at"
     t.datetime "created_at"
-    t.index ["users_id"], name: "index_user_access_tokens_on_users_id"
+    t.index ["user_id"], name: "index_user_tokens_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
