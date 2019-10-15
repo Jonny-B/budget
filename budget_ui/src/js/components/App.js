@@ -14,10 +14,10 @@ import axios from 'axios'
 export default function App(props) {
 
     //user has a sub which is a unique identifier
-    const { isAuthenticated, loginWithRedirect, logout, user, } = useAuth0();
+    const {isAuthenticated, loginWithRedirect, logout, user,} = useAuth0();
 
     const [selectedDate, setSelectedDate] = useState("2015-01-02");
-    const [plaidModalOpen, setPlaidModalOpen, getTokenSilently ] = useState(false);
+    const [plaidModalOpen, setPlaidModalOpen, getTokenSilently] = useState(false);
     const [data, SetData] = useState([
         {
             budgetData:
@@ -47,21 +47,14 @@ export default function App(props) {
 
         },
         {
-            transactionData:
-                [
-                    {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger', charge: 59.99, hidden: true, id: 1},
-                    {assignCategory: 'Category2', date: '01/01/19', description: 'Nation Star', charge: 1500.00, hidden: false, id: 2},
-                    {assignCategory: 'Category1', date: '01/01/19', description: 'Kroger Gas', charge: 32.00, hidden: false, id: 3},
-                    {assignCategory: 'Category3', date: '01/01/19', description: 'Bath and Body Works', charge: 1000000, hidden: false, id: 4},
-                    {assignCategory: 'Select One', date: '01/01/19', description: 'Lorem Ipsum', charge: 20.33, hidden: false, id: 5},
-                ]
+            transactionData: []
         }
     ]);
 
-    useEffect(()=> {
+    useEffect(() => {
         createUserIfNecessary();
         getTransactionData();
-        getBudgetData();
+        // getBudgetData();
     });
 
     const createUserIfNecessary = () => {
@@ -69,7 +62,15 @@ export default function App(props) {
     };
 
     const getTransactionData = (userId, userAccessToken) => {
-        axios.get('/transactions', {id: userId, access_token: userAccessToken})
+        if (user) {
+            axios.get('/transactions', {id: user.sub}).then(t => {
+                let d = [...data];
+                d[1].transactionData = t.data;
+                SetData(d);
+            }).catch(e => {
+                console.log('failed to get transactions')
+            })
+        }
     };
 
     const getBudgetData = (userId, userAccessToken) => {
@@ -93,9 +94,8 @@ export default function App(props) {
         // this.setState({plaidModalOpen: !this.state.plaidModalOpen})
     };
 
-    const handleOnSuccess = (token, metadata) => {
-        let x = 0;
-        // send token to client server
+    const handleAccountLink = (token, metadata) => {
+
     };
 
     const handleOnExit = () => {
@@ -110,15 +110,15 @@ export default function App(props) {
                     <Grid item xs={6}> <Typography> PRACTICE CRUD APP and HOOKS </Typography> </Grid>
                     <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
                     <Grid item xs={3}>
-                        <PlaidLink
+                        {isAuthenticated && <PlaidLink
                             clientName="Budget"
                             env="sandbox"
                             product={["auth", "transactions"]}
                             publicKey="b6eae93fa88deb27355f14563287d5"
                             onExit={handleOnExit}
-                            onSuccess={handleOnSuccess}>
-                            Open Link and connect your bank!
-                        </PlaidLink>
+                            onSuccess={handleAccountLink}>
+                            Link Account Transactions
+                        </PlaidLink>}
                     </Grid>
                     <Grid item xs={12}>
                         <DatePicker
@@ -131,7 +131,9 @@ export default function App(props) {
                         />
                     </Grid>
                     <Grid item xs={6}> <Budget selectedMonth={selectedDate} data={data[0].budgetData}/> </Grid>
-                    <Grid item xs={6}> <Transactions selectedMonth={selectedDate} data={data[1].transactionData} handleUpdateCategory={handleUpdateCategory}/> </Grid>
+                    <Grid item xs={6}>
+                        {data[1].transactionData.length !== 0 ? <Transactions selectedMonth={selectedDate} data={data[1].transactionData} handleUpdateCategory={handleUpdateCategory}/> : <Typography>Loading ...</Typography>}
+                    </Grid>
                 </Grid>
             </MuiPickersUtilsProvider>
         </MuiThemeProvider>

@@ -95,7 +95,8 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
 
   create_table "user_tokens", force: :cascade do |t|
     t.bigint "user_id"
-    t.string "token"
+    t.string "auth_token"
+    t.string "plaid_token"
     t.datetime "updated_at"
     t.datetime "created_at"
     t.index ["user_id"], name: "index_user_tokens_on_user_id"

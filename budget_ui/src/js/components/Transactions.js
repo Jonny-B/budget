@@ -14,7 +14,7 @@ class Transactions extends Component {
             open: false,
             showAll: false,
             editRowData: null,
-            data: this.props.data
+            data: []
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
@@ -24,6 +24,10 @@ class Transactions extends Component {
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.updateDatabase = this.updateDatabase.bind(this);
         this.updateTransactionsVisibility = this.updateTransactionsVisibility.bind(this);
+    }
+
+    componentWillMount() {
+        this.setState({data: this.props.data})
     }
 
     handleEdit = (type, rowData, event) => {
@@ -76,7 +80,6 @@ class Transactions extends Component {
     }
 
     render() {
-        if (this.state.data === undefined || this.state.data === null || this.state.data.length === 0) return (<Typography>Loading...</Typography>);
         let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> :
             <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
         let data = this.state.showAll ? this.state.data : this.state.data.filter(row => {
