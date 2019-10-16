@@ -82,10 +82,12 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
   end
 
   create_table "transactions", id: false, force: :cascade do |t|
+    t.string "transaction_id", null: false
     t.bigint "user_id"
     t.bigint "category_id"
     t.string "description"
-    t.string "transaction_id", null: false
+    t.decimal "charge"
+    t.datetime "date"
     t.boolean "hidden"
     t.datetime "updated_at"
     t.datetime "created_at"
@@ -95,8 +97,8 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
 
   create_table "user_tokens", force: :cascade do |t|
     t.bigint "user_id"
-    t.string "auth_token"
-    t.string "plaid_token"
+    t.string "token_type"
+    t.string "token"
     t.datetime "updated_at"
     t.datetime "created_at"
     t.index ["user_id"], name: "index_user_tokens_on_user_id"

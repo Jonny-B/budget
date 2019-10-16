@@ -1,3 +1,5 @@
+require 'plaid'
+
 class TransactionsController < ActionController::API
   def get
     transactions = [
@@ -9,12 +11,5 @@ class TransactionsController < ActionController::API
     ]
 
     render json: transactions.to_json
-  end
-
-  def create
-    user = params["userToken"]
-    transactions = params["transactions"]
-    access_token = Transaction.find_by()
-
   end
 end

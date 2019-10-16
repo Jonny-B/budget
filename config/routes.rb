@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get '/users', to: 'users#get'
 
   post '/users/create', to: 'users#create'
-  post '/transations/create', to: 'transactions#create'
+  post '/users/set_plaid_token', to: 'users#set_plaid_token'
+  post '/transactions/create', to: 'transactions#create'
   post '/budgets/create', to: 'budgets#create'
 end

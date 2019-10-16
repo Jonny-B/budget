@@ -10,8 +10,8 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     create_table :user_tokens do |t|
       t.belongs_to :user
       # This comes from plaid when a user signs in
-      t.string :auth_token
-      t.string :plaid_token
+      t.string :token_type
+      t.string :token
       t.timestamp :updated_at
       t.timestamp :created_at
     end
@@ -53,10 +53,12 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     end
 
     create_table :transactions, id: false do |t|
+      t.string :transaction_id, null: false
       t.belongs_to :user
       t.belongs_to :category
       t.string :description
-      t.string :transaction_id, null: false
+      t.decimal :charge
+      t.datetime :date
       t.boolean :hidden
       t.timestamp :updated_at
       t.timestamp :created_at

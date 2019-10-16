@@ -48,6 +48,9 @@ export default function App(props) {
         },
         {
             transactionData: []
+        },
+        {
+            allowCreateUserCheck: true
         }
     ]);
 
@@ -58,11 +61,16 @@ export default function App(props) {
     });
 
     const createUserIfNecessary = () => {
-        if (user) axios.post('/users/create', {id: user.sub})
+        if (user && data[2].allowCreateUserCheck){
+        axios.post('/users/create', {userToken: user.sub});
+            let d = [...data];
+            d[2].allowCreateUserCheck = false;
+            SetData(d)
+        }
     };
 
     const getTransactionData = (userId, userAccessToken) => {
-        if (user) {
+        if (user && data[1].transactionData === null) {
             axios.get('/transactions', {id: user.sub}).then(t => {
                 let d = [...data];
                 d[1].transactionData = t.data;
@@ -95,7 +103,9 @@ export default function App(props) {
     };
 
     const handleAccountLink = (token, metadata) => {
-
+        if (user) {
+            axios.post('/users/set_plaid_token', {userToken: user.sub, plaidToken: token});
+        }
     };
 
     const handleOnExit = () => {
