@@ -70,8 +70,8 @@ export default function App(props) {
     };
 
     const getTransactionData = (userId, userAccessToken) => {
-        if (user && data[1].transactionData === null) {
-            axios.get('/transactions', {id: user.sub}).then(t => {
+        if (user && data[1].transactionData.length === 0) {
+            axios.get('/transactions', {params: {userToken: user.sub, date: selectedDate}}).then(t => {
                 let d = [...data];
                 d[1].transactionData = t.data;
                 SetData(d);
