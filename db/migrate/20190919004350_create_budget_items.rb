@@ -60,6 +60,7 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
       t.decimal :charge
       t.datetime :date
       t.boolean :hidden
+      t.boolean :edited
       t.timestamp :updated_at
       t.timestamp :created_at
     end

@@ -7,4 +7,6 @@ Rails.application.routes.draw do
   post '/users/set_plaid_token', to: 'users#set_plaid_token'
   post '/transactions/create', to: 'transactions#create'
   post '/budgets/create', to: 'budgets#create'
+
+  patch 'transactions/patch', to: 'transactions#patch'
 end

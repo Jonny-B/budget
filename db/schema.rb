@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
     t.decimal "charge"
     t.datetime "date"
     t.boolean "hidden"
+    t.boolean "edited"
     t.datetime "updated_at"
     t.datetime "created_at"
     t.index ["category_id"], name: "index_transactions_on_category_id"

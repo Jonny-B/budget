@@ -50,8 +50,9 @@ export default function App(props) {
             transactionData: []
         },
         {
-            allowCreateUserCheck: true
-        }
+            allowCreateUserCheck: true,
+            allowTransactionLookup: true
+        },
     ]);
 
     useEffect(() => {
@@ -61,7 +62,7 @@ export default function App(props) {
     });
 
     const createUserIfNecessary = () => {
-        if (user && data[2].allowCreateUserCheck){
+        if (data[2].allowCreateUserCheck && user){
         axios.post('/users/create', {userToken: user.sub});
             let d = [...data];
             d[2].allowCreateUserCheck = false;
@@ -69,12 +70,13 @@ export default function App(props) {
         }
     };
 
-    const getTransactionData = (userId, userAccessToken) => {
-        if (user && data[1].transactionData.length === 0) {
+    const getTransactionData = () => {
+        if (data[2].allowTransactionLookup && user && data[1].transactionData.length === 0) {
             axios.get('/transactions', {params: {userToken: user.sub, date: selectedDate}}).then(t => {
                 let d = [...data];
                 d[1].transactionData = t.data;
                 SetData(d);
+                d[3].allowTransactionLookup = false;
             }).catch(e => {
                 console.log('failed to get transactions')
             })

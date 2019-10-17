@@ -6,6 +6,7 @@ import {withStyles} from '@material-ui/core/styles';
 import lightFormat from 'date-fns/lightFormat'
 import EditCard from "./EditCard";
 import CategoryDropdown from "./CategoryDropdown"
+import axios from "axios/index";
 
 class Transactions extends Component {
     constructor(props) {
@@ -51,7 +52,7 @@ class Transactions extends Component {
         });
         this.setState({open: false, editRowData: null});
         this.setState({data: data});
-        this.updateDatabase(data);
+        this.updateDatabase(updatedRowData);
     };
 
     handleShowAll() {
@@ -71,8 +72,8 @@ class Transactions extends Component {
         this.updateDatabase(data)
     };
 
-    updateDatabase(data) {
-        // Update assigned budget item in DB here and setState for updated data item.
+    updateDatabase(updatedRowData) {
+        axios.patch('/transactions/patch', {updateData: updatedRowData});
     }
 
     updateTransactionsVisibility() {
