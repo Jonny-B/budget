@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
     t.bigint "expense_id"
     t.bigint "saving_id"
     t.decimal "budgeted"
-    t.decimal "spent"
     t.datetime "effective_date"
     t.datetime "expiry_date"
     t.datetime "updated_at"

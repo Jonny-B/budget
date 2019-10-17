@@ -2,34 +2,38 @@ require 'plaid'
 
 class TransactionsController < ActionController::API
   def get
-    user_id = UserToken.find_by(token: params["userToken"]).user_id
+    user = UserToken.find_by(token: params["userToken"])
+    user_id = user.nil? ? nil : user.user_id
 
-    access_token = UserToken.find_by(user_id: user_id, token_type: "plaid_token").token
+    user_token = UserToken.find_by(user_id: user_id, token_type: "plaid_token")
+    access_token = user_token.nil? ? nil : user_token.token
 
-    client = Plaid::Client.new(env: :sandbox,
-                               client_id: '5d923beaa466f10012dc1363',
-                               secret: '39395b2e8800dadd85947f7fad7bee',
-                               public_key: 'b6eae93fa88deb27355f14563287d5')
+    transactions = []
+    unless access_token.nil?
+      client = Plaid::Client.new(env: :sandbox,
+                                 client_id: '5d923beaa466f10012dc1363',
+                                 secret: '39395b2e8800dadd85947f7fad7bee',
+                                 public_key: 'b6eae93fa88deb27355f14563287d5')
 
 
-    transaction_response = client.transactions.get(access_token, '2019-01-01', '2019-12-01')
-    transactions = transaction_response.transactions
+      transaction_response = client.transactions.get(access_token, '2019-01-01', '2019-12-01')
+      transactions = transaction_response.transactions
 
-    # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
-    while transactions.length < transaction_response['total_transactions']
-      transaction_response = client.transactions.get(access_token, '2016-07-12', '2017-01-09', offset: transactions.length)
-      transactions += transaction_response.transactions
-    end
-    transactions = transform_plaid_transactions(transactions)
+      # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
+      while transactions.length < transaction_response['total_transactions']
+        transaction_response = client.transactions.get(access_token, '2016-07-12', '2017-01-09', offset: transactions.length)
+        transactions += transaction_response.transactions
+      end
+      transactions = transform_plaid_transactions(transactions)
 
-    # user = User.find_by(id: user_id)
-    transactions.each do |t|
-      unless Transaction.find_by(transaction_id: t[:id]) && user_id
-        transaction = Transaction.new(user_id: user_id, transaction_id: t[:id], hidden: false, edited: false)
-        transaction.save
+      # user = User.find_by(id: user_id)
+      transactions.each do |t|
+        unless Transaction.find_by(transaction_id: t[:id]) && user_id
+          transaction = Transaction.new(user_id: user_id, transaction_id: t[:id], hidden: false, edited: false)
+          transaction.save
+        end
       end
     end
-
     render json: transactions.to_json
   end
 
@@ -52,6 +56,5 @@ class TransactionsController < ActionController::API
         {assignCategory: 'Select One', date: t.date, description: t.name, charge: t.amount, hidden: false, id: t.transaction_id}
       end
     end
-    # replace_with_edited = transformed.map{|t| }
   end
 end

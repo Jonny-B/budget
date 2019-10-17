@@ -22,27 +22,9 @@ export default function App(props) {
         {
             budgetData:
                 {
-                    incomeData: [
-                        {category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 0},
-                        {category: 'Category2', budget: 0.00, actual: 0.00, type: 'income', id: 1},
-                        {category: 'Category3', budget: 0.00, actual: 0.00, type: 'income', id: 2},
-                    ],
-                    expensesData: [
-                        {category: 'Category4', budget: 0.00, actual: 0.00, type: 'expenses', id: 0},
-                        {category: 'Category5', budget: 0.00, actual: 0.00, type: 'expenses', id: 1},
-                        {category: 'Category6', budget: 0.00, actual: 0.00, type: 'expenses', id: 2},
-                        {category: 'Category7', budget: 0.00, actual: 0.00, type: 'expenses', id: 3},
-                        {category: 'Category8', budget: 0.00, actual: 0.00, type: 'expenses', id: 4},
-                        {category: 'Category9', budget: 0.00, actual: 0.00, type: 'expenses', id: 5},
-                    ],
-                    savingsData: [
-                        {category: 'Category10', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 0},
-                        {category: 'Category11', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 1},
-                        {category: 'Category12', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 2},
-                        {category: 'Category13', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 3},
-                        {category: 'Category14', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 4},
-
-                    ]
+                    incomeData: [],
+                    expensesData: [],
+                    savingsData: []
                 }
 
         },
@@ -51,19 +33,20 @@ export default function App(props) {
         },
         {
             allowCreateUserCheck: true,
-            allowTransactionLookup: true
+            allowTransactionLookup: true,
+            allowBudgetLookup: true
         },
     ]);
 
     useEffect(() => {
-        createUserIfNecessary();
+        getBudgetData();
         getTransactionData();
-        // getBudgetData();
+        createUserIfNecessary();
     });
 
     const createUserIfNecessary = () => {
-        if (data[2].allowCreateUserCheck && user){
-        axios.post('/users/create', {userToken: user.sub});
+        if (data[2].allowCreateUserCheck && user) {
+            axios.post('/users/create', {userToken: user.sub});
             let d = [...data];
             d[2].allowCreateUserCheck = false;
             SetData(d)
@@ -75,16 +58,25 @@ export default function App(props) {
             axios.get('/transactions', {params: {userToken: user.sub, date: selectedDate}}).then(t => {
                 let d = [...data];
                 d[1].transactionData = t.data;
+                d[2].allowTransactionLookup = false;
                 SetData(d);
-                d[3].allowTransactionLookup = false;
             }).catch(e => {
                 console.log('failed to get transactions')
             })
         }
     };
 
-    const getBudgetData = (userId, userAccessToken) => {
-        axios.get('/budgets', {id: userId, access_token: userAccessToken})
+    const getBudgetData = () => {
+        if (data[2].allowBudgetLookup && user) {
+            axios.get('/budgets', {params: {userToken: user.sub, date: selectedDate}}).then(b => {
+                let d = [...data];
+                d[0].budgetData = b.data;
+                d[3].allowBudgetLookup = false;
+                SetData(d);
+            }).catch(e => {
+                console.log('failed to get Budget Items')
+            })
+        }
     };
 
     const handleDateChange = date => {
@@ -142,7 +134,9 @@ export default function App(props) {
                             onChange={handleDateChange}
                         />
                     </Grid>
-                    <Grid item xs={6}> <Budget selectedMonth={selectedDate} data={data[0].budgetData}/> </Grid>
+                    <Grid item xs={6}>
+                        {data[0].budgetData.incomeData.length !== 0 ? <Budget selectedMonth={selectedDate} data={data[0].budgetData}/> : <Typography>Loading ...</Typography>}
+                    </Grid>
                     <Grid item xs={6}>
                         {data[1].transactionData.length !== 0 ? <Transactions selectedMonth={selectedDate} data={data[1].transactionData} handleUpdateCategory={handleUpdateCategory}/> : <Typography>Loading ...</Typography>}
                     </Grid>

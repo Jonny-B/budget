@@ -11,15 +11,19 @@ class Budget extends Component {
         this.state = {
             open: false,
             editRowData: null,
-            incomeData: this.props.data.incomeData,
-            expensesData: this.props.data.expensesData,
-            savingsData: this.props.data.savingsData
+            incomeData: [],
+            expensesData: [],
+            savingsData: []
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
         this.handleClose = this.handleClose.bind(this);
+    }
+
+    componentWillMount() {
+        this.setState({incomeData: this.props.data.incomeData, expensesData: this.props.data.expensesData, savingsData: this.props.data.savingsData})
     }
 
     handleEdit = (type, rowData, event) => {
@@ -49,10 +53,6 @@ class Budget extends Component {
     handleClose() {
         this.setState({open: false, editRowData: null})
     };
-
-    componentWillMount() {
-        //Get Data for selected month using this.props.selectedMonth
-    }
 
     render() {
         return (

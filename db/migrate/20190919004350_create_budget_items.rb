@@ -45,7 +45,6 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
       t.belongs_to :expense
       t.belongs_to :saving
       t.decimal :budgeted
-      t.decimal :spent
       t.datetime :effective_date
       t.datetime :expiry_date
       t.timestamp :updated_at
