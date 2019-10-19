@@ -2,8 +2,6 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
   def change
     create_table :users do |t|
       # This id comes from Auth0
-      t.datetime :date
-      t.timestamp :updated_at
       t.timestamp :created_at
     end
 
@@ -18,25 +16,16 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
 
     create_table :incomes do |t|
       t.belongs_to :user
-      t.decimal :total
-      t.datetime :date
-      t.timestamp :updated_at
       t.timestamp :created_at
     end
 
     create_table :expenses do |t|
       t.belongs_to :user
-      t.decimal :total
-      t.datetime :date
-      t.timestamp :updated_at
       t.timestamp :created_at
     end
 
     create_table :savings do |t|
       t.belongs_to :user
-      t.decimal :total
-      t.datetime :date
-      t.timestamp :updated_at
       t.timestamp :created_at
     end
 
