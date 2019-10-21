@@ -4,10 +4,10 @@ class UsersController < ApplicationController
     if !access_token
       user = User.new
       user.save
-
       token = UserToken.new(user_id: user.id, token: params["userToken"], token_type: "auth_token")
-
       token.save
+      category = Category.new(user_id: user.id, category_type: "income", category: "Edit/Delete this category and start your own!", budgeted: 0.0, effective_date: Date.today)
+      category.save
     else
       puts "user already exists"
       render json: "user already exists"

@@ -4,6 +4,7 @@ import {Grid, Dialog, DialogTitle, Typography} from '@material-ui/core'
 import {Add, Create} from "@material-ui/icons";
 import {withStyles} from '@material-ui/core/styles';
 import EditCard from "./EditCard";
+import axios from "axios";
 
 class Budget extends Component {
     constructor(props) {
@@ -30,8 +31,9 @@ class Budget extends Component {
         this.setState({open: true, editRowData: rowData})
     };
 
-    handleAdd = (type, rowData, event) => {
-        this.setState({open: true, editRowData: {add: true, type: type}})
+    handleAdd = (category, type) => {
+        // this.setState({open: true, editRowData: {add: true, type: type}});
+        axios.post('/budgets/create', {budgeted: category.budget, type: type, userToken: this.props.user_id, category: category.category});
     };
 
     handleUpdate = (updatedRowData) => {
@@ -96,7 +98,7 @@ class Budget extends Component {
                                             {
                                                 const data = this.state.incomeData;
                                                 data.push(newData);
-                                                this.updateDatabase(newData);
+                                                this.handleAdd(newData, "income");
                                                 this.setState({data}, () => resolve());
                                             }
                                             resolve()
@@ -160,7 +162,7 @@ class Budget extends Component {
                                             {
                                                 const data = this.state.expensesData;
                                                 data.push(newData);
-                                                this.updateDatabase(newData);
+                                                this.handleAdd(newData, "expense");
                                                 this.setState({data}, () => resolve());
                                             }
                                             resolve()
@@ -220,7 +222,7 @@ class Budget extends Component {
                                     },
                                     tooltip: 'Edit Transaction',
                                     onClick: (event, rowData) => {
-                                        this.handleEdit('savings', rowData, event)
+                                        this.handleEdit('saving', rowData, event)
                                     }
                                 }
                             ]}
@@ -231,7 +233,7 @@ class Budget extends Component {
                                             {
                                                 const data = this.state.savingsData;
                                                 data.push(newData);
-                                                this.updateDatabase(newData);
+                                                this.handleAdd(newData, "savings");
                                                 this.setState({data}, () => resolve());
                                             }
                                             resolve()

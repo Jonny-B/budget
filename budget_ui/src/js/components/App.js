@@ -71,7 +71,7 @@ export default function App(props) {
             axios.get('/budgets', {params: {userToken: user.sub, date: selectedDate}}).then(b => {
                 let d = [...data];
                 d[0].budgetData = b.data;
-                d[3].allowBudgetLookup = false;
+                d[2].allowBudgetLookup = false;
                 SetData(d);
             }).catch(e => {
                 console.log('failed to get Budget Items')
