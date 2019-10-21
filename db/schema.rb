@@ -16,35 +16,15 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
   enable_extension "plpgsql"
 
   create_table "categories", force: :cascade do |t|
-    t.bigint "income_id"
-    t.bigint "expense_id"
-    t.bigint "saving_id"
+    t.bigint "user_id"
     t.decimal "budgeted"
+    t.string "category"
+    t.string "category_type"
     t.datetime "effective_date"
     t.datetime "expiry_date"
     t.datetime "updated_at"
     t.datetime "created_at"
-    t.index ["expense_id"], name: "index_categories_on_expense_id"
-    t.index ["income_id"], name: "index_categories_on_income_id"
-    t.index ["saving_id"], name: "index_categories_on_saving_id"
-  end
-
-  create_table "expenses", force: :cascade do |t|
-    t.bigint "user_id"
-    t.decimal "total"
-    t.datetime "date"
-    t.datetime "updated_at"
-    t.datetime "created_at"
-    t.index ["user_id"], name: "index_expenses_on_user_id"
-  end
-
-  create_table "incomes", force: :cascade do |t|
-    t.bigint "user_id"
-    t.decimal "total"
-    t.datetime "date"
-    t.datetime "updated_at"
-    t.datetime "created_at"
-    t.index ["user_id"], name: "index_incomes_on_user_id"
+    t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
   create_table "remember_charge", force: :cascade do |t|
@@ -52,15 +32,6 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
     t.string "description"
     t.decimal "charge"
     t.index ["categories_id"], name: "index_remember_charge_on_categories_id"
-  end
-
-  create_table "savings", force: :cascade do |t|
-    t.bigint "user_id"
-    t.decimal "total"
-    t.datetime "date"
-    t.datetime "updated_at"
-    t.datetime "created_at"
-    t.index ["user_id"], name: "index_savings_on_user_id"
   end
 
   create_table "savings_bucket", force: :cascade do |t|
@@ -71,13 +42,9 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
   end
 
   create_table "summary", force: :cascade do |t|
-    t.bigint "incomes_id"
-    t.bigint "expenses_id"
-    t.bigint "savings_id"
+    t.bigint "user_id"
     t.decimal "transfer_to_savings"
-    t.index ["expenses_id"], name: "index_summary_on_expenses_id"
-    t.index ["incomes_id"], name: "index_summary_on_incomes_id"
-    t.index ["savings_id"], name: "index_summary_on_savings_id"
+    t.index ["user_id"], name: "index_summary_on_user_id"
   end
 
   create_table "transactions", id: false, force: :cascade do |t|
@@ -105,8 +72,6 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.datetime "date"
-    t.datetime "updated_at"
     t.datetime "created_at"
   end
 

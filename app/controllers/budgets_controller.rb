@@ -1,50 +1,51 @@
 class BudgetsController < ActionController::API
   def get
+
     user_id = UserToken.find_by(token: params["userToken"]).user_id
-    income = Income.find_by(user_id: user_id)
-    expense = Expense.find_by(user_id: user_id)
-    saving = Saving.find_by(user_id: user_id)
+    income = Category.where(user_id: user_id, category_type: "income").to_ary
+    expense = Category.where(user_id: user_id, category_type: "expense").to_ary
+    saving = Category.where(user_id: user_id, category_type: "saving").to_ary
 
 
     budget_data = {
-        incomeData: [{category: 'Category1', budget: 0.00, actual: 0.00, type: 'income', id: 0}],
-        expensesData: [{category: 'Category4', budget: 0.00, actual: 0.00, type: 'expenses', id: 0}],
-        savingsData: [{category: 'Category10', budget: 0.00, actual: 0.00, type: 'savings', bucketTotal: 0.00, id: 0}]
+        incomeData: income.map{|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'income', id: 0}},
+        expensesData: expense.map{|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'expense', id: 0}},
+        savingsData: saving.map{|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'saving', id: 0}}
     }
     render json: budget_data.to_json
   end
 
   def create
     user = UserToken.find_by(token: params["userToken"])
+    category = params["category"].gsub("'", "''")
 
-    case parmas["type"]
+    case params["type"]
     when "income"
-      income = Income.find_by_user_id(user.id)
-      if income.nil?
-        income = new Income(user_id) if income.nil?
-        income.save
-      end
-      category = new Category(income_id: income.id, budgeted: params["budgeted"], effective_date: Date.today)
-      category.save
+      income = Category.find_by(user_id: user.id, category: category, category_type: "income")
+
+      render json: "Income category #{category} already exists.".to_json if income
+
+      category = Category.new(user_id: user.id, category_type: "income", category: category, budgeted: params["budgeted"], effective_date: Date.today)
+      category.save!
+
       render json: "New Income Category Created."
-    when "expenses"
-      expense = Expense.find_by_user_id(user.id)
-      if expense.nil?
-        expense = new Expense(user_id) if expense.nil?
-        expense.save
-      end
-      category = new Category(expense_id: expense.id, budgeted: params["budgeted"], effective_date: Date.today)
+    when "expense"
+      expense = Category.find_by(user_id: user.id, category: category, category_type: "expense")
+
+      render json: "Expense category #{category} already exists.".to_json if expense
+
+      category = Category.new(user_id: user.id, category_type: "expense", category: category, budgeted: params["budgeted"], effective_date: Date.today)
       category.save
       render json: "New Expense Category Created."
-    when "savings"
+    when "saving"
       #TODO savings bucket will need to be created new every month. Figure that out later.
-      saving = Saving.find_by_user_id(user.id)
-      if saving.nil?
-        saving = new Income(user_id) if saving.nil?
-        income.save
-      end
-      category = new Category(income_id: saving.id, budgeted: params["budgeted"], effective_date: Date.today)
-      category.save
+      saving = Category.find_by(user_id: user.id, category: category, category_type: "saving")
+
+      render json: "Savings category #{category} already exists.".to_json if saving
+
+      category = Category.new(user_id: user.id, category_type: "saving", category: category, budgeted: params["budgeted"], effective_date: Date.today)
+      category.save!
+
       render json: "New Savings Category Created."
     else
       render json: "Invalid Budget Type. Must be 'income', 'savings', 'expenses'"

@@ -138,7 +138,7 @@ export default function App(props) {
                         {data[0].budgetData.incomeData.length !== 0 ? <Budget selectedMonth={selectedDate} data={data[0].budgetData}/> : <Typography>Loading ...</Typography>}
                     </Grid>
                     <Grid item xs={6}>
-                        {data[1].transactionData.length !== 0 ? <Transactions selectedMonth={selectedDate} data={data[1].transactionData} handleUpdateCategory={handleUpdateCategory}/> : <Typography>Loading ...</Typography>}
+                        {data[1].transactionData.length !== 0 ? <Transactions selectedMonth={selectedDate} data={data[1].transactionData} userToken={user.sub} handleUpdateCategory={handleUpdateCategory}/> : <Typography>Loading ...</Typography>}
                     </Grid>
                 </Grid>
             </MuiPickersUtilsProvider>

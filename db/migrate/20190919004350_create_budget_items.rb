@@ -14,26 +14,11 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
       t.timestamp :created_at
     end
 
-    create_table :incomes do |t|
-      t.belongs_to :user
-      t.timestamp :created_at
-    end
-
-    create_table :expenses do |t|
-      t.belongs_to :user
-      t.timestamp :created_at
-    end
-
-    create_table :savings do |t|
-      t.belongs_to :user
-      t.timestamp :created_at
-    end
-
     create_table :categories do |t|
-      t.belongs_to :income
-      t.belongs_to :expense
-      t.belongs_to :saving
+      t.belongs_to :user
       t.decimal :budgeted
+      t.string :category
+      t.string :category_type
       t.datetime :effective_date
       t.datetime :expiry_date
       t.timestamp :updated_at
@@ -54,9 +39,7 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
     end
 
     create_table :summary do |t|
-      t.belongs_to :incomes
-      t.belongs_to :expenses
-      t.belongs_to :savings
+      t.belongs_to :user
       t.decimal :transfer_to_savings
     end
 

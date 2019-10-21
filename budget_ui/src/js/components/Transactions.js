@@ -15,7 +15,8 @@ class Transactions extends Component {
             open: false,
             showAll: false,
             editRowData: null,
-            data: []
+            data: [],
+            categories: []
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
@@ -28,7 +29,13 @@ class Transactions extends Component {
     }
 
     componentWillMount() {
-        this.setState({data: this.props.data})
+        this.setState({data: this.props.data});
+        axios.get('/categories', {params: {userToken: this.props.userToken}}).then(category => {
+            let categories = category.data.map(c => c.category);
+            this.setState({categories: categories})
+        }).catch(e => {
+            console.log("Failed to get categories")
+        })
     }
 
     handleEdit = (type, rowData, event) => {
@@ -63,17 +70,21 @@ class Transactions extends Component {
         this.setState({open: false, editRowData: null})
     };
 
-    handleDropdownChange(id, event) {
+    handleDropdownChange(transactionId, event) {
         let data = [...this.state.data];
-        data.forEach((row) => {
-            if (row.id === id) row.assignCategory = event.target.value
+        let row;
+        data.forEach((r) => {
+            if (r.id === transactionId) {
+                r.assignCategory = event.target.value;
+                row = r;
+            }
         });
         this.setState({data: data});
-        this.updateDatabase(data)
+        this.updateDatabase(row, transactionId)
     };
 
-    updateDatabase(updatedRowData) {
-        axios.patch('/transactions/patch', {updateData: updatedRowData});
+    updateDatabase(updatedRowData, transactionId) {
+        axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: this.props.usertoken, transactionId: transactionId});
     }
 
     updateTransactionsVisibility() {
@@ -97,9 +108,11 @@ class Transactions extends Component {
                             field: 'assignCategory',
                             render: rowData => <CategoryDropdown id={rowData.id}
                                                                  assignedCategory={rowData.assignCategory}
-                                                                 callback={this.handleDropdownChange}/>,
+                                                                 callback={this.handleDropdownChange}
+                                                                 categories={this.state.categories}/>,
                             editComponent: () => (<CategoryDropdown assignedCategory={'SelectOne'}
-                                                                       callback={this.handleDropdownChange}/>)
+                                                                    callback={this.handleDropdownChange}
+                                                                    categories={this.state.categories}/>)
                         },
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},
@@ -153,7 +166,7 @@ class Transactions extends Component {
                                         const index = data.indexOf(oldData);
                                         data.splice(index, 1);
                                         this.updateDatabase(oldData);
-                                        this.setState({ data }, () => resolve());
+                                        this.setState({data}, () => resolve());
                                     }
                                     resolve();
                                 }, 1000);

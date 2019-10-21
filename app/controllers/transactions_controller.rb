@@ -40,6 +40,7 @@ class TransactionsController < ActionController::API
   def patch
     d = params['updateData']
     transaction = Transaction.find_by(transaction_id: d[:id])
+    category = Category.find_by(category: d[:assignCategory])
     # TODO when categories are created we will need to wire up the dropdowns to have the category id and then pass that around.
     transaction.update(category_id: nil, date: d[:date], description: d[:description], charge: d[:charge], hidden: d[:hidden], edited: true, updated_at: Date.today)
     transaction.save
