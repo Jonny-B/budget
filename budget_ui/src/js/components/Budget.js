@@ -27,21 +27,14 @@ class Budget extends Component {
         this.setState({incomeData: this.props.data.incomeData, expensesData: this.props.data.expensesData, savingsData: this.props.data.savingsData})
     }
 
-    handleEdit = (type, rowData, event) => {
-        this.setState({open: true, editRowData: rowData})
-    };
+    handleEdit = (type, rowData, event) => this.setState({open: true, editRowData: rowData});
 
-    handleAdd = (category, type) => {
-        // this.setState({open: true, editRowData: {add: true, type: type}});
-        axios.post('/budgets/create', {budgeted: category.budget, type: type, userToken: this.props.user_id, category: category.category});
-    };
+    handleAdd = (category, type) => axios.post('/budgets/create', {budgeted: category.budget, type: type, userToken: this.props.userToken, category: category.category});
 
     handleUpdate = (updatedRowData) => {
         let data = [...this.state[`${updatedRowData.type}Data`]];
         data.forEach((row) => {
-            if (row.id === updatedRowData.id) {
-                row.category = updatedRowData.category;
-            }
+            if (row.id === updatedRowData.id) row.category = updatedRowData.category;
         });
         this.setState({open: false, editRowData: null});
         this.setState({data: data});
@@ -54,7 +47,8 @@ class Budget extends Component {
 
     handleClose() {
         this.setState({open: false, editRowData: null})
-    };
+    }
+    ;
 
     render() {
         return (
@@ -70,8 +64,7 @@ class Budget extends Component {
                                     title: 'Budget',
                                     field: 'budget',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value}
-                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: props => (<input type="numeric" value={props.value} onChange={e => props.onChange(e.target.value)}/>)
                                 },
                                 {
                                     title: 'Actual',
@@ -133,15 +126,13 @@ class Budget extends Component {
                                     title: 'Budget',
                                     field: 'budget',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value}
-                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: props => (<input type="numeric" value={props.value} onChange={e => props.onChange(e.target.value)}/>)
                                 },
                                 {
                                     title: 'Actual',
                                     field: 'actual',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value}
-                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: () => (<></>)
                                 }
                             ]}
                             actions={[
@@ -197,22 +188,19 @@ class Budget extends Component {
                                     title: 'Budget',
                                     field: 'budget',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value}
-                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: props => (<input type="numeric" value={props.value} onChange={e => props.onChange(e.target.value)}/>)
                                 },
                                 {
                                     title: 'Actual',
                                     field: 'actual',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value}
-                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: () => (<></>)
                                 },
                                 {
-                                    title: 'Bucket Total',
+                                    title: 'Total in Savings Bucket',
                                     field: 'bucketTotal',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value}
-                                                                    onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: () => (<></>)
                                 }
                             ]}
                             actions={[
@@ -233,7 +221,7 @@ class Budget extends Component {
                                             {
                                                 const data = this.state.savingsData;
                                                 data.push(newData);
-                                                this.handleAdd(newData, "savings");
+                                                this.handleAdd(newData, "saving");
                                                 this.setState({data}, () => resolve());
                                             }
                                             resolve()
