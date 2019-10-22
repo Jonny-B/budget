@@ -14,18 +14,43 @@ class Budget extends Component {
             editRowData: null,
             incomeData: [],
             expensesData: [],
-            savingsData: []
+            savingsData: [],
+            incomeTotal: 0,
+            expensesTotal: 0,
+            savingsTotal: 0,
+            transferToSavings: 0
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
+        this.setTotals = this.setTotals.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
 
     componentWillMount() {
-        this.setState({incomeData: this.props.data.incomeData, expensesData: this.props.data.expensesData, savingsData: this.props.data.savingsData})
+        this.setState({incomeData: this.props.data.incomeData, expensesData: this.props.data.expensesData, savingsData: this.props.data.savingsData});
+        this.setTotals()
     }
+
+    setTotals() {
+        let iTotal = 0;
+        let eTotal = 0;
+        let sTotal = 0;
+
+        if (this.props.data.incomeData.length > 0) iTotal = this.props.data.incomeData.map(i => parseInt(i.actual)).reduce((total, num) => total + num, 0);
+        if (this.props.data.expensesData.length > 0) eTotal = this.props.data.expensesData.map(e => parseInt(e.actual)).reduce((total, num) => total + num, 0);
+        if (this.props.data.savingsData.length > 0) sTotal = this.props.data.savingsData.map(s => parseInt(s.actual)).reduce((total, num) => total + num, 0);
+
+        let transferToSavings = 0;
+        if (this.props.data.savingsData.length > 0) {
+            let budgetedSavings = this.props.data.savingsData.map(s => s.budgeted).reduce((total, num) => total + num, 0);
+            transferToSavings = iTotal + budgetedSavings - sTotal - eTotal;
+        }
+
+
+        this.setState({incomeTotal: iTotal, expensesTotal: eTotal, savingsTotal: sTotal, transferToSavings: transferToSavings})
+    };
 
     handleEdit = (type, rowData, event) => this.setState({open: true, editRowData: rowData});
 
@@ -89,7 +114,7 @@ class Budget extends Component {
                                     new Promise((resolve) => {
                                         setTimeout(() => {
                                             {
-                                                const data = this.state.incomeData;
+                                                const data = this.props.data.incomeData;
                                                 data.push(newData);
                                                 this.handleAdd(newData, "income");
                                                 this.setState({data}, () => resolve());
@@ -101,7 +126,7 @@ class Budget extends Component {
                                     new Promise((resolve) => {
                                         setTimeout(() => {
                                             {
-                                                let data = this.state.incomeData;
+                                                let data = this.props.data.incomeData;
                                                 const index = data.indexOf(oldData);
                                                 data.splice(index, 1);
                                                 this.updateDatabase(oldData);
@@ -111,10 +136,10 @@ class Budget extends Component {
                                         }, 1000);
                                     })
                             }}
-                            data={this.state.incomeData}/>
+                            data={this.props.data.incomeData}/>
                     </Grid>
                     <Grid item>
-                        <Typography>Income Total: $1000</Typography>
+                        <Typography>Income Total: ${this.state.incomeTotal}</Typography>
                     </Grid>
                     <Grid item>
                         <MaterialTable
@@ -151,7 +176,7 @@ class Budget extends Component {
                                     new Promise((resolve) => {
                                         setTimeout(() => {
                                             {
-                                                const data = this.state.expensesData;
+                                                const data = this.props.data.expensesData;
                                                 data.push(newData);
                                                 this.handleAdd(newData, "expense");
                                                 this.setState({data}, () => resolve());
@@ -163,7 +188,7 @@ class Budget extends Component {
                                     new Promise((resolve) => {
                                         setTimeout(() => {
                                             {
-                                                let data = this.state.expensesData;
+                                                let data = this.props.data.expensesData;
                                                 const index = data.indexOf(oldData);
                                                 data.splice(index, 1);
                                                 this.updateDatabase(oldData);
@@ -173,10 +198,10 @@ class Budget extends Component {
                                         }, 1000);
                                     })
                             }}
-                            data={this.state.expensesData}/>
+                            data={this.props.data.expensesData}/>
                     </Grid>
                     <Grid item>
-                        <Typography>Expenses Total: $1000</Typography>
+                        <Typography>Expenses Total: ${this.state.expensesTotal}</Typography>
                     </Grid>
                     <Grid item>
                         <MaterialTable
@@ -219,7 +244,7 @@ class Budget extends Component {
                                     new Promise((resolve) => {
                                         setTimeout(() => {
                                             {
-                                                const data = this.state.savingsData;
+                                                const data = this.props.data.savingsData;
                                                 data.push(newData);
                                                 this.handleAdd(newData, "saving");
                                                 this.setState({data}, () => resolve());
@@ -231,7 +256,7 @@ class Budget extends Component {
                                     new Promise((resolve) => {
                                         setTimeout(() => {
                                             {
-                                                let data = this.state.savingsData;
+                                                let data = this.props.data.savingsData;
                                                 const index = data.indexOf(oldData);
                                                 data.splice(index, 1);
                                                 this.updateDatabase(oldData);
@@ -241,18 +266,18 @@ class Budget extends Component {
                                         }, 1000);
                                     })
                             }}
-                            data={this.state.savingsData}/>
+                            data={this.props.data.savingsData}/>
                     </Grid>
                     <Grid item>
-                        <Typography>Savings Total: $1000</Typography>
+                        <Typography>Savings Total: ${this.state.savingsTotal}</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography>Transfer to Savings: $1000</Typography>
+                        <Typography>Transfer to Saving: ${this.state.transferToSavings}</Typography>
                     </Grid>
                 </Grid>
-                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
+                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.props.data.open}>
                     <DialogTitle id="simple-dialog-title">Budget Item</DialogTitle>
-                    <EditCard data={this.state.editRowData} callback={this.handleUpdate}/>
+                    <EditCard data={this.props.data.editRowData} callback={this.handleUpdate}/>
                 </Dialog>
             </div>
         )
