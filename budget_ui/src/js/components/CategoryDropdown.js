@@ -25,7 +25,7 @@ class CategoryDropdown extends Component {
         return (
             <div id={'categoryDropdown'}>
                 <Select onChange={this.handleDropdownChange} value={this.state.assignedCategory}>
-                    <MenuItem id={`${this.props.id}${count}`} key={`${this.props.id}${count}`} value="Select One">Select One</MenuItem>
+                    <MenuItem id={`${this.props.id}#${count}`} key={`${this.props.id}${count}`} value="Select One">Select One</MenuItem>
                     {this.props.categories.map((category) => {
                         count += 1;
                         return <MenuItem key={`${this.props.id}${count}`} value={category}>{category}</MenuItem>
