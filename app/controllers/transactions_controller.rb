@@ -16,8 +16,8 @@ class TransactionsController < ActionController::API
                                  public_key: 'b6eae93fa88deb27355f14563287d5')
 
       sd = params["date"].split("-")
-      start_date = Date.new(sd[0].to_i, sd[1].to_i ,1).strftime('%Y-%m-%d')
-      end_date = Date.new(sd[0].to_i, sd[1].to_i ,-1).strftime('%Y-%m-%d')
+      start_date = Date.new(sd[0].to_i, sd[1].to_i, 1).strftime('%Y-%m-%d')
+      end_date = Date.new(sd[0].to_i, sd[1].to_i, -1).strftime('%Y-%m-%d')
       transaction_response = client.transactions.get(access_token, start_date, end_date)
       transactions = transaction_response.transactions
 

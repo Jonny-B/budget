@@ -17,7 +17,7 @@ export default function App(props) {
     //user has a sub which is a unique identifier
     const {isAuthenticated, loginWithRedirect, logout, user,} = useAuth0();
 
-    const [selectedDate, setSelectedDate] = useState("2015-01-02");
+    const [selectedDate, setSelectedDate] = useState("2019-01-02");
     const [plaidModalOpen, SetPlaidModalOpen, getTokenSilently] = useState(false);
     const [allowCreateUserCheck, SetAllowCreateUserCheck] = useState(true);
     const [allowTransactionLookup, SetAllowTransactionLookup] = useState(true);
