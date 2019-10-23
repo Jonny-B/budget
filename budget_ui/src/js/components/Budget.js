@@ -49,7 +49,7 @@ class Budget extends Component {
         }
 
 
-        this.setState({incomeTotal: iTotal, expensesTotal: eTotal, savingsTotal: sTotal, transferToSavings: transferToSavings})
+        return {incomeTotal: iTotal, expensesTotal: eTotal, savingsTotal: sTotal, transferToSavings: transferToSavings}
     };
 
     handleEdit = (type, rowData, event) => this.setState({open: true, editRowData: rowData});
@@ -139,7 +139,7 @@ class Budget extends Component {
                             data={this.props.data.incomeData}/>
                     </Grid>
                     <Grid item>
-                        <Typography>Income Total: ${this.state.incomeTotal}</Typography>
+                        <Typography>Income Total: ${this.setTotals().incomeTotal}</Typography>
                     </Grid>
                     <Grid item>
                         <MaterialTable
@@ -201,7 +201,7 @@ class Budget extends Component {
                             data={this.props.data.expensesData}/>
                     </Grid>
                     <Grid item>
-                        <Typography>Expenses Total: ${this.state.expensesTotal}</Typography>
+                        <Typography>Expenses Total: ${this.setTotals().expensesTotal}</Typography>
                     </Grid>
                     <Grid item>
                         <MaterialTable
@@ -269,10 +269,10 @@ class Budget extends Component {
                             data={this.props.data.savingsData}/>
                     </Grid>
                     <Grid item>
-                        <Typography>Savings Total: ${this.state.savingsTotal}</Typography>
+                        <Typography>Savings Total: ${this.setTotals().savingsTotal}</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography>Transfer to Saving: ${this.state.transferToSavings}</Typography>
+                        <Typography>Transfer to Saving: ${this.setTotals().transferToSavings}</Typography>
                     </Grid>
                 </Grid>
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.props.data.open}>
