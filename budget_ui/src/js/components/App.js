@@ -87,9 +87,43 @@ export default function App(props) {
 
     };
 
-    const handleUpdateCategory = (type, id, charge) => {
-        // Keep in mind that in the DB these links are handled by foreign key relationships and will resync after refresh.
-        // I do this here to improve performance by removing the need to wait for DB updates to complete.
+    const handleUpdateCategory = (transaction, previousCategory) => {
+        let d = {...data};
+
+        // Add to new category
+        let incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === transaction.assignCategory);
+        let expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === transaction.assignCategory);
+        let savingsIndex = d[0].budgetData.savingsData.findIndex(s => s.category === transaction.assignCategory);
+        let actual;
+        if (incomeIndex !== -1){
+            actual = d[0].budgetData.incomeData[incomeIndex].actual;
+            d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
+        }
+        else if (expensesIndex !== -1){
+            actual = d[0].budgetData.expensesData[expensesIndex].actual;
+            d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
+        }
+        else if (savingsIndex !== -1){
+            actual = d[0].budgetData.savingsData[savingsIndex].actual;
+            d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
+        }
+        // Subtract from old category
+        incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === previousCategory);
+        expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === previousCategory);
+        savingsIndex = d[0].budgetData.savingsData.findIndex(s => s.category === previousCategory);
+        if (incomeIndex !== -1){
+            actual = d[0].budgetData.incomeData[incomeIndex].actual;
+            d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
+        }
+        else if (expensesIndex !== -1){
+            actual = d[0].budgetData.expensesData[expensesIndex].actual;
+            d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
+        }
+        else if (savingsIndex !== -1){
+            actual = d[0].budgetData.savingsData[savingsIndex].actual;
+            d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
+        }
+        SetData(d)
     };
 
     const handleOpenClosePlaid = () => {

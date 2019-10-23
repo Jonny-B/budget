@@ -70,7 +70,7 @@ class Transactions extends Component {
         this.setState({open: false, editRowData: null})
     };
 
-    handleDropdownChange(transactionId, event) {
+    handleDropdownChange(transactionId, event, previousCategory) {
         let data = [...this.state.data];
         let row;
         data.forEach((r) => {
@@ -80,11 +80,13 @@ class Transactions extends Component {
             }
         });
         this.setState({data: data});
-        this.updateDatabase(row, transactionId)
+        this.updateDatabase(row, transactionId);
+        this.props.handleUpdateCategory(row, previousCategory)
     };
 
     updateDatabase(updatedRowData, transactionId) {
         axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: this.props.usertoken, transactionId: transactionId});
+
     }
 
     updateTransactionsVisibility() {

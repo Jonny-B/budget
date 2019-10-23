@@ -15,9 +15,9 @@ class CategoryDropdown extends Component {
     }
 
     handleDropdownChange = event => {
-        this.setState({assignedCategory: event.target.value});
+        this.props.callback(this.props.id, event, this.state.assignedCategory);
 
-        this.props.callback(this.props.id, event)
+        this.setState({assignedCategory: event.target.value});
     };
 
     render() {
