@@ -29,7 +29,6 @@ class Budget extends Component {
     }
 
     componentDidMount() {
-        this.setState({incomeData: this.props.data.incomeData, expensesData: this.props.data.expensesData, savingsData: this.props.data.savingsData});
         this.setTotals()
     }
 
