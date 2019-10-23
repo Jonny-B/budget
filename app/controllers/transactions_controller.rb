@@ -15,13 +15,15 @@ class TransactionsController < ActionController::API
                                  secret: '39395b2e8800dadd85947f7fad7bee',
                                  public_key: 'b6eae93fa88deb27355f14563287d5')
 
-
-      transaction_response = client.transactions.get(access_token, '2019-01-01', '2019-12-01')
+      sd = params["date"].split("-")
+      start_date = Date.new(sd[0].to_i, sd[1].to_i ,1).strftime('%Y-%m-%d')
+      end_date = Date.new(sd[0].to_i, sd[1].to_i ,-1).strftime('%Y-%m-%d')
+      transaction_response = client.transactions.get(access_token, start_date, end_date)
       transactions = transaction_response.transactions
 
       # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
       while transactions.length < transaction_response['total_transactions']
-        transaction_response = client.transactions.get(access_token, '2016-07-12', '2017-01-09', offset: transactions.length)
+        transaction_response = client.transactions.get(access_token, start_date, end_date, offset: transactions.length)
         transactions += transaction_response.transactions
       end
       transactions = transform_plaid_transactions(transactions)

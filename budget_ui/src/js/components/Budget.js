@@ -274,7 +274,7 @@ class Budget extends Component {
                         <Typography>Transfer to Saving: ${this.setTotals().transferToSavings}</Typography>
                     </Grid>
                 </Grid>
-                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.props.data.open}>
+                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                     <DialogTitle id="simple-dialog-title">Budget Item</DialogTitle>
                     <EditCard data={this.props.data.editRowData} callback={this.handleUpdate}/>
                 </Dialog>

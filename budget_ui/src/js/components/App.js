@@ -4,6 +4,7 @@ import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import ShowChart from '@material-ui/icons/ShowChart';
 import Budget from './Budget'
+import lightFormat from 'date-fns/lightFormat'
 import Transactions from './Transactions'
 import DateFnsUtils from "@date-io/date-fns";
 import PlaidLink from 'react-plaid-link'
@@ -17,7 +18,11 @@ export default function App(props) {
     const {isAuthenticated, loginWithRedirect, logout, user,} = useAuth0();
 
     const [selectedDate, setSelectedDate] = useState("2015-01-02");
-    const [plaidModalOpen, setPlaidModalOpen, getTokenSilently] = useState(false);
+    const [plaidModalOpen, SetPlaidModalOpen, getTokenSilently] = useState(false);
+    const [allowCreateUserCheck, SetAllowCreateUserCheck] = useState(true);
+    const [allowTransactionLookup, SetAllowTransactionLookup] = useState(true);
+    const [allowBudgetLookup, SetAllowBudgetLookup] = useState(true);
+
     const [data, SetData] = useState([
         {
             budgetData:
@@ -31,12 +36,8 @@ export default function App(props) {
         {
             transactionData: []
         },
-        {
-            allowCreateUserCheck: true,
-            allowTransactionLookup: true,
-            allowBudgetLookup: true
-        },
     ]);
+
 
     useEffect(() => {
         getBudgetData();
@@ -45,20 +46,20 @@ export default function App(props) {
     });
 
     const createUserIfNecessary = () => {
-        if (data[2].allowCreateUserCheck && user) {
+        if (allowCreateUserCheck && user) {
             axios.post('/users/create', {userToken: user.sub});
             let d = [...data];
-            d[2].allowCreateUserCheck = false;
+            SetAllowCreateUserCheck(false);
             SetData(d)
         }
     };
 
     const getTransactionData = () => {
-        if (data[2].allowTransactionLookup && user && data[1].transactionData.length === 0) {
+        if (allowTransactionLookup && user && data[1].transactionData.length === 0) {
             axios.get('/transactions', {params: {userToken: user.sub, date: selectedDate}}).then(t => {
                 let d = [...data];
                 d[1].transactionData = t.data;
-                d[2].allowTransactionLookup = false;
+                SetAllowTransactionLookup(false);
                 SetData(d);
             }).catch(e => {
                 console.log('failed to get transactions')
@@ -67,11 +68,11 @@ export default function App(props) {
     };
 
     const getBudgetData = () => {
-        if (data[2].allowBudgetLookup && user) {
+        if (allowBudgetLookup && user) {
             axios.get('/budgets', {params: {userToken: user.sub, date: selectedDate}}).then(b => {
                 let d = [...data];
                 d[0].budgetData = b.data;
-                d[2].allowBudgetLookup = false;
+                SetAllowBudgetLookup(false);
                 SetData(d);
             }).catch(e => {
                 console.log('failed to get Budget Items')
@@ -80,11 +81,12 @@ export default function App(props) {
     };
 
     const handleDateChange = date => {
-        setSelectedDate(date);
-    };
+        let year = date.getYear() + 1900;
+        let month = date.getMonth() + 1;
+        setSelectedDate(`${year}-${month}-${1}`);
 
-    const updateCateogry = () => {
-
+        SetAllowTransactionLookup(true);
+        SetAllowBudgetLookup(true);
     };
 
     const handleUpdateCategory = (transaction, previousCategory) => {
@@ -95,15 +97,15 @@ export default function App(props) {
         let expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === transaction.assignCategory);
         let savingsIndex = d[0].budgetData.savingsData.findIndex(s => s.category === transaction.assignCategory);
         let actual;
-        if (incomeIndex !== -1){
+        if (incomeIndex !== -1) {
             actual = d[0].budgetData.incomeData[incomeIndex].actual;
             d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
         }
-        else if (expensesIndex !== -1){
+        else if (expensesIndex !== -1) {
             actual = d[0].budgetData.expensesData[expensesIndex].actual;
             d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
         }
-        else if (savingsIndex !== -1){
+        else if (savingsIndex !== -1) {
             actual = d[0].budgetData.savingsData[savingsIndex].actual;
             d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
         }
@@ -111,15 +113,15 @@ export default function App(props) {
         incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === previousCategory);
         expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === previousCategory);
         savingsIndex = d[0].budgetData.savingsData.findIndex(s => s.category === previousCategory);
-        if (incomeIndex !== -1){
+        if (incomeIndex !== -1) {
             actual = d[0].budgetData.incomeData[incomeIndex].actual;
             d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
         }
-        else if (expensesIndex !== -1){
+        else if (expensesIndex !== -1) {
             actual = d[0].budgetData.expensesData[expensesIndex].actual;
             d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
         }
-        else if (savingsIndex !== -1){
+        else if (savingsIndex !== -1) {
             actual = d[0].budgetData.savingsData[savingsIndex].actual;
             d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
         }
@@ -169,10 +171,31 @@ export default function App(props) {
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        {data[0].budgetData.incomeData.length !== 0 ? <Budget selectedMonth={selectedDate} data={data[0].budgetData} userToken={user.sub}/> : <Typography>Loading ...</Typography>}
+                        {
+                            data[0].budgetData.incomeData.length !== 0 ?
+                                <Budget
+                                    selectedMonth={selectedDate}
+                                    data={data[0].budgetData}
+                                    userToken={user.sub}
+                                /> :
+                                <Typography>
+                                    Loading ...
+                                </Typography>
+                        }
                     </Grid>
                     <Grid item xs={6}>
-                        {data[1].transactionData.length !== 0 ? <Transactions selectedMonth={selectedDate} data={data[1].transactionData} userToken={user.sub} handleUpdateCategory={handleUpdateCategory}/> : <Typography>Loading ...</Typography>}
+                        {
+                            data[1].transactionData.length !== 0 ?
+                                <Transactions
+                                    selectedMonth={selectedDate}
+                                    data={data[1].transactionData}
+                                    userToken={user.sub}
+                                    handleUpdateCategory={handleUpdateCategory}
+                                /> :
+                                <Typography>
+                                    Loading ...
+                                </Typography>
+                        }
                     </Grid>
                 </Grid>
             </MuiPickersUtilsProvider>
