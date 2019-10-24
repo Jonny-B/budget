@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   def create
     access_token = UserToken.find_by(token: params["userToken"])
     if !access_token
-      user = User.new
+      user = User.new(last_viewed: Date.today.strftime('%Y-%m-%d'))
       user.save
       token = UserToken.new(user_id: user.id, token: params["userToken"], token_type: "auth_token")
       token.save

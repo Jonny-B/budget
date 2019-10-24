@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "last_viewed"
     t.datetime "created_at"
   end
 

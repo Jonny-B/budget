@@ -12,81 +12,22 @@ class Transactions extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: false,
             showAll: false,
             editRowData: null,
-            data: [],
             categories: []
         };
-        this.handleEdit = this.handleEdit.bind(this);
-        this.handleAdd = this.handleAdd.bind(this);
-        this.handleUpdate = this.handleUpdate.bind(this);
         this.handleShowAll = this.handleShowAll.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleDropdownChange = this.handleDropdownChange.bind(this);
         this.updateDatabase = this.updateDatabase.bind(this);
         this.updateTransactionsVisibility = this.updateTransactionsVisibility.bind(this);
     }
-
-    componentWillMount() {
-        this.setState({data: this.props.data});
-        axios.get('/categories', {params: {userToken: this.props.userToken}}).then(category => {
-            let categories = category.data.map(c => c.category);
-            this.setState({categories: categories})
-        }).catch(e => {
-            console.log("Failed to get categories")
-        })
-    }
-
-    handleEdit = (type, rowData, event) => {
-        this.setState({open: true, editRowData: rowData})
-    };
-
-    handleAdd = () => {
-
-    };
-
-    handleUpdate = (updatedRowData) => {
-        let data = [...this.state.data];
-        data.forEach((row) => {
-            if (row.id === updatedRowData.id) {
-                row.assignCategory = updatedRowData.assignCategory;
-                row.date = lightFormat(new Date(updatedRowData.date), 'MM/dd/yyyy');
-                row.description = updatedRowData.description;
-                row.charge = updatedRowData.charge;
-                row.hidden = updatedRowData.hidden;
-            }
-        });
-        this.setState({open: false, editRowData: null});
-        this.setState({data: data});
-        this.updateDatabase(updatedRowData);
-    };
 
     handleShowAll() {
         this.setState({showAll: !this.state.showAll})
     };
 
-    handleClose() {
-        this.setState({open: false, editRowData: null})
-    };
-
-    handleDropdownChange(transactionId, event, previousCategory) {
-        let data = [...this.state.data];
-        let row;
-        data.forEach((r) => {
-            if (r.id === transactionId) {
-                r.assignCategory = event.target.value;
-                row = r;
-            }
-        });
-        this.setState({data: data});
-        this.updateDatabase(row, transactionId);
-        this.props.handleUpdateCategory(row, previousCategory)
-    };
 
     updateDatabase(updatedRowData, transactionId) {
         axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: this.props.usertoken, transactionId: transactionId});
-
     }
 
     updateTransactionsVisibility() {
@@ -96,7 +37,8 @@ class Transactions extends Component {
     render() {
         let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> :
             <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
-        let data = this.state.showAll ? this.state.data : this.state.data.filter(row => {
+
+        let data = this.state.showAll ? this.props.data : this.props.data.filter(row => {
             if (!row.hidden) return row
         });
         return (
@@ -110,11 +52,11 @@ class Transactions extends Component {
                             field: 'assignCategory',
                             render: rowData => <CategoryDropdown id={rowData.id}
                                                                  assignedCategory={rowData.assignCategory}
-                                                                 callback={this.handleDropdownChange}
-                                                                 categories={this.state.categories}/>,
+                                                                 callback={this.props.handleDropdownChange}
+                                                                 categories={this.props.categories}/>,
                             editComponent: () => (<CategoryDropdown assignedCategory={'SelectOne'}
-                                                                    callback={this.handleDropdownChange}
-                                                                    categories={this.state.categories}/>)
+                                                                    callback={this.props.handleDropdownChange}
+                                                                    categories={this.props.categories}/>)
                         },
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},
@@ -125,17 +67,13 @@ class Transactions extends Component {
                             editComponent: props => (<input type="numeric" value={props.value}
                                                             onChange={e => props.onChange(e.target.value)}/>)
                         },
+                        {   title: 'Hide',
+                            field: 'hide',
+                            render: rowData =>
+                                    rowData.hidden ? <VisibilityOff onClick={() => {this.props.hideRow(rowData)}}/> : <Visibility onClick={() => {this.props.hideRow(rowData)}}/>,
+                        }
                     ]}
                     actions={[
-                        {
-                            icon: () => {
-                                return <Create/>
-                            },
-                            tooltip: 'Edit Transaction',
-                            onClick: (event, rowData) => {
-                                this.handleEdit('addTransaction', rowData, event)
-                            }
-                        },
                         {
                             icon: () => {
                                 return showAllIcon
@@ -147,39 +85,7 @@ class Transactions extends Component {
                             }
                         }
                     ]}
-                    editable={{
-                        onRowAdd: newData =>
-                            new Promise((resolve) => {
-                                setTimeout(() => {
-                                    {
-                                        const data = this.state.data;
-                                        data.push(newData);
-                                        this.updateDatabase(newData);
-                                        this.setState({data}, () => resolve());
-                                    }
-                                    resolve()
-                                }, 1000)
-                            }),
-                        onRowDelete: oldData =>
-                            new Promise((resolve) => {
-                                setTimeout(() => {
-                                    {
-                                        let data = this.state.data;
-                                        const index = data.indexOf(oldData);
-                                        data.splice(index, 1);
-                                        this.updateDatabase(oldData);
-                                        this.setState({data}, () => resolve());
-                                    }
-                                    resolve();
-                                }, 1000);
-                            })
-                    }}
                     data={data}/>
-
-                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
-                    <DialogTitle id="simple-dialog-title">Transaction Item</DialogTitle>
-                    <EditCard data={this.state.editRowData} callback={this.handleUpdate}/>
-                </Dialog>
             </div>
         )
     }

@@ -1,7 +1,7 @@
 class CreateBudgetItems < ActiveRecord::Migration[5.2]
   def change
     create_table :users do |t|
-      # This id comes from Auth0
+      t.string :last_viewed
       t.timestamp :created_at
     end
 

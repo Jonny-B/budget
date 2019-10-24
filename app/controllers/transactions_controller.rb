@@ -2,8 +2,8 @@ require 'plaid'
 
 class TransactionsController < ActionController::API
   def get
-    user = UserToken.find_by(token: params["userToken"])
-    user_id = user.nil? ? nil : user.user_id
+    user_token = UserToken.find_by(token: params["userToken"])
+    user_id = user_token.nil? ? nil : user_token.user_id
 
     user_token = UserToken.find_by(user_id: user_id, token_type: "plaid_token")
     access_token = user_token.nil? ? nil : user_token.token
@@ -43,8 +43,10 @@ class TransactionsController < ActionController::API
     d = params['updateData']
     transaction = Transaction.find_by(transaction_id: d[:id])
     category = Category.find_by(category: d[:assignCategory])
+    category_id = category.nil? ? nil : category.id
     # TODO when categories are created we will need to wire up the dropdowns to have the category id and then pass that around.
-    transaction.update(category_id: category.id, date: d[:date], description: d[:description], charge: d[:charge], hidden: d[:hidden], edited: true, updated_at: Date.today)
+
+    transaction.update(category_id: category_id, date: d[:date], description: d[:description], charge: d[:charge], hidden: d[:hidden], edited: true, updated_at: Date.today)
     transaction.save
   end
 
@@ -54,7 +56,8 @@ class TransactionsController < ActionController::API
       # Check to see if this transaction has been edited and stored in our Db. If so look it up and swap t with it.
       if edited_transaction_ids.include?(t.transaction_id)
         t = Transaction.find_by(transaction_id: t.transaction_id)
-        assignCategory = Category.find_by(id: t.category_id).category
+        c = Category.find_by(id: t.category_id)
+        assignCategory = c.nil? ? "Select One" : c.category
         {assignCategory: assignCategory, date: t.date, description: t.description, charge: t.charge, hidden: t.hidden, id: t.transaction_id}
       else
         {assignCategory: 'Select One', date: t.date, description: t.name, charge: t.amount, hidden: false, id: t.transaction_id}

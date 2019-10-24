@@ -15,14 +15,10 @@ import axios from 'axios'
 export default function App(props) {
 
     //user has a sub which is a unique identifier
-    const {isAuthenticated, loginWithRedirect, logout, user,} = useAuth0();
+    const {isAuthenticated, loginWithRedirect, logout, user} = useAuth0();
 
-    const [selectedDate, setSelectedDate] = useState("2019-01-02");
     const [plaidModalOpen, SetPlaidModalOpen, getTokenSilently] = useState(false);
-    const [allowCreateUserCheck, SetAllowCreateUserCheck] = useState(true);
-    const [allowTransactionLookup, SetAllowTransactionLookup] = useState(true);
-    const [allowBudgetLookup, SetAllowBudgetLookup] = useState(true);
-
+    const [categories, SetCategories] = useState([]);
     const [data, SetData] = useState([
         {
             budgetData:
@@ -36,14 +32,62 @@ export default function App(props) {
         {
             transactionData: []
         },
+        {categories: []},
+        {
+            allowCreateUserCheck: true,
+            allowTransactionLookup: true,
+            allowBudgetLookup: true,
+            allowCategoryLookup: true,
+            allowDateLookup: true
+        },
+        {selectedData: "2019-01-01"},
     ]);
 
 
     useEffect(() => {
-        getBudgetData();
-        getTransactionData();
-        createUserIfNecessary();
+        let data = [...data];
+        data = getDate();
+        data = getBudgetData();
+        data = getCategories();
+        data = getTransactionData();
+        let user = createUserIfNecessary();
     });
+
+    const getDate = () => {
+        if (user && allowDateLookup) {
+            axios.get('/selectedDate', {params: {userToken: user.sub}}).then(d => {
+                SetAllowDateLookup(false);
+                setSelectedDate(d.data)
+            });
+        }
+
+
+    };
+
+    const handleDropdownChange = (transactionId, event, previousCategory) => {
+        let d = [...data];
+        let row = [];
+        d[1].transactionData.forEach((r) => {
+            if (r.id === transactionId) {
+                r.assignCategory = event.target.value;
+                row = r;
+            }
+        });
+        SetData(d);
+        axios.patch('/transactions/patch', {updateData: row, userToken: user.sub, transactionId: transactionId});
+        handleUpdateCategory(row, previousCategory)
+    };
+
+    const hideRow = updatedRowData => {
+        let d = [...data];
+        d[1].transactionData.forEach((row) => {
+            if (row.id === updatedRowData.id) {
+                row.hidden = !updatedRowData.hidden;
+            }
+        });
+        SetData(d);
+        axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: user.sub});
+    };
 
     const createUserIfNecessary = () => {
         if (allowCreateUserCheck && user) {
@@ -55,10 +99,10 @@ export default function App(props) {
     };
 
     const getTransactionData = () => {
-        if (allowTransactionLookup && user && data[1].transactionData.length === 0) {
+        if (allowTransactionLookup && user) {
             axios.get('/transactions', {params: {userToken: user.sub, date: selectedDate}}).then(t => {
                 let d = [...data];
-                d[1].transactionData = t.data;
+                d[1].transactionData = t.data.transactions;
                 SetAllowTransactionLookup(false);
                 SetData(d);
             }).catch(e => {
@@ -76,6 +120,18 @@ export default function App(props) {
                 SetData(d);
             }).catch(e => {
                 console.log('failed to get Budget Items')
+            })
+        }
+    };
+
+    const getCategories = () => {
+        if (allowCategoryLookup && user) {
+            axios.get('/categories', {params: {userToken: user.sub}}).then(category => {
+                let categories = category.data.map(c => c.category);
+                SetAllowCategoryLookup(false);
+                SetCategories(categories);
+            }).catch(e => {
+                console.log("Failed to get categories")
             })
         }
     };
@@ -177,6 +233,7 @@ export default function App(props) {
                                     selectedMonth={selectedDate}
                                     data={data[0].budgetData}
                                     userToken={user.sub}
+                                    SetAllowCategoryLookup={SetAllowCategoryLookup}
                                 /> :
                                 <Typography>
                                     Loading ...
@@ -189,8 +246,11 @@ export default function App(props) {
                                 <Transactions
                                     selectedMonth={selectedDate}
                                     data={data[1].transactionData}
+                                    categories={categories}
                                     userToken={user.sub}
                                     handleUpdateCategory={handleUpdateCategory}
+                                    handleDropdownChange={handleDropdownChange}
+                                    hideRow={hideRow}
                                 /> :
                                 <Typography>
                                     Loading ...
