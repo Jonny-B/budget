@@ -17,7 +17,6 @@ export default function App(props) {
     //user has a sub which is a unique identifier
     const {isAuthenticated, loginWithRedirect, logout, user} = useAuth0();
 
-    const [selectedDate, setSelectedDate] = useState("2019-01-02");
     const [plaidModalOpen, SetPlaidModalOpen, getTokenSilently] = useState(false);
     const [allowCreateUserCheck, SetAllowCreateUserCheck] = useState(true);
     const [allowTransactionLookup, SetAllowTransactionLookup] = useState(true);
@@ -37,6 +36,9 @@ export default function App(props) {
         {
             transactionData: []
         },
+        {
+            selectedDate: ""
+        }
     ]);
 
 
@@ -83,11 +85,11 @@ export default function App(props) {
 
     const getTransactionData = () => {
         if (allowTransactionLookup && user) {
-            axios.get('/transactions', {params: {userToken: user.sub, date: selectedDate}}).then(t => {
+            axios.get('/transactions', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(t => {
                 let d = [...data];
                 d[1].transactionData = t.data.transactions;
+                d[2].selectedDate = t.data.date;
                 SetAllowTransactionLookup(false);
-                setSelectedDate(t.data.date);
                 SetData(d);
             }).catch(e => {
                 console.log('failed to get transactions')
@@ -97,7 +99,7 @@ export default function App(props) {
 
     const getBudgetData = () => {
         if (allowBudgetLookup && user) {
-            axios.get('/budgets', {params: {userToken: user.sub, date: selectedDate}}).then(b => {
+            axios.get('/budgets', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(b => {
                 let d = [...data];
                 d[0].budgetData = b.data;
                 SetAllowBudgetLookup(false);
@@ -123,8 +125,9 @@ export default function App(props) {
     const handleDateChange = date => {
         let year = date.getYear() + 1900;
         let month = date.getMonth() + 1;
-        setSelectedDate(`${year}-${month}-${1}`);
-
+        let d = [...data];
+        d[2].selectedDate = `${year}-${month}-${1}`;
+        SetData(d);
         SetAllowTransactionLookup(true);
         SetAllowBudgetLookup(true);
     };
@@ -206,7 +209,7 @@ export default function App(props) {
                             label="Budget Date"
                             helperText="Choose Month/Year"
                             minDate={new Date("2000-01-01")}
-                            value={selectedDate}
+                            value={data[2].selectedDate}
                             onChange={handleDateChange}
                         />
                     </Grid>
@@ -214,7 +217,7 @@ export default function App(props) {
                         {
                             data[0].budgetData.incomeData.length !== 0 ?
                                 <Budget
-                                    selectedMonth={selectedDate}
+                                    selectedMonth={data[2].selectedDate}
                                     data={data[0].budgetData}
                                     userToken={user.sub}
                                     SetAllowCategoryLookup={SetAllowCategoryLookup}
@@ -228,7 +231,7 @@ export default function App(props) {
                         {
                             data[1].transactionData.length !== 0 ?
                                 <Transactions
-                                    selectedMonth={selectedDate}
+                                    selectedMonth={data[2].selectedDate}
                                     data={data[1].transactionData}
                                     categories={categories}
                                     userToken={user.sub}
