@@ -17,7 +17,12 @@ export default function App(props) {
     //user has a sub which is a unique identifier
     const {isAuthenticated, loginWithRedirect, logout, user} = useAuth0();
 
+    const [selectedDate, setSelectedDate] = useState("2019-01-02");
     const [plaidModalOpen, SetPlaidModalOpen, getTokenSilently] = useState(false);
+    const [allowCreateUserCheck, SetAllowCreateUserCheck] = useState(true);
+    const [allowTransactionLookup, SetAllowTransactionLookup] = useState(true);
+    const [allowBudgetLookup, SetAllowBudgetLookup] = useState(true);
+    const [allowCategoryLookup, SetAllowCategoryLookup] = useState(true);
     const [categories, SetCategories] = useState([]);
     const [data, SetData] = useState([
         {
@@ -32,37 +37,15 @@ export default function App(props) {
         {
             transactionData: []
         },
-        {categories: []},
-        {
-            allowCreateUserCheck: true,
-            allowTransactionLookup: true,
-            allowBudgetLookup: true,
-            allowCategoryLookup: true,
-            allowDateLookup: true
-        },
-        {selectedData: "2019-01-01"},
     ]);
 
 
     useEffect(() => {
-        let data = [...data];
-        data = getDate();
-        data = getBudgetData();
-        data = getCategories();
-        data = getTransactionData();
-        let user = createUserIfNecessary();
+        getBudgetData();
+        getCategories();
+        getTransactionData();
+        createUserIfNecessary();
     });
-
-    const getDate = () => {
-        if (user && allowDateLookup) {
-            axios.get('/selectedDate', {params: {userToken: user.sub}}).then(d => {
-                SetAllowDateLookup(false);
-                setSelectedDate(d.data)
-            });
-        }
-
-
-    };
 
     const handleDropdownChange = (transactionId, event, previousCategory) => {
         let d = [...data];
@@ -104,6 +87,7 @@ export default function App(props) {
                 let d = [...data];
                 d[1].transactionData = t.data.transactions;
                 SetAllowTransactionLookup(false);
+                setSelectedDate(t.data.date);
                 SetData(d);
             }).catch(e => {
                 console.log('failed to get transactions')
@@ -128,8 +112,8 @@ export default function App(props) {
         if (allowCategoryLookup && user) {
             axios.get('/categories', {params: {userToken: user.sub}}).then(category => {
                 let categories = category.data.map(c => c.category);
-                SetAllowCategoryLookup(false);
                 SetCategories(categories);
+                SetAllowCategoryLookup(false);
             }).catch(e => {
                 console.log("Failed to get categories")
             })

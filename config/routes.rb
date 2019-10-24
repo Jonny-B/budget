@@ -3,7 +3,6 @@ Rails.application.routes.draw do
   get '/budgets', to: 'budgets#get'
   get '/users', to: 'users#get'
   get '/categories', to: 'categories#get'
-  get '/selectedDate', to: 'selected_date#get'
 
   post '/users/create', to: 'users#create'
   post '/users/set_plaid_token', to: 'users#set_plaid_token'

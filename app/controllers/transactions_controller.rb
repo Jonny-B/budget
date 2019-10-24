@@ -35,8 +35,11 @@ class TransactionsController < ActionController::API
           transaction.save
         end
       end
+
+      user_token.user.update(last_viewed: start_date)
+      user_token.user.save
     end
-    render json: transactions.to_json
+    render json: {transactions: transactions, date: user_token.user.last_viewed}.to_json
   end
 
   def patch
