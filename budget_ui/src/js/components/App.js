@@ -19,9 +19,10 @@ export default function App(props) {
 
     const [plaidModalOpen, SetPlaidModalOpen, getTokenSilently] = useState(false);
     const [allowCreateUserCheck, SetAllowCreateUserCheck] = useState(true);
-    const [allowTransactionLookup, SetAllowTransactionLookup] = useState(true);
-    const [allowBudgetLookup, SetAllowBudgetLookup] = useState(true);
-    const [allowCategoryLookup, SetAllowCategoryLookup] = useState(true);
+    const [allowDateLookup, SetAllowDateLookup] = useState(false);
+    const [allowTransactionLookup, SetAllowTransactionLookup] = useState(false);
+    const [allowBudgetLookup, SetAllowBudgetLookup] = useState(false);
+    const [allowCategoryLookup, SetAllowCategoryLookup] = useState(false);
     const [categories, SetCategories] = useState([]);
     const [data, SetData] = useState([
         {
@@ -43,11 +44,83 @@ export default function App(props) {
 
 
     useEffect(() => {
+        createUserIfNecessary();
+        getDate();
         getBudgetData();
         getCategories();
         getTransactionData();
-        createUserIfNecessary();
     });
+
+    const createUserIfNecessary = () => {
+        if (allowCreateUserCheck && user) {
+            axios.post('/users/create', {userToken: user.sub});
+            let d = [...data];
+            SetAllowCreateUserCheck(false);
+            SetData(d);
+            SetAllowDateLookup(true)
+        }
+    };
+
+    const getDate = () => {
+        if (allowDateLookup && user) {
+            axios.get('/users', {params: {user_token: user.sub}}).then(u => {
+                let d = [...data];
+                let date = u.data.last_viewed;
+                if (date === null || date == undefined) {
+                    date = new Date();
+                    let year = date.getYear() + 1900;
+                    let month = date.getMonth() + 1;
+                    date = `${year}/${month}/${1}`
+                }
+
+                d[2].selectedDate = date;
+                SetAllowDateLookup(false);
+                SetData(d);
+                SetAllowBudgetLookup(true);
+            })
+        }
+    };
+
+    const getBudgetData = () => {
+        if (allowBudgetLookup && user) {
+            axios.get('/budgets', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(b => {
+                let d = [...data];
+                d[0].budgetData = b.data.budgetData;
+                d[2].selectedDate = b.data.date;
+                SetAllowBudgetLookup(false);
+                SetData(d);
+                SetAllowCategoryLookup(true);
+            }).catch(e => {
+                console.log('failed to get Budget Items')
+            })
+        }
+    };
+
+    const getTransactionData = () => {
+        if (allowTransactionLookup && user) {
+            axios.get('/transactions', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(t => {
+                let d = [...data];
+                d[1].transactionData = t.data.transactions;
+                SetAllowTransactionLookup(false);
+                SetData(d);
+            }).catch(e => {
+                console.log('failed to get transactions')
+            })
+        }
+    };
+
+    const getCategories = () => {
+        if (allowCategoryLookup && user) {
+            axios.get('/categories', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(category => {
+                let categories = category.data.map(c => c.category);
+                SetAllowCategoryLookup(false);
+                SetCategories(categories);
+                SetAllowTransactionLookup(true)
+            }).catch(e => {
+                console.log("Failed to get categories")
+            })
+        }
+    };
 
     const handleDropdownChange = (transactionId, event, previousCategory) => {
         let d = [...data];
@@ -74,59 +147,11 @@ export default function App(props) {
         axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: user.sub});
     };
 
-    const createUserIfNecessary = () => {
-        if (allowCreateUserCheck && user) {
-            axios.post('/users/create', {userToken: user.sub});
-            let d = [...data];
-            SetAllowCreateUserCheck(false);
-            SetData(d)
-        }
-    };
-
-    const getTransactionData = () => {
-        if (allowTransactionLookup && user) {
-            axios.get('/transactions', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(t => {
-                let d = [...data];
-                d[1].transactionData = t.data.transactions;
-                d[2].selectedDate = t.data.date;
-                SetAllowTransactionLookup(false);
-                SetData(d);
-            }).catch(e => {
-                console.log('failed to get transactions')
-            })
-        }
-    };
-
-    const getBudgetData = () => {
-        if (allowBudgetLookup && user) {
-            axios.get('/budgets', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(b => {
-                let d = [...data];
-                d[0].budgetData = b.data;
-                SetAllowBudgetLookup(false);
-                SetData(d);
-            }).catch(e => {
-                console.log('failed to get Budget Items')
-            })
-        }
-    };
-
-    const getCategories = () => {
-        if (allowCategoryLookup && user) {
-            axios.get('/categories', {params: {userToken: user.sub}}).then(category => {
-                let categories = category.data.map(c => c.category);
-                SetCategories(categories);
-                SetAllowCategoryLookup(false);
-            }).catch(e => {
-                console.log("Failed to get categories")
-            })
-        }
-    };
-
     const handleDateChange = date => {
         let year = date.getYear() + 1900;
         let month = date.getMonth() + 1;
         let d = [...data];
-        d[2].selectedDate = `${year}-${month}-${1}`;
+        d[2].selectedDate = `${year}/${month}/${1}`;
         SetData(d);
         SetAllowTransactionLookup(true);
         SetAllowBudgetLookup(true);
@@ -204,20 +229,20 @@ export default function App(props) {
                         </PlaidLink>}
                     </Grid>
                     <Grid item xs={12}>
-                        <DatePicker
+                        { data[2].selectedDate != "" ? <DatePicker
                             views={["year", "month"]}
                             label="Budget Date"
                             helperText="Choose Month/Year"
                             minDate={new Date("2000-01-01")}
                             value={data[2].selectedDate}
                             onChange={handleDateChange}
-                        />
+                        /> : <></>}
                     </Grid>
                     <Grid item xs={6}>
                         {
                             data[0].budgetData.incomeData.length !== 0 ?
                                 <Budget
-                                    selectedMonth={data[2].selectedDate}
+                                    date={data[2].selectedDate}
                                     data={data[0].budgetData}
                                     userToken={user.sub}
                                     SetAllowCategoryLookup={SetAllowCategoryLookup}

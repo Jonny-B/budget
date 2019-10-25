@@ -1,58 +1,27 @@
 class BudgetsController < ActionController::API
   def get
+    user_token = UserToken.find_by(token: params["userToken"])
+    user_id = user_token.user_id
+    date = params["date"] == "" ? user_token.user.last_viewed: params["date"]
+    income = Category.where(user_id: user_id, category_type: "income").where("effective_date = ?", date).to_ary
+    expense = Category.where(user_id: user_id, category_type: "expense").where("effective_date = ?", date).to_ary
+    saving = Category.where(user_id: user_id, category_type: "saving").where("effective_date = ?", date).to_ary
 
-    user_id = UserToken.find_by(token: params["userToken"]).user_id
-    income = Category.where(user_id: user_id, category_type: "income").to_ary
-    expense = Category.where(user_id: user_id, category_type: "expense").to_ary
-    saving = Category.where(user_id: user_id, category_type: "saving").to_ary
+    if (income.length == 0 && expense.length == 0 && saving.length == 0)
+      last_month = date.split('/')
+      last_month = Date.new(last_month[0].to_i, last_month[1].to_i - 1, 1).strftime('%Y/%m/%d')
 
+      income = Category.where(user_id: user_id, category_type: "income").where("effective_date = ?", last_month).map{|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
+      expense = Category.where(user_id: user_id, category_type: "expense").where("effective_date = ?", last_month).map{|c| dup =  c.dup; dup.update(effective_date: date); dup.save; dup}
+      saving = Category.where(user_id: user_id, category_type: "saving").where("effective_date = ?", last_month).map{|c| dup =  c.dup; dup.update(effective_date: date); dup.save; dup}
+    end
 
     budget_data = {
         incomeData: income.map{|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'income', id: 0}},
         expensesData: expense.map{|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'expense', id: 0}},
         savingsData: saving.map{|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'saving', id: 0}}
     }
-    render json: budget_data.to_json
+    render json: {budgetData: budget_data, date: date}.to_json
   end
 
-  def create
-    userToken = UserToken.find_by(token: params["userToken"])
-    category = params["category"].gsub("'", "''")
-
-    case params["type"]
-    when "income"
-      income = Category.find_by(user_id: userToken.user_id, category: category, category_type: "income")
-
-      render json: "Income category #{category} already exists.".to_json if income
-
-      category = Category.new(user_id: userToken.user_id, category_type: "income", category: category, budgeted: params["budgeted"], effective_date: Date.today)
-      category.save!
-
-      render json: "New Income Category Created."
-    when "expense"
-      expense = Category.find_by(user_id: userToken.user_id, category: category, category_type: "expense")
-
-      render json: "Expense category #{category} already exists.".to_json if expense
-
-      category = Category.new(user_id: userToken.user_id, category_type: "expense", category: category, budgeted: params["budgeted"], effective_date: Date.today)
-      category.save
-      render json: "New Expense Category Created."
-    when "saving"
-      #TODO savings bucket will need to be created new every month. Figure that out later.
-      saving = Category.find_by(user_id: userToken.user_id, category: category, category_type: "saving")
-
-      render json: "Savings category #{category} already exists.".to_json if saving
-
-      category = Category.new(user_id: userToken.user_id, category_type: "saving", category: category, budgeted: params["budgeted"], effective_date: Date.today)
-      category.save!
-
-      render json: "New Savings Category Created."
-    else
-      render json: "Invalid Budget Type. Must be 'income', 'saving', 'expense'"
-    end
-  end
-
-  def destroy
-
-  end
 end

@@ -54,7 +54,7 @@ class Budget extends Component {
     handleEdit = (type, rowData, event) => this.setState({open: true, editRowData: rowData});
 
     handleAdd = (category, type) => {
-        axios.post('/budgets/create', {budgeted: category.budget, type: type, userToken: this.props.userToken, category: category.category})
+        axios.post('/budgets/create', {budgeted: category.budget, type: type, userToken: this.props.userToken, category: category.category, date: this.props.date});
         this.props.SetAllowCategoryLookup(true);
     };
 

@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   post '/users/create', to: 'users#create'
   post '/users/set_plaid_token', to: 'users#set_plaid_token'
   post '/transactions/create', to: 'transactions#create'
-  post '/budgets/create', to: 'budgets#create'
+  post '/budgets/create', to: 'categories#create'
 
   patch 'transactions/patch', to: 'transactions#patch'
 end

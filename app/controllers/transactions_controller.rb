@@ -9,7 +9,7 @@ class TransactionsController < ActionController::API
     access_token = user_token.nil? ? nil : user_token.token
 
     transactions = []
-    date = params["date"] == "" ? user_token.user.last_viewed.split("-") : params["date"].split("-")
+    date = params["date"] == "" ? user_token.user.last_viewed.split('/') : params["date"].split('/')
     unless access_token.nil?
       client = Plaid::Client.new(env: :sandbox,
                                  client_id: '5d923beaa466f10012dc1363',
@@ -36,7 +36,7 @@ class TransactionsController < ActionController::API
         end
       end
 
-      user_token.user.update(last_viewed: start_date)
+      user_token.user.update(last_viewed: start_date.gsub('-', '/'))
       user_token.user.save
     end
     render json: {transactions: transactions, date: date}.to_json
