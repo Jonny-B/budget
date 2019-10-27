@@ -1,12 +1,14 @@
+require 'active_support'
+
 class UsersController < ApplicationController
   def create
     access_token = UserToken.find_by(token: params["userToken"])
     if !access_token
-      user = User.new(last_viewed: Date.today.strftime('%Y/%m/%d'))
+      user = User.new(last_viewed: Date.today.beginning_of_month.strftime('%Y/%m/%d'))
       user.save
       token = UserToken.new(user_id: user.id, token: params["userToken"], token_type: "auth_token")
       token.save
-      category = Category.new(user_id: user.id, category_type: "income", category: "Edit/Delete this category and start your own!", budgeted: 0.0, effective_date: Date.today)
+      category = Category.new(user_id: user.id, category_type: "income", category: "Edit/Delete this category and start your own!", budgeted: 0.0, effective_date: Date.today.beginning_of_month)
       category.save
     else
       puts "user already exists"
