@@ -43,8 +43,8 @@ class Budget extends Component {
 
         let transferToSavings = 0;
         if (this.props.data.savingsData.length > 0) {
-            let budgetedSavings = this.props.data.savingsData.map(s => s.budgeted).reduce((total, num) => total + num, 0);
-            transferToSavings = iTotal + budgetedSavings - sTotal - eTotal;
+            let budgetedSavings = this.props.data.savingsData.map(s => parseInt(s.budget)).reduce((total, num) => total + num, 0);
+            transferToSavings = (iTotal + budgetedSavings) - (sTotal + eTotal);
         }
 
 
