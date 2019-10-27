@@ -12,6 +12,17 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
+// TODO Cannot delete categories.
+// TODO Cannot Edit categories.
+
+// TODO clicking the add button makes the table shrink rather than open the form.
+// TODO adding a new category sets totals to NAN until refresh.
+// TODO adding categories sometimes results in dropdowns not being updated.
+// TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
+// TODO hiding should clear selected category.
+// TODO look and feel sucks.
+// TODO create development/prod configs for deployment.
+
 export default function App(props) {
 
     //user has a sub which is a unique identifier
