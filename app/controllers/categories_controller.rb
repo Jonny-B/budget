@@ -5,7 +5,6 @@ class CategoriesController < ApplicationController
     user_token = UserToken.find_by(token: params["userToken"])
     user_id = user_token.user_id
     date = params["date"] == "" ? user_token.user.last_viewed: params["date"]
-    date =
     category = Category.where(user_id: user_id).where("effective_date = ?", date)
 
     render json: "No Categories found for this user" if category.nil?
@@ -17,10 +16,11 @@ class CategoriesController < ApplicationController
     userToken = UserToken.find_by(token: params["userToken"])
     category = params["category"].gsub("'", "''")
 
-    date = Date.today.beginning_of_month
+    date = params["date"].split('/')
+    date = Date.new(date[0].to_i, date[1].to_i, 1).strftime('%Y/%m/%d')
     case params["type"]
     when "income"
-      income = Category.find_by(user_id: userToken.user_id, category: category, category_type: "income")
+      income = Category.find_by(user_id: userToken.user_id, category: category, category_type: "income", effective_date: date)
 
       render json: "Income category #{category} already exists.".to_json if income
 
@@ -29,7 +29,7 @@ class CategoriesController < ApplicationController
 
       render json: "New Income Category Created."
     when "expense"
-      expense = Category.find_by(user_id: userToken.user_id, category: category, category_type: "expense")
+      expense = Category.find_by(user_id: userToken.user_id, category: category, category_type: "expense", effective_date: date)
 
       render json: "Expense category #{category} already exists.".to_json if expense
 
@@ -38,7 +38,7 @@ class CategoriesController < ApplicationController
       render json: "New Expense Category Created."
     when "saving"
       #TODO savings bucket will need to be created new every month. Figure that out later.
-      saving = Category.find_by(user_id: userToken.user_id, category: category, category_type: "saving")
+      saving = Category.find_by(user_id: userToken.user_id, category: category, category_type: "saving", effective_date: date)
 
       render json: "Savings category #{category} already exists.".to_json if saving
 
