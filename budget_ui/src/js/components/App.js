@@ -158,7 +158,7 @@ export default function App(props) {
     };
 
     const handleUpdateCategory = (transaction, previousCategory) => {
-        let d = {...data};
+        let d = [...data];
 
         // Add to new category
         let incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === transaction.assignCategory);

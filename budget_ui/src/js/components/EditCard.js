@@ -11,31 +11,31 @@ export default function EditCard(props) {
     const [data, setData] = useState(props.data);
 
     const handleCategoryDropdownChange = (id, event) => {
-        let d = {...data};
+        let d = [...data];
         d.assignCategory = event.target.value;
         setData(d);
     };
 
     const handleDateChange = (date) => {
-        let d = {...data};
+        let d = [...data];
         d.date = date;
         setData(d);
     };
 
     const handleDescriptionChange = (event) => {
-        let d = {...data};
+        let d = [...data];
         d.description = event.target.value;
         setData(d);
     };
 
     const handleChargeChange = (event) => {
-        let d = {...data};
+        let d = [...data];
         d.charge = parseFloat(event.target.value.replace('$', ''));
         setData(d);
     };
 
     const handleCategoryChange = (event) => {
-        let d = {...data};
+        let d = [...data];
         d.category = event.target.value;
         setData(d);
     };
@@ -45,7 +45,7 @@ export default function EditCard(props) {
     };
 
     const toggleHide = () => {
-        let d = {...data};
+        let d = [...data];
         d.hidden = !d.hidden;
         setData(d);
     };
