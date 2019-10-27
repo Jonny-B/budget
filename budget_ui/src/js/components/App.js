@@ -132,7 +132,7 @@ export default function App(props) {
             }
         });
         SetData(d);
-        axios.patch('/transactions/patch', {updateData: row, userToken: user.sub, transactionId: transactionId});
+        axios.patch('/transactions/patch', {updateData: row, userToken: user.sub, transactionId: transactionId, date: data[2].selectedDate});
         handleUpdateCategory(row, previousCategory)
     };
 
@@ -144,7 +144,7 @@ export default function App(props) {
             }
         });
         SetData(d);
-        axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: user.sub});
+        axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: user.sub, date: data[2].selectedDate});
     };
 
     const handleDateChange = date => {
@@ -176,6 +176,7 @@ export default function App(props) {
         else if (savingsIndex !== -1) {
             actual = d[0].budgetData.savingsData[savingsIndex].actual;
             d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
+            d[0].budgetData.savingsData[savingsIndex].bucketTotal = d[0].budgetData.savingsData[savingsIndex].bucketTotal - transaction.charge;
         }
         // Subtract from old category
         incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === previousCategory);

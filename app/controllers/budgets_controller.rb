@@ -32,7 +32,12 @@ class BudgetsController < ActionController::API
         incomeData: income.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'income', id: 0}},
         expensesData: expense.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'expense', id: 0}},
         savingsData: saving.map {|i|
-          {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucketTotal: 0, type: 'saving', id: 0}
+          categories = Category.where(category: i.category).where("effective_date <= ?", date).order('effective_date ASC')
+          bucket = 0
+          categories.each do |c|
+            bucket += c.budgeted - c.transactions.sum(:charge)
+          end
+          {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucketTotal: bucket, type: 'saving', id: 0}
         }
     }
     render json: {budgetData: budget_data, date: date}.to_json

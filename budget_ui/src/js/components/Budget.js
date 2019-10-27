@@ -68,10 +68,6 @@ class Budget extends Component {
         this.updateDatabase(data);
     };
 
-    updateDatabase(data) {
-        // Update assigned budget item in DB here and setState for updated data item.
-    }
-
     handleClose() {
         this.setState({open: false, editRowData: null})
     }
