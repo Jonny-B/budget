@@ -53,10 +53,7 @@ class Transactions extends Component {
                             render: rowData => <CategoryDropdown id={rowData.id}
                                                                  assignedCategory={rowData.assignCategory}
                                                                  callback={this.props.handleDropdownChange}
-                                                                 categories={this.props.categories}/>,
-                            editComponent: () => (<CategoryDropdown assignedCategory={'SelectOne'}
-                                                                    callback={this.props.handleDropdownChange}
-                                                                    categories={this.props.categories}/>)
+                                                                 categories={this.props.categories}/>
                         },
                         {title: 'Date', field: 'date'},
                         {title: 'Description', field: 'description'},
@@ -64,8 +61,6 @@ class Transactions extends Component {
                             title: 'Charge',
                             field: 'charge',
                             type: 'currency',
-                            editComponent: props => (<input type="numeric" value={props.value}
-                                                            onChange={e => props.onChange(e.target.value)}/>)
                         },
                         {   title: 'Hide',
                             field: 'hide',

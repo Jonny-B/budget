@@ -50,4 +50,10 @@ class CategoriesController < ApplicationController
       render json: "Invalid Budget Type. Must be 'income', 'saving', 'expense'"
     end
   end
+
+  def patch
+    category = Category.find_by(id: params["id"])
+    category.update(category: params["category"], budgeted: params["budgeted"])
+    category.save
+  end
 end

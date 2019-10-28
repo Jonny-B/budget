@@ -14,14 +14,13 @@ import axios from 'axios'
 
 // TODO Cannot delete categories.
 // TODO Cannot Edit categories.
-
-// TODO clicking the add button makes the table shrink rather than open the form.
 // TODO adding a new category sets totals to NAN until refresh.
 // TODO adding categories sometimes results in dropdowns not being updated.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
-// TODO hiding should clear selected category.
-// TODO look and feel sucks.
 // TODO create development/prod configs for deployment.
+// TODO look and feel sucks.
+// TODO clicking the add button makes the table shrink rather than open the form.
+// TODO hiding should clear selected category.
 
 export default function App(props) {
 
@@ -222,6 +221,36 @@ export default function App(props) {
 
     };
 
+    const handleUpdate = (updatedRowData) => {
+        axios.patch('/categories/patch',{id: updatedRowData.id, category: updatedRowData.category, budgeted: updatedRowData.budget});
+        let d = [...data];
+        let oldCategory = "";
+        data[0].budgetData[`${updatedRowData.type}Data`].forEach((b) => {
+            if (b.id === updatedRowData.id) {
+                oldCategory = b.category;
+                b.category = updatedRowData.category;
+                b.budget = updatedRowData.budget;
+            }
+
+        });
+        data[1].transactionData.forEach((t) => {
+            if (t.assignCategory === oldCategory) {
+              t.assignedCategory = updatedRowData.category
+          }
+
+        });
+        SetAllowTransactionLookup(true);
+        SetData(d);
+        let cats = [...categories];
+        cats.forEach((c, i) => {
+            if (c === oldCategory){
+                cats[i] = updatedRowData.category;
+            }
+        });
+        SetCategories(cats)
+
+    };
+
     return (
         <MuiThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -257,6 +286,7 @@ export default function App(props) {
                                     date={data[2].selectedDate}
                                     data={data[0].budgetData}
                                     userToken={user.sub}
+                                    handleUpdate={handleUpdate}
                                     SetAllowCategoryLookup={SetAllowCategoryLookup}
                                 /> :
                                 <Typography>

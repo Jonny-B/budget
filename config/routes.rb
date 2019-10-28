@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   post '/budgets/create', to: 'categories#create'
 
   patch 'transactions/patch', to: 'transactions#patch'
+  patch '/categories/patch', to: 'categories#patch'
 end

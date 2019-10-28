@@ -7,9 +7,6 @@ class CategoryDropdown extends Component {
     constructor(props) {
         super(props);
         //TODO Get Categories from DB and set default
-        this.state = {
-            assignedCategory: this.props.assignedCategory
-        };
 
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
@@ -17,14 +14,13 @@ class CategoryDropdown extends Component {
     handleDropdownChange = event => {
         this.props.callback(this.props.id, event, this.state.assignedCategory);
 
-        this.setState({assignedCategory: event.target.value});
     };
 
     render() {
         let count = 0;
         return (
             <div id={'categoryDropdown'}>
-                <Select onChange={this.handleDropdownChange} value={this.state.assignedCategory}>
+                <Select onChange={this.handleDropdownChange} value={this.props.assignedCategory}>
                     <MenuItem id={`${this.props.id}#${count}`} key={`${this.props.id}${count}`} value="Select One">Select One</MenuItem>
                     {this.props.categories.map((category) => {
                         count += 1;

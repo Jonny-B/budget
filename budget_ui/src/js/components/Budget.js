@@ -11,7 +11,6 @@ class Budget extends Component {
         super(props);
         this.state = {
             open: false,
-            editRowData: null,
             incomeData: [],
             expensesData: [],
             savingsData: [],
@@ -22,8 +21,6 @@ class Budget extends Component {
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
-        this.handleUpdate = this.handleUpdate.bind(this);
-        this.handleUpdate = this.handleUpdate.bind(this);
         this.setTotals = this.setTotals.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
@@ -59,19 +56,12 @@ class Budget extends Component {
     };
 
     handleUpdate = (updatedRowData) => {
-        let data = [...this.state[`${updatedRowData.type}Data`]];
-        data.forEach((row) => {
-            if (row.id === updatedRowData.id) row.category = updatedRowData.category;
-        });
         this.setState({open: false, editRowData: null});
-        this.setState({data: data});
-        this.updateDatabase(data);
+        this.props.handleUpdate(updatedRowData);
     };
 
     handleClose() {
-        this.setState({open: false, editRowData: null})
-    }
-    ;
+        this.setState({open: false, editRowData: null})    }    ;
 
     render() {
         return (
@@ -275,7 +265,7 @@ class Budget extends Component {
                 </Grid>
                 <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.open}>
                     <DialogTitle id="simple-dialog-title">Budget Item</DialogTitle>
-                    <EditCard data={this.props.data.editRowData} callback={this.handleUpdate}/>
+                    <EditCard data={this.state.editRowData} callback={this.handleUpdate}/>
                 </Dialog>
             </div>
         )

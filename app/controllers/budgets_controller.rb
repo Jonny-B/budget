@@ -20,8 +20,8 @@ class BudgetsController < ActionController::API
 
     # If previous month is blank (like when back filling budgets for new users) create a default category.
     if income.length == 0 && expense.length == 0 && saving.length == 0
-      new_date =  date.split('/')
-      category = Category.new(user_id: user_id, category_type: "income", category: "Edit/Delete this category and start your own!", budgeted: 0.0, effective_date:  Date.new(new_date[0].to_i, new_date[1].to_i, 1).strftime('%Y/%m/%d'))
+      new_date = date.split('/')
+      category = Category.new(user_id: user_id, category_type: "income", category: "Edit/Delete this category and start your own!", budgeted: 0.0, effective_date: Date.new(new_date[0].to_i, new_date[1].to_i, 1).strftime('%Y/%m/%d'))
       category.save
       income = Category.where(user_id: user_id, category_type: "income").where("effective_date = ?", last_month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
       expense = Category.where(user_id: user_id, category_type: "expense").where("effective_date = ?", last_month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
@@ -29,18 +29,18 @@ class BudgetsController < ActionController::API
     end
 
     budget_data = {
-        incomeData: income.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'income', id: 0}},
-        expensesData: expense.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'expense', id: 0}},
+        incomeData: income.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'income', id: i.id}},
+        expensesData: expense.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'expense', id: i.id}},
         savingsData: saving.map {|i|
           categories = Category.where(category: i.category).where("effective_date <= ?", date).order('effective_date ASC')
           bucket = 0
           categories.each do |c|
             bucket += c.budgeted - c.transactions.sum(:charge)
           end
-          {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucketTotal: bucket, type: 'saving', id: 0}
+          {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucketTotal: bucket, type: 'saving', id: i.id}
         }
     }
     render json: {budgetData: budget_data, date: date}.to_json
   end
 
-  end
+end
