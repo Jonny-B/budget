@@ -56,4 +56,10 @@ class CategoriesController < ApplicationController
     category.update(category: params["category"], budgeted: params["budgeted"])
     category.save
   end
+
+  def delete
+    category = Category.find_by(id: params["id"].to_i)
+    category.delete
+    category.save
+  end
 end

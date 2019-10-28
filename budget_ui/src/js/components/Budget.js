@@ -51,7 +51,13 @@ class Budget extends Component {
     handleEdit = (type, rowData, event) => this.setState({open: true, editRowData: rowData});
 
     handleAdd = (category, type) => {
-        axios.post('/budgets/create', {budgeted: category.budget, type: type, userToken: this.props.userToken, category: category.category, date: this.props.date});
+        axios.post('/budgets/create', {
+            budgeted: category.budget,
+            type: type,
+            userToken: this.props.userToken,
+            category: category.category,
+            date: this.props.date
+        });
         this.props.SetAllowCategoryLookup(true);
     };
 
@@ -61,7 +67,8 @@ class Budget extends Component {
     };
 
     handleClose() {
-        this.setState({open: false, editRowData: null})    }    ;
+        this.setState({open: false, editRowData: null})
+    };
 
     render() {
         return (
@@ -77,7 +84,8 @@ class Budget extends Component {
                                     title: 'Budget',
                                     field: 'budget',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value} onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
                                 },
                                 {
                                     title: 'Actual',
@@ -117,7 +125,7 @@ class Budget extends Component {
                                                 let data = this.props.data.incomeData;
                                                 const index = data.indexOf(oldData);
                                                 data.splice(index, 1);
-                                                this.updateDatabase(oldData);
+                                                this.props.handleDeleteCategory(oldData);
                                                 this.setState({data}, () => resolve());
                                             }
                                             resolve();
@@ -139,7 +147,8 @@ class Budget extends Component {
                                     title: 'Budget',
                                     field: 'budget',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value} onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
                                 },
                                 {
                                     title: 'Actual',
@@ -179,7 +188,7 @@ class Budget extends Component {
                                                 let data = this.props.data.expensesData;
                                                 const index = data.indexOf(oldData);
                                                 data.splice(index, 1);
-                                                this.updateDatabase(oldData);
+                                                this.props.handleDeleteCategory(oldData);
                                                 this.setState({data}, () => resolve());
                                             }
                                             resolve();
@@ -201,7 +210,8 @@ class Budget extends Component {
                                     title: 'Budget',
                                     field: 'budget',
                                     type: 'currency',
-                                    editComponent: props => (<input type="numeric" value={props.value} onChange={e => props.onChange(e.target.value)}/>)
+                                    editComponent: props => (<input type="numeric" value={props.value}
+                                                                    onChange={e => props.onChange(e.target.value)}/>)
                                 },
                                 {
                                     title: 'Actual',
@@ -247,7 +257,7 @@ class Budget extends Component {
                                                 let data = this.props.data.savingsData;
                                                 const index = data.indexOf(oldData);
                                                 data.splice(index, 1);
-                                                this.updateDatabase(oldData);
+                                                this.props.handleDeleteCategory(oldData);
                                                 this.setState({data}, () => resolve());
                                             }
                                             resolve();

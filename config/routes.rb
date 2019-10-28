@@ -11,4 +11,6 @@ Rails.application.routes.draw do
 
   patch 'transactions/patch', to: 'transactions#patch'
   patch '/categories/patch', to: 'categories#patch'
+
+  delete '/categories/delete', to: 'categories#delete'
 end

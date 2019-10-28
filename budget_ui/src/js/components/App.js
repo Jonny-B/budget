@@ -13,9 +13,9 @@ import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
 // TODO Cannot delete categories.
-// TODO Cannot Edit categories.
 // TODO adding a new category sets totals to NAN until refresh.
 // TODO adding categories sometimes results in dropdowns not being updated.
+// TODO if there are no income categories but there ARE expense or savings table will not show.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
 // TODO create development/prod configs for deployment.
 // TODO look and feel sucks.
@@ -207,6 +207,29 @@ export default function App(props) {
         SetData(d)
     };
 
+    const handleDeleteCategory = oldData => {
+        axios.delete('/categories/delete', {params: {id: oldData.id}});
+
+        let d = [...data];
+
+        data[1].transactionData.forEach((t) => {
+            if (t.assignCategory === oldData.category) {
+                t.assignedCategory = oldData.category
+            }
+
+        });
+        SetAllowTransactionLookup(true);
+        SetData(d);
+        let cats = [...categories];
+        cats.forEach((c, i) => {
+            if (c === oldData.category){
+                cats[i] = oldData.category;
+            }
+        });
+        SetCategories(cats)
+
+    };
+
     const handleOpenClosePlaid = () => {
         // this.setState({plaidModalOpen: !this.state.plaidModalOpen})
     };
@@ -287,6 +310,7 @@ export default function App(props) {
                                     data={data[0].budgetData}
                                     userToken={user.sub}
                                     handleUpdate={handleUpdate}
+                                    handleDeleteCategory={handleDeleteCategory}
                                     SetAllowCategoryLookup={SetAllowCategoryLookup}
                                 /> :
                                 <Typography>

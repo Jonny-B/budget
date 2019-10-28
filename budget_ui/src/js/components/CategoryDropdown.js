@@ -12,8 +12,7 @@ class CategoryDropdown extends Component {
     }
 
     handleDropdownChange = event => {
-        this.props.callback(this.props.id, event, this.state.assignedCategory);
-
+        this.props.callback(this.props.id, event, this.props.assignedCategory);
     };
 
     render() {
