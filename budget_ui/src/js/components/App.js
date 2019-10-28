@@ -12,7 +12,6 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
-// TODO Cannot delete categories.
 // TODO adding a new category sets totals to NAN until refresh.
 // TODO adding categories sometimes results in dropdowns not being updated.
 // TODO if there are no income categories but there ARE expense or savings table will not show.
