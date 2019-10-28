@@ -20,6 +20,7 @@ import axios from 'axios'
 // TODO look and feel sucks.
 // TODO clicking the add button makes the table shrink rather than open the form.
 // TODO hiding should clear selected category.
+// TODO write tests.
 
 export default function App(props) {
 
