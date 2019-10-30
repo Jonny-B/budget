@@ -12,7 +12,6 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
-// TODO if there are no income categories but there ARE expense or savings table will not show.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
 // TODO create development/prod configs for deployment.
 // TODO look and feel sucks.
@@ -322,7 +321,7 @@ export default function App(props) {
                     </Grid>
                     <Grid item xs={6}>
                         {
-                            data[0].budgetData.incomeData.length !== 0 ?
+                           ( data[0].budgetData.incomeData.length !== 0 || data[0].budgetData.expensesData.length !== 0 || data[0].budgetData.savingsData.length !== 0) ?
                                 <Budget
                                     date={data[2].selectedDate}
                                     data={data[0].budgetData}
