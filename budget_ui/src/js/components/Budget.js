@@ -112,7 +112,6 @@ class Budget extends Component {
                                         setTimeout(() => {
                                             {
                                                 const data = this.props.data.incomeData;
-                                                data.push(newData);
                                                 this.handleAdd(newData, "income");
                                                 this.setState({data}, () => resolve());
                                             }
@@ -175,7 +174,6 @@ class Budget extends Component {
                                         setTimeout(() => {
                                             {
                                                 const data = this.props.data.expensesData;
-                                                data.push(newData);
                                                 this.handleAdd(newData, "expense");
                                                 this.setState({data}, () => resolve());
                                             }
@@ -244,7 +242,6 @@ class Budget extends Component {
                                         setTimeout(() => {
                                             {
                                                 const data = this.props.data.savingsData;
-                                                data.push(newData);
                                                 this.handleAdd(newData, "saving");
                                                 this.setState({data}, () => resolve());
                                             }

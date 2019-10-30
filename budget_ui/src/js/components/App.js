@@ -12,7 +12,7 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
-// TODO Deleting a brand new cateogry before a refresh will result in a server error and the category not being delted.
+// TODO NaN in totals if you add new cat.
 // TODO if there are no income categories but there ARE expense or savings table will not show.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
 // TODO create development/prod configs for deployment.
@@ -211,6 +211,9 @@ export default function App(props) {
 
     const handleAddCategory = (category, budget, type, id) => {
         let d = [...data];
+        // TODO go around and fix this so you aren't using plural sometimes and not others. Doing this here will make the app very britle.
+        if (type === 'expense') type = 'expenses';
+        if (type === 'saving') type = 'savings';
         data[0].budgetData[`${type}Data`].push({category: category, budget: budget, type: type, id: id});
         updateCategories(category.category);
 
@@ -221,6 +224,7 @@ export default function App(props) {
         let cats = [...categories];
         cats.push(newCategory);
         SetCategories(cats);
+        SetAllowCategoryLookup(true)
     };
 
     const handleDeleteCategory = oldData => {
