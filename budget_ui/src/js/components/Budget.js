@@ -26,7 +26,7 @@ class Budget extends Component {
     }
 
     componentDidMount() {
-        this.setTotals()
+        // this.setTotals()
     }
 
     setTotals() {

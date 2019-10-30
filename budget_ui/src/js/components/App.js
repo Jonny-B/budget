@@ -214,7 +214,7 @@ export default function App(props) {
         // TODO go around and fix this so you aren't using plural sometimes and not others. Doing this here will make the app very britle.
         if (type === 'expense') type = 'expenses';
         if (type === 'saving') type = 'savings';
-        data[0].budgetData[`${type}Data`].push({category: category, budget: budget, type: type, id: id});
+        data[0].budgetData[`${type}Data`].push({category: category, actual: 0, budget: budget, type: type, id: id});
         updateCategories(category.category);
 
         // SetData(d)
