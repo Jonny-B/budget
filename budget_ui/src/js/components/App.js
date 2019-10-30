@@ -12,7 +12,7 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
-// TODO adding a new category sets totals to NAN until refresh.
+// TODO deleting categories does not appear to delte them from the DB.
 // TODO adding categories sometimes results in dropdowns not being updated.
 // TODO if there are no income categories but there ARE expense or savings table will not show.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
@@ -177,14 +177,17 @@ export default function App(props) {
         let actual;
         if (incomeIndex !== -1) {
             actual = d[0].budgetData.incomeData[incomeIndex].actual;
+            actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
             d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
         }
         else if (expensesIndex !== -1) {
             actual = d[0].budgetData.expensesData[expensesIndex].actual;
+            actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
             d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
         }
         else if (savingsIndex !== -1) {
             actual = d[0].budgetData.savingsData[savingsIndex].actual;
+            actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
             d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
             d[0].budgetData.savingsData[savingsIndex].bucketTotal = d[0].budgetData.savingsData[savingsIndex].bucketTotal - transaction.charge;
         }
