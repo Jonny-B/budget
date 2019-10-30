@@ -12,7 +12,6 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
-// TODO NaN in totals if you add new cat.
 // TODO if there are no income categories but there ARE expense or savings table will not show.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
 // TODO create development/prod configs for deployment.
