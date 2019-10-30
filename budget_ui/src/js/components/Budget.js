@@ -57,8 +57,9 @@ class Budget extends Component {
             userToken: this.props.userToken,
             category: category.category,
             date: this.props.date
+        }).then(c => {
+            this.props.handleAddCategory(category.category, category.budget, type, c.data.id);
         });
-        this.props.SetAllowCategoryLookup(true);
     };
 
     handleUpdate = (updatedRowData) => {

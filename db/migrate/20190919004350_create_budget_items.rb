@@ -20,7 +20,6 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
       t.string :category
       t.string :category_type
       t.datetime :effective_date
-      t.datetime :expiry_date
       t.timestamp :updated_at
       t.timestamp :created_at
     end

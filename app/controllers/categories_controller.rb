@@ -27,7 +27,7 @@ class CategoriesController < ApplicationController
       category = Category.new(user_id: userToken.user_id, category_type: "income", category: category, budgeted: params["budgeted"], effective_date: date)
       category.save!
 
-      render json: "New Income Category Created."
+      render json: {id: category.id}
     when "expense"
       expense = Category.find_by(user_id: userToken.user_id, category: category, category_type: "expense", effective_date: date)
 
@@ -35,7 +35,7 @@ class CategoriesController < ApplicationController
 
       category = Category.new(user_id: userToken.user_id, category_type: "expense", category: category, budgeted: params["budgeted"], effective_date: date)
       category.save
-      render json: "New Expense Category Created."
+      render json: {id: category.id}
     when "saving"
       #TODO savings bucket will need to be created new every month. Figure that out later.
       saving = Category.find_by(user_id: userToken.user_id, category: category, category_type: "saving", effective_date: date)
@@ -45,7 +45,7 @@ class CategoriesController < ApplicationController
       category = Category.new(user_id: userToken.user_id, category_type: "saving", category: category, budgeted: params["budgeted"], effective_date: date)
       category.save!
 
-      render json: "New Savings Category Created."
+      render json: {id: category.id}
     else
       render json: "Invalid Budget Type. Must be 'income', 'saving', 'expense'"
     end
@@ -60,6 +60,5 @@ class CategoriesController < ApplicationController
   def delete
     category = Category.find_by(id: params["id"].to_i)
     category.delete
-    category.save
   end
 end

@@ -21,7 +21,6 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
     t.string "category"
     t.string "category_type"
     t.datetime "effective_date"
-    t.datetime "expiry_date"
     t.datetime "updated_at"
     t.datetime "created_at"
     t.index ["user_id"], name: "index_categories_on_user_id"

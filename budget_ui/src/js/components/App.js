@@ -12,8 +12,7 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
-// TODO deleting categories does not appear to delte them from the DB.
-// TODO adding categories sometimes results in dropdowns not being updated.
+// TODO Deleting a brand new cateogry before a refresh will result in a server error and the category not being delted.
 // TODO if there are no income categories but there ARE expense or savings table will not show.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
 // TODO create development/prod configs for deployment.
@@ -210,6 +209,20 @@ export default function App(props) {
         SetData(d)
     };
 
+    const handleAddCategory = (category, budget, type, id) => {
+        let d = [...data];
+        data[0].budgetData[`${type}Data`].push({category: category, budget: budget, type: type, id: id});
+        updateCategories(category.category);
+
+        // SetData(d)
+    };
+
+    const updateCategories = (newCategory) => {
+        let cats = [...categories];
+        cats.push(newCategory);
+        SetCategories(cats);
+    };
+
     const handleDeleteCategory = oldData => {
         axios.delete('/categories/delete', {params: {id: oldData.id}});
 
@@ -217,19 +230,18 @@ export default function App(props) {
 
         data[1].transactionData.forEach((t) => {
             if (t.assignCategory === oldData.category) {
-                t.assignedCategory = oldData.category
+                t.assignedCategory = ""
             }
 
         });
-        SetAllowTransactionLookup(true);
-        SetData(d);
         let cats = [...categories];
         cats.forEach((c, i) => {
             if (c === oldData.category){
-                cats[i] = oldData.category;
+                cats.splice(i, 1);
             }
         });
-        SetCategories(cats)
+        SetCategories(cats);
+        SetData(d);
 
     };
 
@@ -314,7 +326,7 @@ export default function App(props) {
                                     userToken={user.sub}
                                     handleUpdate={handleUpdate}
                                     handleDeleteCategory={handleDeleteCategory}
-                                    SetAllowCategoryLookup={SetAllowCategoryLookup}
+                                    handleAddCategory={handleAddCategory}
                                 /> :
                                 <Typography>
                                     Loading ...
