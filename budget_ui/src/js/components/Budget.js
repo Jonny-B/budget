@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import MaterialTable from 'material-table'
 import {Grid, Dialog, DialogTitle, Typography} from '@material-ui/core'
-import {Add, Create} from "@material-ui/icons";
+import {Create} from "@material-ui/icons";
 import {withStyles} from '@material-ui/core/styles';
 import EditCard from "./EditCard";
 import axios from "axios";

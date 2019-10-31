@@ -4,7 +4,7 @@ class CategoriesController < ApplicationController
   def get
     user_token = UserToken.find_by(token: params["userToken"])
     user_id = user_token.user_id
-    date = params["date"] == "" ? user_token.user.last_viewed: params["date"]
+    date = params["date"] == "" ? user_token.user.last_viewed : params["date"]
     category = Category.where(user_id: user_id).where("effective_date = ?", date)
 
     render json: "No Categories found for this user" if category.nil?

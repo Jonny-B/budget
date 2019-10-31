@@ -1,10 +1,7 @@
 import React, {Component} from 'react'
-import {Select, Dialog, DialogTitle, Typography, MenuItem} from '@material-ui/core'
-import {Create, Add, Visibility, VisibilityOff} from '@material-ui/icons'
+import {Visibility, VisibilityOff} from '@material-ui/icons'
 import MaterialTable from "material-table";
 import {withStyles} from '@material-ui/core/styles';
-import lightFormat from 'date-fns/lightFormat'
-import EditCard from "./EditCard";
 import CategoryDropdown from "./CategoryDropdown"
 import axios from "axios/index";
 
@@ -27,7 +24,11 @@ class Transactions extends Component {
 
 
     updateDatabase(updatedRowData, transactionId) {
-        axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: this.props.usertoken, transactionId: transactionId});
+        axios.patch('/transactions/patch', {
+            updateData: updatedRowData,
+            userToken: this.props.usertoken,
+            transactionId: transactionId
+        });
     }
 
     updateTransactionsVisibility() {
@@ -62,10 +63,15 @@ class Transactions extends Component {
                             field: 'charge',
                             type: 'currency',
                         },
-                        {   title: 'Hide',
+                        {
+                            title: 'Hide',
                             field: 'hide',
                             render: rowData =>
-                                    rowData.hidden ? <VisibilityOff onClick={() => {this.props.hideRow(rowData)}}/> : <Visibility onClick={() => {this.props.hideRow(rowData)}}/>,
+                                rowData.hidden ? <VisibilityOff onClick={() => {
+                                    this.props.hideRow(rowData)
+                                }}/> : <Visibility onClick={() => {
+                                    this.props.hideRow(rowData)
+                                }}/>,
                         }
                     ]}
                     actions={[

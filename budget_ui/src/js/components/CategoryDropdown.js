@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {withStyles} from '@material-ui/core/styles';
 import {MenuItem, Select} from "@material-ui/core";
-import axios from 'axios'
 
 class CategoryDropdown extends Component {
     constructor(props) {
@@ -20,7 +19,8 @@ class CategoryDropdown extends Component {
         return (
             <div id={'categoryDropdown'}>
                 <Select onChange={this.handleDropdownChange} value={this.props.assignedCategory}>
-                    <MenuItem id={`${this.props.id}#${count}`} key={`${this.props.id}${count}`} value="Select One">Select One</MenuItem>
+                    <MenuItem id={`${this.props.id}#${count}`} key={`${this.props.id}${count}`} value="Select One">Select
+                        One</MenuItem>
                     {this.props.categories.map((category) => {
                         count += 1;
                         return <MenuItem key={`${this.props.id}${count}`} value={category}>{category}</MenuItem>

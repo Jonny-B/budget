@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import {Grid, Typography, Select, MenuItem, Button, Dialog, DialogTitle} from '@material-ui/core';
+import {Grid, Typography, Button} from '@material-ui/core';
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import ShowChart from '@material-ui/icons/ShowChart';
 import Budget from './Budget'
-import lightFormat from 'date-fns/lightFormat'
 import Transactions from './Transactions'
 import DateFnsUtils from "@date-io/date-fns";
 import PlaidLink from 'react-plaid-link'
@@ -139,7 +138,12 @@ export default function App(props) {
             }
         });
         SetData(d);
-        axios.patch('/transactions/patch', {updateData: row, userToken: user.sub, transactionId: transactionId, date: data[2].selectedDate});
+        axios.patch('/transactions/patch', {
+            updateData: row,
+            userToken: user.sub,
+            transactionId: transactionId,
+            date: data[2].selectedDate
+        });
         handleUpdateCategory(row, previousCategory)
     };
 
@@ -151,7 +155,11 @@ export default function App(props) {
             }
         });
         SetData(d);
-        axios.patch('/transactions/patch', {updateData: updatedRowData, userToken: user.sub, date: data[2].selectedDate});
+        axios.patch('/transactions/patch', {
+            updateData: updatedRowData,
+            userToken: user.sub,
+            date: data[2].selectedDate
+        });
     };
 
     const handleDateChange = date => {
@@ -238,7 +246,7 @@ export default function App(props) {
         });
         let cats = [...categories];
         cats.forEach((c, i) => {
-            if (c === oldData.category){
+            if (c === oldData.category) {
                 cats.splice(i, 1);
             }
         });
@@ -262,7 +270,11 @@ export default function App(props) {
     };
 
     const handleUpdate = (updatedRowData) => {
-        axios.patch('/categories/patch',{id: updatedRowData.id, category: updatedRowData.category, budgeted: updatedRowData.budget});
+        axios.patch('/categories/patch', {
+            id: updatedRowData.id,
+            category: updatedRowData.category,
+            budgeted: updatedRowData.budget
+        });
         let d = [...data];
         let oldCategory = "";
         data[0].budgetData[`${updatedRowData.type}Data`].forEach((b) => {
@@ -275,15 +287,15 @@ export default function App(props) {
         });
         data[1].transactionData.forEach((t) => {
             if (t.assignCategory === oldCategory) {
-              t.assignedCategory = updatedRowData.category
-          }
+                t.assignedCategory = updatedRowData.category
+            }
 
         });
         SetAllowTransactionLookup(true);
         SetData(d);
         let cats = [...categories];
         cats.forEach((c, i) => {
-            if (c === oldCategory){
+            if (c === oldCategory) {
                 cats[i] = updatedRowData.category;
             }
         });
@@ -295,7 +307,8 @@ export default function App(props) {
         <MuiThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Grid container spacing={3} className="App">
-                    <Grid item xs={12}> <NavBar isAuthenticated={isAuthenticated} loginWithRedirect={loginWithRedirect} logout={logout} user={user}/> </Grid>
+                    <Grid item xs={12}> <NavBar isAuthenticated={isAuthenticated} loginWithRedirect={loginWithRedirect}
+                                                logout={logout} user={user}/> </Grid>
                     <Grid item xs={6}> <Typography> PRACTICE CRUD APP and HOOKS </Typography> </Grid>
                     <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
                     <Grid item xs={3}>
@@ -310,7 +323,7 @@ export default function App(props) {
                         </PlaidLink>}
                     </Grid>
                     <Grid item xs={12}>
-                        { data[2].selectedDate != "" ? <DatePicker
+                        {data[2].selectedDate != "" ? <DatePicker
                             views={["year", "month"]}
                             label="Budget Date"
                             helperText="Choose Month/Year"
@@ -321,7 +334,7 @@ export default function App(props) {
                     </Grid>
                     <Grid item xs={6}>
                         {
-                           ( data[0].budgetData.incomeData.length !== 0 || data[0].budgetData.expensesData.length !== 0 || data[0].budgetData.savingsData.length !== 0) ?
+                            (data[0].budgetData.incomeData.length !== 0 || data[0].budgetData.expensesData.length !== 0 || data[0].budgetData.savingsData.length !== 0) ?
                                 <Budget
                                     date={data[2].selectedDate}
                                     data={data[0].budgetData}

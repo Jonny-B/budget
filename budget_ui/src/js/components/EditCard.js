@@ -25,8 +25,10 @@ export default function EditCard(props) {
         props.callback(data)
     };
 
-    let categoryCol = data.category !== undefined ? <CategoryCol data={data} handleCategoryChange={handleCategoryChange}/> : <></>;
-    let budgetCol = data.budget !== undefined ? <BudgetCol data={data} handleBudgetChange={handleBudgetChange}/> : <></>;
+    let categoryCol = data.category !== undefined ?
+        <CategoryCol data={data} handleCategoryChange={handleCategoryChange}/> : <></>;
+    let budgetCol = data.budget !== undefined ?
+        <BudgetCol data={data} handleBudgetChange={handleBudgetChange}/> : <></>;
     let actual = data.actual !== undefined ? <Actual data={data}/> : <></>;
     let bucketTotal = data.bucketTotal !== undefined ? <BucketTotal data={data}/> : <></>;
 
@@ -42,11 +44,13 @@ export default function EditCard(props) {
 }
 
 const CategoryCol = (props) => {
-    return (<TextField id={'categoryCol'} label={'Category Name'} onChange={props.handleCategoryChange} defaultValue={props.data.category}/>)
+    return (<TextField id={'categoryCol'} label={'Category Name'} onChange={props.handleCategoryChange}
+                       defaultValue={props.data.category}/>)
 };
 
 const BudgetCol = (props) => {
-    return (<TextField id={'budgetCol'} label={'Budget'} onChange={props.handleBudgetChange} defaultValue={`$${props.data.budget}`}/>)
+    return (<TextField id={'budgetCol'} label={'Budget'} onChange={props.handleBudgetChange}
+                       defaultValue={`$${props.data.budget}`}/>)
 
 };
 
