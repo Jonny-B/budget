@@ -23,10 +23,14 @@ class UsersController < ApplicationController
   end
 
   def set_plaid_token
-    client = Plaid::Client.new(env: :sandbox,
-                               client_id: '5d923beaa466f10012dc1363',
-                               secret: '39395b2e8800dadd85947f7fad7bee',
-                               public_key: 'b6eae93fa88deb27355f14563287d5')
+    plaid_env = Rails.application.config.plaid_env
+    client_id = Rails.application.config.client_id
+    secret = Rails.application.config.secret
+    public_key = Rails.application.config.public_key
+    client = Plaid::Client.new(env: plaid_env,
+                               client_id: client_id,
+                               secret: secret,
+                               public_key: public_key)
 
     exchange_token_response = client.item.public_token.exchange(params["plaidToken"])
     access_token = exchange_token_response.access_token

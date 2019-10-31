@@ -19,13 +19,18 @@ Rails.application.configure do
 
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+        'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
   else
     config.action_controller.perform_caching = false
 
     config.cache_store = :null_store
   end
+
+  config.plaid_env = :sandbox
+  config.client_id = '5d923beaa466f10012dc1363'
+  config.secret = '39395b2e8800dadd85947f7fad7bee'
+  config.public_key = 'b6eae93fa88deb27355f14563287d5'
 
   # Store uploaded files on the local file system (see config/storage.yml for options)
   config.active_storage.service = :local

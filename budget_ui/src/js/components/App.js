@@ -12,14 +12,12 @@ import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import axios from 'axios'
 
-
-// TODO if there are no income categories but there ARE expense or savings table will not show.
-// TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
-// TODO create development/prod configs for deployment.
 // TODO look and feel sucks.
+// TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
 // TODO clicking the add button makes the table shrink rather than open the form.
 // TODO hiding should clear selected category.
 // TODO write tests.
+
 
 export default function App(props) {
 

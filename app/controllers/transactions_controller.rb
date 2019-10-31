@@ -11,10 +11,14 @@ class TransactionsController < ActionController::API
     transactions = []
     date = params["date"] == "" ? user_token.user.last_viewed.split('/') : params["date"].split('/')
     unless access_token.nil?
-      client = Plaid::Client.new(env: :sandbox,
-                                 client_id: '5d923beaa466f10012dc1363',
-                                 secret: '39395b2e8800dadd85947f7fad7bee',
-                                 public_key: 'b6eae93fa88deb27355f14563287d5')
+      plaid_env = Rails.application.config.plaid_env
+      client_id = Rails.application.config.client_id
+      secret = Rails.application.config.secret
+      public_key = Rails.application.config.public_key
+      client = Plaid::Client.new(env: plaid_env,
+                                 client_id: client_id,
+                                 secret: secret,
+                                 public_key: public_key)
 
       start_date = Date.new(date[0].to_i, date[1].to_i, 1).strftime('%Y-%m-%d')
       end_date = Date.new(date[0].to_i, date[1].to_i, -1).strftime('%Y-%m-%d')

@@ -1,3 +1,3 @@
-class RememberCharge
+class RememberCharge < ApplicationRecord
   belongs_to :category
 end
