@@ -35,6 +35,7 @@ class BudgetsController < ActionController::API
           categories = Category.where(category: i.category).where("effective_date <= ?", date).order('effective_date ASC')
           bucket = 0
           categories.each do |c|
+            c.budgeted = c.budgeted.nil? ? 0 : c.budgeted
             bucket += c.budgeted - c.transactions.sum(:charge)
           end
           {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucketTotal: bucket, type: 'saving', id: i.id}

@@ -51,6 +51,7 @@ class Budget extends Component {
     handleEdit = (type, rowData, event) => this.setState({open: true, editRowData: rowData});
 
     handleAdd = (category, type) => {
+        if (category.budget === null || category.budget === undefined || category.budget === 'NaN') category.budget = 0;
         axios.post('/budgets/create', {
             budgeted: category.budget,
             type: type,
