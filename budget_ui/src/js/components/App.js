@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Grid, Typography, Button} from '@material-ui/core';
+import {Grid, Typography, Button, DialogTitle, Dialog} from '@material-ui/core';
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import ShowChart from '@material-ui/icons/ShowChart';
@@ -23,13 +23,15 @@ export default function App(props) {
     //user has a sub which is a unique identifier
     const {isAuthenticated, loginWithRedirect, logout, user} = useAuth0();
 
-    const [plaidModalOpen, SetPlaidModalOpen, getTokenSilently] = useState(false);
+    const [publicKey, SetPublicKey] = useState(false);
     const [allowCreateUserCheck, SetAllowCreateUserCheck] = useState(true);
     const [allowDateLookup, SetAllowDateLookup] = useState(false);
     const [allowTransactionLookup, SetAllowTransactionLookup] = useState(false);
     const [allowBudgetLookup, SetAllowBudgetLookup] = useState(false);
     const [allowCategoryLookup, SetAllowCategoryLookup] = useState(false);
     const [categories, SetCategories] = useState([]);
+    const [openDialog, SetOpenDialog] = useState(false);
+    const [token, SetToken] = useState("");
     const [data, SetData] = useState([
         {
             budgetData:
@@ -105,10 +107,21 @@ export default function App(props) {
     const getTransactionData = () => {
         if (allowTransactionLookup && user) {
             axios.get('/transactions', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(t => {
-                let d = [...data];
-                d[1].transactionData = t.data.transactions;
-                SetAllowTransactionLookup(false);
-                SetData(d);
+                if (t.data.message === "ITEM_LOGIN_REQUIRED" && (token === undefined || token === "")) {
+                    if (user) {
+                        axios.get('/users/get_public_token', {params: {userToken: user.sub}}).then(t => {
+                            SetToken(t.data);
+                            SetOpenDialog(true);
+                        });
+                    }
+
+                }
+                else {
+                    let d = [...data];
+                    d[1].transactionData = t.data.transactions;
+                    SetAllowTransactionLookup(false);
+                    SetData(d);
+                }
             }).catch(e => {
                 console.log('failed to get transactions')
             })
@@ -259,10 +272,16 @@ export default function App(props) {
         // this.setState({plaidModalOpen: !this.state.plaidModalOpen})
     };
 
-    const handleAccountLink = (token, metadata) => {
+    const handleVerifyAccount = () => {
+        SetOpenDialog(false);
+        SetAllowTransactionLookup(true);
+    };
+
+    const handleAccountLink = (token) => {
         if (user) {
             axios.post('/users/set_plaid_token', {userToken: user.sub, plaidToken: token});
         }
+        SetAllowTransactionLookup(true);
     };
 
     const handleOnExit = () => {
@@ -314,9 +333,9 @@ export default function App(props) {
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
                             clientName="Budget"
-                            env="sandbox"
-                            product={["auth", "transactions"]}
-                            publicKey="b6eae93fa88deb27355f14563287d5"
+                            env="development"
+                            product={["transactions"]}
+                            publicKey="d010207ffa5ab886eea1b7f31471f3"
                             onExit={handleOnExit}
                             onSuccess={handleAccountLink}>
                             Link Account Transactions
@@ -350,7 +369,7 @@ export default function App(props) {
                     </Grid>
                     <Grid item xs={6}>
                         {
-                            data[1].transactionData.length !== 0 ?
+                            (data[1].transactionData !== undefined && data[1].transactionData.length !== 0) ?
                                 <Transactions
                                     selectedMonth={data[2].selectedDate}
                                     data={data[1].transactionData}
@@ -366,6 +385,21 @@ export default function App(props) {
                         }
                     </Grid>
                 </Grid>
+                <Dialog open={openDialog}>
+                    <DialogTitle id="verify-dialog">Verify Linked Account</DialogTitle>
+                    <Typography>Your Financial Institution would like you to verify you credentials. Click below to Verify.</Typography>
+                    {openDialog && <PlaidLink
+                        clientName="Budget"
+                        env="development"
+                        token={token}
+                        product={["transactions"]}
+                        publicKey="d010207ffa5ab886eea1b7f31471f3"
+                        onEvent={() => SetOpenDialog(false)}
+                        onExit={handleOnExit}
+                        onSuccess={handleVerifyAccount}>
+                        Verify
+                    </PlaidLink>}
+                </Dialog>
             </MuiPickersUtilsProvider>
         </MuiThemeProvider>
     )

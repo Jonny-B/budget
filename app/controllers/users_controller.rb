@@ -40,4 +40,24 @@ class UsersController < ApplicationController
     token = UserToken.new(user_id: user.id, token: access_token, token_type: "plaid_token")
     token.save
   end
+
+  def get_public_token
+    user_token = UserToken.find_by(token: params["userToken"])
+    user_id = user_token.nil? ? nil : user_token.user_id
+
+    user_token = UserToken.find_by(user_id: user_id, token_type: "plaid_token")
+    access_token = user_token.nil? ? nil : user_token.token
+
+    plaid_env = Rails.application.config.plaid_env
+    client_id = Rails.application.config.client_id
+    secret = Rails.application.config.secret
+    public_key = Rails.application.config.public_key
+    client = Plaid::Client.new(env: plaid_env,
+                               client_id: client_id,
+                               secret: secret,
+                               public_key: public_key)
+
+    exchange_token_response = client.item.public_token.create(access_token)
+    render json: exchange_token_response.public_token.to_json
+  end
 end

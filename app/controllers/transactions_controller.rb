@@ -10,21 +10,40 @@ class TransactionsController < ActionController::API
 
     transactions = []
     date = params["date"] == "" ? user_token.user.last_viewed.split('/') : params["date"].split('/')
-    unless access_token.nil?
-      plaid_env = Rails.application.config.plaid_env
-      client_id = Rails.application.config.client_id
-      secret = Rails.application.config.secret
-      public_key = Rails.application.config.public_key
-      client = Plaid::Client.new(env: plaid_env,
-                                 client_id: client_id,
-                                 secret: secret,
-                                 public_key: public_key)
+    begin
+      unless access_token.nil?
+        plaid_env = Rails.application.config.plaid_env
+        client_id = Rails.application.config.client_id
+        secret = Rails.application.config.secret
+        public_key = Rails.application.config.public_key
+        client = Plaid::Client.new(env: plaid_env,
+                                   client_id: client_id,
+                                   secret: secret,
+                                   public_key: public_key)
 
-      start_date = Date.new(date[0].to_i, date[1].to_i, 1).strftime('%Y-%m-%d')
-      end_date = Date.new(date[0].to_i, date[1].to_i, -1).strftime('%Y-%m-%d')
-      transaction_response = client.transactions.get(access_token, start_date, end_date)
-      transactions = transaction_response.transactions
+        start_date = Date.new(date[0].to_i, date[1].to_i, 1).strftime('%Y-%m-%d')
+        end_date = Date.new(date[0].to_i, date[1].to_i, -1).strftime('%Y-%m-%d')
+        transaction_response = client.transactions.get(access_token, start_date, end_date)
+        transactions = transaction_response.transactions
+        # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
+        while transactions.length < transaction_response['total_transactions']
+          transaction_response = client.transactions.get(access_token, start_date, end_date, offset: transactions.length)
+          transactions += transaction_response.transactions
+        end
+        transactions = transform_plaid_transactions(transactions)
 
+        # user = User.find_by(id: user_id)
+        transactions.each do |t|
+          unless Transaction.find_by(transaction_id: t[:id]) && user_id
+            transaction = Transaction.new(user_id: user_id, transaction_id: t[:id], hidden: false, edited: false)
+            transaction.save
+          end
+        end
+
+        user_token.user.update(last_viewed: start_date.gsub('-', '/'))
+        user_token.user.save
+      end
+      render json: {transactions: transactions, date: date}.to_json
       # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
       while transactions.length < transaction_response['total_transactions']
         transaction_response = client.transactions.get(access_token, start_date, end_date, offset: transactions.length)
@@ -42,8 +61,10 @@ class TransactionsController < ActionController::API
 
       user_token.user.update(last_viewed: start_date.gsub('-', '/'))
       user_token.user.save
+      render json: {transactions: transactions, date: date}.to_json
+    rescue
+      render json: {message: $!.error_code, status: 500, token: user_token.token}.to_json
     end
-    render json: {transactions: transactions, date: date}.to_json
   end
 
   def patch

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   get '/transactions', to: 'transactions#get'
   get '/budgets', to: 'budgets#get'
   get '/users', to: 'users#get'
+  get '/users/get_public_token', to: 'users#get_public_token'
   get '/categories', to: 'categories#get'
 
   post '/users/create', to: 'users#create'
