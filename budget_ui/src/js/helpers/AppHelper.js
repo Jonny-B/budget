@@ -45,7 +45,7 @@ export function getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLooku
     }
 }
 
-export function getTransactionData(allowTransactionLookup, user, data, token, SetAllowTransactionLookup, SetData) {
+export function getTransactionData(allowTransactionLookup, user, data, token, SetToken, SetOpenDialog, SetAllowTransactionLookup, SetData) {
     if (allowTransactionLookup && user) {
         axios.get('/transactions', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(t => {
             if (t.data.message === "ITEM_LOGIN_REQUIRED" && (token === undefined || token === "")) {
@@ -117,7 +117,7 @@ export function hideRow(updatedRowData, data, SetData, user) {
     });
 }
 
-export function dateChange(date, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup) {
+export function dateChange(date, data, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup) {
     let year = date.getYear() + 1900;
     let month = date.getMonth() + 1;
     let d = [...data];
@@ -187,7 +187,7 @@ export function updateCategories(categories, newCategory, SetCategories, SetAllo
     SetAllowCategoryLookup(true)
 }
 
-export function deleteCategory(oldData, data, categories, SetCategories, SetData){
+export function deleteCategory(oldData, data, categories, SetCategories, SetData) {
     axios.delete('/categories/delete', {params: {id: oldData.id}});
 
     let d = [...data];
@@ -208,19 +208,19 @@ export function deleteCategory(oldData, data, categories, SetCategories, SetData
     SetData(d);
 }
 
-export function verifyAccount(SetOpenDialog, SetAllowTransactionLookup){
+export function verifyAccount(SetOpenDialog, SetAllowTransactionLookup) {
     SetOpenDialog(false);
     SetAllowTransactionLookup(true);
 }
 
-export function accountLink(token, user, SetAllowTransactionLookup){
+export function accountLink(token, user, SetAllowTransactionLookup) {
     if (user) {
         axios.post('/users/set_plaid_token', {userToken: user.sub, plaidToken: token});
     }
     SetAllowTransactionLookup(true);
 }
 
-export function update(updatedRowData, data, SetAllowTransactionLookup, SetData, categories, SetCategories){
+export function update(updatedRowData, data, SetAllowTransactionLookup, SetData, categories, SetCategories) {
     axios.patch('/categories/patch', {
         id: updatedRowData.id,
         category: updatedRowData.category,

@@ -9,9 +9,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import PlaidLink from 'react-plaid-link'
 import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
-import axios from 'axios'
 import * as AppHepler from '../helpers/AppHelper'
-import {updateCategories} from "../helpers/AppHelper";
 
 // TODO look and feel sucks.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
@@ -74,7 +72,7 @@ export default function App(props) {
     };
 
     const handleGetTransactionData = () => {
-        AppHepler.getTransactionData(allowTransactionLookup, user, data, token, SetAllowTransactionLookup, SetData)
+        AppHepler.getTransactionData(allowTransactionLookup, user, data, token, SetToken, SetOpenDialog, SetAllowTransactionLookup, SetData)
     };
 
     const handleGetCategories = () => {
@@ -90,7 +88,7 @@ export default function App(props) {
     };
 
     const handleDateChange = (date) => {
-        AppHepler.dateChange(date, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup)
+        AppHepler.dateChange(date, date, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup)
     };
 
     const handleUpdateCategory = (transaction, previousCategory) => {
