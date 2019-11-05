@@ -12,50 +12,24 @@ export default function Budget(props) {
     const [open, SetOpen] = useState(false);
     const [rowData, SetRowData] = useState(false);
 
-    const setTotals = () => {
-        let iTotal = 0;
-        let eTotal = 0;
-        let sTotal = 0;
-
-        if (props.data.incomeData.length > 0) iTotal = props.data.incomeData.map(i => parseInt(i.actual)).reduce((total, num) => total + num, 0);
-        if (props.data.expensesData.length > 0) eTotal = props.data.expensesData.map(e => parseInt(e.actual)).reduce((total, num) => total + num, 0);
-        if (props.data.savingsData.length > 0) sTotal = props.data.savingsData.map(s => parseInt(s.actual)).reduce((total, num) => total + num, 0);
-
-        let transferToSavings = 0;
-        if (props.data.savingsData.length > 0) {
-            let budgetedSavings = props.data.savingsData.map(s => parseInt(s.budget)).reduce((total, num) => total + num, 0);
-            transferToSavings = (iTotal + budgetedSavings) - (sTotal + eTotal);
-        }
-
-
-        return {incomeTotal: iTotal, expensesTotal: eTotal, savingsTotal: sTotal, transferToSavings: transferToSavings}
+    const handleSetTotals = () => {
+        return BudgetHelper.seeTotals(props)
     };
 
-    const handleEdit = (type, rowData, event) => {
-        SetOpen(true);
-        SetRowData(rowData)
+    const handleEdit = (rowData) => {
+        BudgetHelper.edit(SetOpen, SetRowData, rowData)
     };
 
     const handleAdd = (category, type) => {
-        if (category.budget === null || category.budget === undefined || category.budget === 'NaN') category.budget = 0;
-        axios.post('/budgets/create', {
-            budgeted: category.budget,
-            type: type,
-            userToken: props.userToken,
-            category: category.category,
-            date: props.date
-        }).then(c => {
-            props.handleAddCategory(category.category, category.budget, type, c.data.id);
-        });
+        BudgetHelper.add()
     };
 
-    const handleUpdate = (updatedRowData) => {
-        SetOpen(false);
-        props.handleUpdate(updatedRowData);
+    const handleUpdate = (SetOpen, props, updatedRowData) => {
+        BudgetHelper.update(updatedRowData)
     };
 
     const handleClose = () => {
-        SetOpen(false)
+        BudgetHelper.close(SetOpen)
     };
 
     return (
@@ -121,7 +95,7 @@ export default function Budget(props) {
                         data={props.data.incomeData}/>
                 </Grid>
                 <Grid item>
-                    <Typography>Income Total: ${setTotals().incomeTotal}</Typography>
+                    <Typography>Income Total: ${handleSetTotals().incomeTotal}</Typography>
                 </Grid>
                 <Grid item>
                     <MaterialTable
@@ -183,7 +157,7 @@ export default function Budget(props) {
                         data={props.data.expensesData}/>
                 </Grid>
                 <Grid item>
-                    <Typography>Expenses Total: ${setTotals().expensesTotal}</Typography>
+                    <Typography>Expenses Total: ${handleSetTotals().expensesTotal}</Typography>
                 </Grid>
                 <Grid item>
                     <MaterialTable
@@ -251,10 +225,10 @@ export default function Budget(props) {
                         data={props.data.savingsData}/>
                 </Grid>
                 <Grid item>
-                    <Typography>Savings Total: ${setTotals().savingsTotal}</Typography>
+                    <Typography>Savings Total: ${handleSetTotals().savingsTotal}</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography>Transfer to Saving: ${setTotals().transferToSavings}</Typography>
+                    <Typography>Transfer to Saving: ${handleSetTotals().transferToSavings}</Typography>
                 </Grid>
             </Grid>
             <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
