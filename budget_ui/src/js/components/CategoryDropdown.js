@@ -1,37 +1,29 @@
 import React, {Component} from 'react'
 import {withStyles} from '@material-ui/core/styles';
 import {MenuItem, Select} from "@material-ui/core";
+import * as CategoryDropdownHelper from '../helpers/CategoryDropdownHelper'
 
-class CategoryDropdown extends Component {
-    constructor(props) {
-        super(props);
-        //TODO Get Categories from DB and set default
-
-        this.handleDropdownChange = this.handleDropdownChange.bind(this);
+export default function CategoryDropdown(props) {
+    function handleDropdownChange(event) {
+        CategoryDropdownHelper.dropdownChange(props.callback, props.id, event, props.assignedCategory)
     }
 
-    handleDropdownChange = event => {
-        this.props.callback(this.props.id, event, this.props.assignedCategory);
-    };
+    let count = 0;
 
-    render() {
-        let count = 0;
-        return (
-            <div id={'categoryDropdown'}>
-                <Select onChange={this.handleDropdownChange} value={this.props.assignedCategory}>
-                    <MenuItem id={`${this.props.id}#${count}`} key={`${this.props.id}${count}`} value="Select One">Select
-                        One</MenuItem>
-                    {this.props.categories.map((category) => {
-                        count += 1;
-                        return <MenuItem key={`${this.props.id}${count}`} value={category}>{category}</MenuItem>
-                    })}
-                </Select>
-            </div>
-        )
-    }
+    return (
+        <div id={'categoryDropdown'}>
+            <Select onChange={handleDropdownChange} value={props.assignedCategory}>
+                <MenuItem id={`${props.id}#${count}`} key={`${props.id}${count}`} value="Select One">
+                    Select One
+                </MenuItem>
+                {props.categories.map((category) => {
+                    count += 1;
+                    return <MenuItem key={`${props.id}${count}`} value={category}>{category}</MenuItem>
+                })}
+            </Select>
+        </div>
+    )
+
 }
 
-
 const styles = theme => ({});
-
-export default withStyles(styles)(CategoryDropdown)

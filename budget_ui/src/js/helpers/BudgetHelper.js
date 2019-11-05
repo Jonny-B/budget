@@ -25,22 +25,22 @@ export function edit(SetOpen, SetRowData, rowData) {
     SetRowData(rowData)
 }
 
-export function add() {
+export function add(category, type, handleAddCategory, userToken, date) {
     if (category.budget === null || category.budget === undefined || category.budget === 'NaN') category.budget = 0;
     axios.post('/budgets/create', {
         budgeted: category.budget,
         type: type,
-        userToken: props.userToken,
+        userToken: userToken,
         category: category.category,
-        date: props.date
+        date: date
     }).then(c => {
-        props.handleAddCategory(category.category, category.budget, type, c.data.id);
+        handleAddCategory(category.category, category.budget, type, c.data.id);
     });
 }
 
-export function update(SetOpen, props, updatedRowData) {
+export function update(SetOpen, handleUpdate, updatedRowData) {
     SetOpen(false);
-    props.handleUpdate(updatedRowData);
+    handleUpdate(updatedRowData);
 }
 
 export function close(SetOpen) {

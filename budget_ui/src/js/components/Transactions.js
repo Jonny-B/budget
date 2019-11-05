@@ -1,98 +1,85 @@
-import React, {Component} from 'react'
+import React, {useState} from 'react'
 import {Visibility, VisibilityOff} from '@material-ui/icons'
 import MaterialTable from "material-table";
 import {withStyles} from '@material-ui/core/styles';
 import CategoryDropdown from "./CategoryDropdown"
 import axios from "axios/index";
+import * as TransactionsHelper from "../helpers/TransactionsHelper"
 
-class Transactions extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showAll: false,
-            editRowData: null,
-            categories: []
-        };
-        this.handleShowAll = this.handleShowAll.bind(this);
-        this.updateDatabase = this.updateDatabase.bind(this);
-        this.updateTransactionsVisibility = this.updateTransactionsVisibility.bind(this);
-    }
+export default function Transactions(props) {
 
-    handleShowAll() {
-        this.setState({showAll: !this.state.showAll})
+    const [showAll, SetShowAll] = useState(false);
+    // const [editRowData, SetEditRowData] = useState(null);
+    // const [categories, SetCategories] = useState([]);
+
+    const handleShowAll = () => {
+        TransactionsHelper.showAll(SetShowAll, showAll)
     };
 
 
-    updateDatabase(updatedRowData, transactionId) {
-        axios.patch('/transactions/patch', {
-            updateData: updatedRowData,
-            userToken: this.props.usertoken,
-            transactionId: transactionId
-        });
-    }
+    const handleUpdateDatabase = (updatedRowData, transactionId) => {
+        TransactionsHelper.updateDatabase(updatedRowData, props.usertoken, transactionId)
+    };
 
-    updateTransactionsVisibility() {
-        this.setState({showAll: !this.state.showAll})
-    }
+    const handleUpdateTransactionsVisibility = () => {
+        TransactionsHelper.updateTransactionsVisibility(SetShowAll, showAll)
+    };
 
-    render() {
-        let showAllIcon = this.state.showAll ? <Visibility onClick={this.updateTransactionsVisibility}/> :
-            <VisibilityOff onClick={this.updateTransactionsVisibility}/>;
 
-        let data = this.state.showAll ? this.props.data : this.props.data.filter(row => {
-            if (!row.hidden) return row
-        });
-        return (
-            <div>
-                <MaterialTable
-                    title={"Transactions"}
-                    options={{search: false, paging: false, actionsColumnIndex: -1}}
-                    columns={[
-                        {
-                            title: 'Category',
-                            field: 'assignCategory',
-                            render: rowData => <CategoryDropdown id={rowData.id}
-                                                                 assignedCategory={rowData.assignCategory}
-                                                                 callback={this.props.handleDropdownChange}
-                                                                 categories={this.props.categories}/>
+    let showAllIcon = showAll ? <Visibility onClick={handleUpdateTransactionsVisibility}/> :
+        <VisibilityOff onClick={handleUpdateTransactionsVisibility}/>;
+
+    let data = showAll ? props.data : props.data.filter(row => {
+        if (!row.hidden) return row
+    });
+    return (
+        <div>
+            <MaterialTable
+                title={"Transactions"}
+                options={{search: false, paging: false, actionsColumnIndex: -1}}
+                columns={[
+                    {
+                        title: 'Category',
+                        field: 'assignCategory',
+                        render: rowData => <CategoryDropdown id={rowData.id}
+                                                             assignedCategory={rowData.assignCategory}
+                                                             callback={props.handleDropdownChange}
+                                                             categories={props.categories}/>
+                    },
+                    {title: 'Date', field: 'date'},
+                    {title: 'Description', field: 'description'},
+                    {
+                        title: 'Charge',
+                        field: 'charge',
+                        type: 'currency',
+                    },
+                    {
+                        title: 'Hide',
+                        field: 'hide',
+                        render: rowData =>
+                            rowData.hidden ? <VisibilityOff onClick={() => {
+                                props.hideRow(rowData)
+                            }}/> : <Visibility onClick={() => {
+                                props.hideRow(rowData)
+                            }}/>,
+                    }
+                ]}
+                actions={[
+                    {
+                        icon: () => {
+                            return showAllIcon
                         },
-                        {title: 'Date', field: 'date'},
-                        {title: 'Description', field: 'description'},
-                        {
-                            title: 'Charge',
-                            field: 'charge',
-                            type: 'currency',
-                        },
-                        {
-                            title: 'Hide',
-                            field: 'hide',
-                            render: rowData =>
-                                rowData.hidden ? <VisibilityOff onClick={() => {
-                                    this.props.hideRow(rowData)
-                                }}/> : <Visibility onClick={() => {
-                                    this.props.hideRow(rowData)
-                                }}/>,
+                        tooltip: 'Show Hidden',
+                        isFreeAction: true,
+                        onClick: () => {
+                            handleShowAll()
                         }
-                    ]}
-                    actions={[
-                        {
-                            icon: () => {
-                                return showAllIcon
-                            },
-                            tooltip: 'Show Hidden',
-                            isFreeAction: true,
-                            onClick: () => {
-                                this.handleShowAll()
-                            }
-                        }
-                    ]}
-                    data={data}/>
-            </div>
-        )
-    }
-}
-
+                    }
+                ]}
+                data={data}/>
+        </div>
+    )
+};
 
 const styles = theme => ({});
 
-export default withStyles(styles)(Transactions)

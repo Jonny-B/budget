@@ -21,11 +21,11 @@ export default function Budget(props) {
     };
 
     const handleAdd = (category, type) => {
-        BudgetHelper.add()
+        BudgetHelper.add(category, type, props.handleAddCategory, props.userToken, props.date)
     };
 
-    const handleUpdate = (SetOpen, props, updatedRowData) => {
-        BudgetHelper.update(updatedRowData)
+    const handleUpdate = (updatedRowData) => {
+        BudgetHelper.update(SetOpen, props.handleUpdate, updatedRowData)
     };
 
     const handleClose = () => {

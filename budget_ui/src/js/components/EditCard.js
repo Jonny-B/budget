@@ -4,25 +4,22 @@ import DateFnsUtils from '@date-io/date-fns';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {makeStyles} from '@material-ui/core/styles';
 import {Lock} from '@material-ui/icons'
+import * as EditCardHelper from '../helpers/EditCardHelper';
 
 export default function EditCard(props) {
     //todo material table has an editable feature. Implement that because it makes me have to write less code.
-    const [data, setData] = useState(props.data);
+    const [data, SetData] = useState(props.data);
 
     const handleCategoryChange = (event) => {
-        let d = {...data};
-        d.category = event.target.value;
-        setData(d);
+        EditCardHelper.categoryChange(data, SetData, event)
     };
 
     const handleBudgetChange = (event) => {
-        let d = {...data};
-        d.budget = event.target.value;
-        setData(d);
+        EditCardHelper.budgetChange(data, SetData, event)
     };
 
     const handleUpdate = () => {
-        props.callback(data)
+        EditCardHelper.update(props.callback, data)
     };
 
     let categoryCol = data.category !== undefined ?

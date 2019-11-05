@@ -35,7 +35,7 @@ class TransactionsController < ActionController::API
         # user = User.find_by(id: user_id)
         transactions.each do |t|
           unless Transaction.find_by(transaction_id: t[:id]) && user_id
-            transaction = Transaction.new(user_id: user_id, transaction_id: t[:id], hidden: false, edited: false)
+            transaction = Transaction.new(transaction_id: t[:id], user_id: user_id, description: t[:description], charge: t[:charge], date: t[:date], hidden: false, edited: false)
             transaction.save
           end
         end
@@ -43,24 +43,6 @@ class TransactionsController < ActionController::API
         user_token.user.update(last_viewed: start_date.gsub('-', '/'))
         user_token.user.save
       end
-      render json: {transactions: transactions, date: date}.to_json
-      # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
-      while transactions.length < transaction_response['total_transactions']
-        transaction_response = client.transactions.get(access_token, start_date, end_date, offset: transactions.length)
-        transactions += transaction_response.transactions
-      end
-      transactions = transform_plaid_transactions(transactions)
-
-      # user = User.find_by(id: user_id)
-      transactions.each do |t|
-        unless Transaction.find_by(transaction_id: t[:id]) && user_id
-          transaction = Transaction.new(user_id: user_id, transaction_id: t[:id], hidden: false, edited: false)
-          transaction.save
-        end
-      end
-
-      user_token.user.update(last_viewed: start_date.gsub('-', '/'))
-      user_token.user.save
       render json: {transactions: transactions, date: date}.to_json
     rescue
       render json: {message: $!.error_code, status: 500, token: user_token.token}.to_json
@@ -79,7 +61,7 @@ class TransactionsController < ActionController::API
   end
 
   def transform_plaid_transactions(transactions)
-    edited_transaction_ids = Transaction.where(edited: true).to_a.map {|e| e.transaction_id}
+    edited_transaction_ids = Transaction.where(edited: true).to_a.map { |e| e.transaction_id }
     transactions.map do |t|
       # Check to see if this transaction has been edited and stored in our Db. If so look it up and swap t with it.
       if edited_transaction_ids.include?(t.transaction_id)
