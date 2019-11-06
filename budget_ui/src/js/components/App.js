@@ -60,7 +60,7 @@ export default function App(props) {
     });
 
     const handleCreateUserIfNecessary = () => {
-        AppHepler.createUserIfNecessary(allowCreateUserCheck, user, data, SetAllowCreateUserCheck, SetData, SetAllowDateLookup)
+        AppHepler.createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreateUserCheck, SetAllowDateLookup)
     };
 
     const handleGetDate = () => {

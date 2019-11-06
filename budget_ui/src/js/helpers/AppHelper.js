@@ -1,11 +1,9 @@
 import axios from "axios";
 
-export function createUserIfNecessary(allowCreateUserCheck, user, data, SetAllowCreateUserCheck, SetData, SetAllowDateLookup) {
+export function createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreateUserCheck, SetAllowDateLookup) {
     if (allowCreateUserCheck && user) {
         axios.post('/users/create', {userToken: user.sub});
-        let d = [...data];
         SetAllowCreateUserCheck(false);
-        SetData(d);
         SetAllowDateLookup(true)
     }
 }
@@ -56,8 +54,7 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
                     });
                 }
 
-            }
-            else {
+            } else {
                 let d = [...data];
                 d[1].transactionData = t.data.transactions;
                 SetAllowTransactionLookup(false);
@@ -139,13 +136,11 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
         actual = d[0].budgetData.incomeData[incomeIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
         d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
-    }
-    else if (expensesIndex !== -1) {
+    } else if (expensesIndex !== -1) {
         actual = d[0].budgetData.expensesData[expensesIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
         d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
-    }
-    else if (savingsIndex !== -1) {
+    } else if (savingsIndex !== -1) {
         actual = d[0].budgetData.savingsData[savingsIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
         d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
@@ -158,12 +153,10 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
     if (incomeIndex !== -1) {
         actual = d[0].budgetData.incomeData[incomeIndex].actual;
         d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
-    }
-    else if (expensesIndex !== -1) {
+    } else if (expensesIndex !== -1) {
         actual = d[0].budgetData.expensesData[expensesIndex].actual;
         d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
-    }
-    else if (savingsIndex !== -1) {
+    } else if (savingsIndex !== -1) {
         actual = d[0].budgetData.savingsData[savingsIndex].actual;
         d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
     }
