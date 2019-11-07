@@ -1,6 +1,7 @@
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 import * as AppHelper from "../../helpers/AppHelper"
+import App from "../../components/App";
 
 describe('AppHelper', () => {
     describe('createUserIfNecessary', () => {
@@ -43,6 +44,92 @@ describe('AppHelper', () => {
             AppHelper.createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreateUserCheck, SetAllowDateLookup);
             expect(allowCreateUserCheck).toBe(false);
             expect(allowDateLookup).toBe(true);
+        })
+    });
+
+    describe('getDate', () => {
+        it('should not execute if NOT allowDateLookup', () => {
+            let allowDateLookup = false;
+            let user = null;
+            let data = [];
+            let SetAllowDateLookup = jest.fn();
+            let SetData = () => {
+            };
+            let SetAllowBudgetLookup = () => {
+            };
+            AppHelper.getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData, SetAllowBudgetLookup);
+            expect(SetAllowDateLookup.mock.calls.length).toBe(0);
+        });
+
+        it('should not execute if NOT user', () => {
+            let allowDateLookup = true;
+            let user = {userName: 'test'};
+            let data = [];
+            let SetAllowDateLookup = jest.fn();
+            let SetData = () => {
+            };
+            let SetAllowBudgetLookup = () => {
+            };
+            AppHelper.getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData, SetAllowBudgetLookup);
+            expect(SetAllowDateLookup.mock.calls.length).toBe(0);
+        });
+
+        it('should get last viewed date from user', (done) => {
+            let mock = new MockAdapter(axios);
+            mock.onGet('/users').reply(200, {last_viewed: '2020/01/01'});
+            let allowDateLookup = true;
+            let user = true;
+            let data = [{}, {}, {selectedDate: '0000/00/00'}];
+            let SetData = (d) => {
+                expect(d[2].selectedDate).toBe('2020/01/01');
+                done()
+            };
+
+            AppHelper.getDate(allowDateLookup, user, data, ()=>{}, SetData, ()=>{});
+        });
+
+        it('should call SetAllowDateLookup', (done) => {
+            let mock = new MockAdapter(axios);
+            mock.onGet('/users').reply(200, {last_viewed: '2020/01/01'});
+            let allowDateLookup = true;
+            let user = true;
+            let data = [{}, {}, {selectedDate: '0000/00/00'}];
+            let SetAllowDateLookup = (x) => {
+                expect(x).toBe(false);
+                done();
+            };
+            AppHelper.getDate(allowDateLookup, user, data, SetAllowDateLookup, ()=>{}, ()=>{});
+        });
+
+        it('should call SetAllowBudgetLookup', (done) => {
+            let mock = new MockAdapter(axios);
+            mock.onGet('/users').reply(200, {last_viewed: '2020/01/01'});
+            let allowDateLookup = true;
+            let user = true;
+            let data = [{}, {}, {selectedDate: '0000/00/00'}];
+            let SetAllowBudgetLookup = (x) => {
+                expect(x).toBe(true);
+                done();
+            };
+            AppHelper.getDate(allowDateLookup, user, data, ()=>{}, ()=>{}, SetAllowBudgetLookup);
+        });
+
+        it('should get todays date in yyyy/mm/dd if user has no last_viewed date set', (done) => {
+            let mock = new MockAdapter(axios);
+            mock.onGet('/users').reply(200, {data: null});
+            let allowDateLookup = true;
+            let user = true;
+            let data = [{}, {}, {selectedDate: '0000/00/00'}];
+            let SetData = (d) => {
+                let date = new Date();
+                let year = date.getYear() + 1900;
+                let month = date.getMonth() + 1;
+                date = `${year}/${month}/${1}`;
+                expect(d[2].selectedDate).toBe(date);
+                done();
+            };
+
+            AppHelper.getDate(allowDateLookup, user, data, ()=>{}, SetData, ()=>{});
         })
     })
 });

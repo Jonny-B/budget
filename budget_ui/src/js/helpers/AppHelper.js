@@ -13,7 +13,7 @@ export function getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData
         axios.get('/users', {params: {user_token: user.sub}}).then(u => {
             let d = [...data];
             let date = u.data.last_viewed;
-            if (date === null || date == undefined) {
+            if (date === null || date === undefined) {
                 date = new Date();
                 let year = date.getYear() + 1900;
                 let month = date.getMonth() + 1;
