@@ -1,16 +1,12 @@
 import React, {useState} from 'react'
 import {Visibility, VisibilityOff} from '@material-ui/icons'
 import MaterialTable from "material-table";
-import {withStyles} from '@material-ui/core/styles';
 import CategoryDropdown from "./CategoryDropdown"
-import axios from "axios/index";
 import * as TransactionsHelper from "../helpers/TransactionsHelper"
 
 export default function Transactions(props) {
 
     const [showAll, SetShowAll] = useState(false);
-    // const [editRowData, SetEditRowData] = useState(null);
-    // const [categories, SetCategories] = useState([]);
 
     const handleShowAll = () => {
         TransactionsHelper.showAll(SetShowAll, showAll)

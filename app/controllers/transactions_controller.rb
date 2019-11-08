@@ -5,13 +5,13 @@ class TransactionsController < ActionController::API
     user_token = UserToken.find_by(token: params["userToken"])
     user_id = user_token.nil? ? nil : user_token.user_id
 
-    user_token = UserToken.find_by(user_id: user_id, token_type: "plaid_token")
-    access_token = user_token.nil? ? nil : user_token.token
+    plaid_tokens = UserToken.where(user_id: user_id, token_type: "plaid_token").map {|t| t.token}
+    access_tokens = plaid_tokens.length > 0 ? plaid_tokens : nil
 
-    transactions = []
+    all_accounts_transactions = []
     date = params["date"] == "" ? user_token.user.last_viewed.split('/') : params["date"].split('/')
     begin
-      unless access_token.nil?
+      unless access_tokens.nil?
         plaid_env = Rails.application.config.plaid_env
         client_id = Rails.application.config.client_id
         secret = Rails.application.config.secret
@@ -23,24 +23,28 @@ class TransactionsController < ActionController::API
 
         start_date = Date.new(date[0].to_i, date[1].to_i, 1).strftime('%Y-%m-%d')
         end_date = Date.new(date[0].to_i, date[1].to_i, -1).strftime('%Y-%m-%d')
-        transaction_response = client.transactions.get(access_token, start_date, end_date)
-        transactions = transaction_response.transactions
-        # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
-        while transactions.length < transaction_response['total_transactions']
-          transaction_response = client.transactions.get(access_token, start_date, end_date, offset: transactions.length)
-          transactions += transaction_response.transactions
+
+        access_tokens.each do |access_token|
+          transaction_response = client.transactions.get(access_token, start_date, end_date)
+          transactions = transaction_response.transactions
+          # the transactions in the response are paginated, so make multiple calls while increasing the offset to retrieve all transactions
+          while transactions.length < transaction_response['total_transactions']
+            transaction_response = client.transactions.get(access_token, start_date, end_date, offset: transactions.length)
+            transactions += transaction_response.transactions
+          end
+          all_accounts_transactions += transactions
         end
-        transactions = transform_plaid_transactions(transactions)
+        all_accounts_transactions = transform_plaid_transactions(all_accounts_transactions)
 
         # user = User.find_by(id: user_id)
-        transactions.each do |t|
+        all_accounts_transactions.each do |t|
           unless Transaction.find_by(transaction_id: t[:id]) && user_id
             transaction = Transaction.new(transaction_id: t[:id], user_id: user_id, description: t[:description], charge: t[:charge], date: t[:date], hidden: false, edited: false)
             transaction.save
           end
         end
       end
-      render json: {transactions: transactions, date: date}.to_json
+      render json: {transactions: all_accounts_transactions, date: date}.to_json
     rescue
       render json: {message: $!.error_code, status: 500, token: user_token.token}.to_json
     end
@@ -58,7 +62,7 @@ class TransactionsController < ActionController::API
   end
 
   def transform_plaid_transactions(transactions)
-    edited_transaction_ids = Transaction.where(edited: true).to_a.map { |e| e.transaction_id }
+    edited_transaction_ids = Transaction.where(edited: true).to_a.map {|e| e.transaction_id}
     transactions.map do |t|
       # Check to see if this transaction has been edited and stored in our Db. If so look it up and swap t with it.
       if edited_transaction_ids.include?(t.transaction_id)
