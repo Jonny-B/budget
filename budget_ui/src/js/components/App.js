@@ -137,7 +137,7 @@ export default function App(props) {
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
                             clientName="Budget"
-                            env="development"
+                            env="sandbox"
                             product={["transactions"]}
                             publicKey="d010207ffa5ab886eea1b7f31471f3"
                             onExit={handleOnExit}
@@ -194,7 +194,7 @@ export default function App(props) {
                     <Typography>Your Financial Institution would like you to verify you credentials. Click below to Verify.</Typography>
                     {openDialog && <PlaidLink
                         clientName="Budget"
-                        env="development"
+                        env="sandbox"
                         token={token}
                         product={["transactions"]}
                         publicKey="d010207ffa5ab886eea1b7f31471f3"

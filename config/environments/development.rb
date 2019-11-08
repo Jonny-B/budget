@@ -27,11 +27,11 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  # config.plaid_env = :sandbox
-  config.plaid_env = :development
+  config.plaid_env = :sandbox
+  # config.plaid_env = :development
+  config.secret = 'de3056b3a963df772ab65ddb7cad58'
+  # config.secret = '42d70066c37094fd7da3d0b427fa92'
   config.client_id = '5dbcd6864019f8001105769b'
-  # config.secret = 'de3056b3a963df772ab65ddb7cad58'
-  config.secret = '42d70066c37094fd7da3d0b427fa92'
   config.public_key = 'd010207ffa5ab886eea1b7f31471f3'
 
   # Store uploaded files on the local file system (see config/storage.yml for options)
