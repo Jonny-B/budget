@@ -10,7 +10,7 @@ export function createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreate
 
 export function getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData, SetAllowBudgetLookup) {
     if (allowDateLookup && user) {
-        axios.get('/users', {params: {user_token: user.sub}}).then(u => {
+        axios.get('/users', {params: {userToken: user.sub}}).then(u => {
             let d = [...data];
             let date = u.data.last_viewed;
             if (date === null || date === undefined) {
@@ -33,7 +33,6 @@ export function getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLooku
         axios.get('/budgets', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(b => {
             let d = [...data];
             d[0].budgetData = b.data.budgetData;
-            // d[2].selectedDate = b.data.date;
             SetAllowBudgetLookup(false);
             SetData(d);
             SetAllowCategoryLookup(true);
@@ -114,11 +113,15 @@ export function hideRow(updatedRowData, data, SetData, user) {
     });
 }
 
-export function dateChange(date, data, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup) {
+export function dateChange(date, data, user, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup) {
     let year = date.getYear() + 1900;
     let month = date.getMonth() + 1;
     let d = [...data];
     d[2].selectedDate = `${year}/${month}/${1}`;
+    axios.patch('/users/update_date', {
+        userToken: user.sub,
+        date: d[2].selectedDate
+    });
     SetData(d);
     SetAllowTransactionLookup(true);
     SetAllowBudgetLookup(true);

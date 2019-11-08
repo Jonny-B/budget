@@ -17,7 +17,9 @@ class UsersController < ApplicationController
   end
 
   def get
-    user = UserToken.find_by(user_id: 1).user
+    user_id = UserToken.find_by(token: params["userToken"]).user_id
+
+    user = UserToken.find_by(user_id: user_id).user
 
     render json: user.to_json
   end
@@ -59,5 +61,11 @@ class UsersController < ApplicationController
 
     exchange_token_response = client.item.public_token.create(access_token)
     render json: exchange_token_response.public_token.to_json
+  end
+
+  def update_date
+    user_token = UserToken.find_by(token: params["userToken"])
+    user_token.user.update(last_viewed: params["date"])
+    user_token.user.save
   end
 end

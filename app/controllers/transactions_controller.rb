@@ -39,9 +39,6 @@ class TransactionsController < ActionController::API
             transaction.save
           end
         end
-
-        user_token.user.update(last_viewed: start_date.gsub('-', '/'))
-        user_token.user.save
       end
       render json: {transactions: transactions, date: date}.to_json
     rescue

@@ -88,7 +88,7 @@ export default function App(props) {
     };
 
     const handleDateChange = (date) => {
-        AppHepler.dateChange(date, date, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup)
+        AppHepler.dateChange(date, data, user, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup)
     };
 
     const handleUpdateCategory = (transaction, previousCategory) => {
@@ -137,7 +137,7 @@ export default function App(props) {
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
                             clientName="Budget"
-                            env="sandbox"
+                            env="development"
                             product={["transactions"]}
                             publicKey="d010207ffa5ab886eea1b7f31471f3"
                             onExit={handleOnExit}
@@ -194,7 +194,7 @@ export default function App(props) {
                     <Typography>Your Financial Institution would like you to verify you credentials. Click below to Verify.</Typography>
                     {openDialog && <PlaidLink
                         clientName="Budget"
-                        env="sandbox"
+                        env="development"
                         token={token}
                         product={["transactions"]}
                         publicKey="d010207ffa5ab886eea1b7f31471f3"
