@@ -1,7 +1,6 @@
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 import * as AppHelper from "../../helpers/AppHelper"
-import App from "../../components/App";
 
 describe('AppHelper', () => {
     describe('createUserIfNecessary', () => {
@@ -131,5 +130,73 @@ describe('AppHelper', () => {
 
             AppHelper.getDate(allowDateLookup, user, data, ()=>{}, SetData, ()=>{});
         })
+    });
+
+    describe('getBudgetData', () => {
+        it('should not execute if NOT allowBudgetLookup', (done) => {
+            allowBudgetLookup = false;
+            user=true;
+            data=[];
+            SetAllowBudgetLookup = jest.fn();
+            SetData = () => {};
+            SetAllowCategoryLookup = () => {};
+
+            AppHelper.getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLookup, SetData, SetAllowCategoryLookup);
+
+            expect(SetAllowBudgetLookup.mock.calls.length).toBe(0)
+        });
+
+        it('should not execute if NOT user', () => {
+            allowBudgetLookup = true;
+            user=null;
+            data=[];
+            SetAllowBudgetLookup = jest.fn();
+            SetData = () => {};
+            SetAllowCategoryLookup = () => {};
+
+            AppHelper.getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLookup, SetData, SetAllowCategoryLookup);
+
+            expect(SetAllowBudgetLookup.mock.calls.length).toBe(0)
+        });
+
+        it('should get budget data', (done) => {
+            let mock = new MockAdapter(axios);
+            mock.onGet('/budgets').reply(200, {budgetData: 'TEST'});
+            let allowBudgetLookup = true;
+            let user = true;
+            let data = [{budgetData}, {}, {}];
+            let SetData = (d) => {
+                expect(d[0].budgetData).toBe('TEST');
+                done()
+            };
+
+            AppHelper.getBudgetData(allowBudgetLookup, user, data, ()=>{}, SetData, ()=>{});
+        });
+
+        it('should call SetAllowDateLookup', (done) => {
+            let mock = new MockAdapter(axios);
+            mock.onGet('/budgets').reply(200, {budgetData: 'TEST'});
+            let allowBudgetLookup = true;
+            let user = true;
+            let data = [{budgetData}, {}, {}];
+            let SetAllowBudgetLookup = (x) => {
+                expect(x).toBe(false);
+                done();
+            };
+            AppHelper.getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLookup, ()=>{}, ()=>{});
+        });
+
+        it('should call SetAllowBudgetLookup', (done) => {
+            let mock = new MockAdapter(axios);
+            mock.onGet('/budgets').reply(200, {budgetData: 'TEST'});
+            let allowBudgetLookup = true;
+            let user = true;
+            let data = [{budgetData}, {}, {}];
+            let SetAllowCategoryLookup = (x) => {
+                expect(x).toBe(true);
+                done();
+            };
+            AppHelper.getBudgetData(allowBudgetLookup, user, data, ()=>{}, ()=>{}, SetAllowCategoryLookup);
+        });
     })
 });

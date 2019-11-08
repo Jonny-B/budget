@@ -33,7 +33,7 @@ export function getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLooku
         axios.get('/budgets', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(b => {
             let d = [...data];
             d[0].budgetData = b.data.budgetData;
-            d[2].selectedDate = b.data.date;
+            // d[2].selectedDate = b.data.date;
             SetAllowBudgetLookup(false);
             SetData(d);
             SetAllowCategoryLookup(true);
