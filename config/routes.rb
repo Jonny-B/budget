@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get '/transactions', to: 'transactions#get'
+  get '/buxfer', to: 'transactions#buxfer'
   get '/budgets', to: 'budgets#get'
   get '/users', to: 'users#get'
   get '/users/get_public_token', to: 'users#get_public_token'

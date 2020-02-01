@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>Radio Buttons:</p>
+<div id="containter">
+</div>
+<div id="containter2">
+</div>
+<script>
+
+
+    let input1 = document.createElement('input');
+    input1.setAttribute("type", "radio");
+    input1.setAttribute("id", "1");
+    input1.setAttribute("name", "group");
+    input1.setAttribute("value", "1");
+
+    let input2 = document.createElement('input');
+    input2.setAttribute("type", "radio");
+    input2.setAttribute("id", "2");
+    input2.setAttribute("name", "group");
+    input2.setAttribute("value", "2");
+
+    let input3 = document.createElement('input');
+    input3.setAttribute("type", "radio");
+    input3.setAttribute("id", "3");
+    input3.setAttribute("name", "group");
+    input3.setAttribute("value", "3");
+
+    let input4 = document.createElement('input');
+    input4.setAttribute("type", "radio");
+    input4.setAttribute("id", "4");
+    input4.setAttribute("name", "group");
+    input4.setAttribute("value", "4");
+
+    let input5 = document.createElement('input');
+    input5.setAttribute("type", "radio");
+    input5.setAttribute("id", "5");
+    input5.setAttribute("name", "group");
+    input5.setAttribute("value", "5");
+
+    let input6 = document.createElement('input');
+    input6.setAttribute("type", "radio");
+    input6.setAttribute("id", "6");
+    input6.setAttribute("name", "group");
+    input6.setAttribute("value", "6");
+
+    let container = document.getElementById('containter');
+    let shadowContainer = container.attachShadow({mode: 'open'});
+
+    let container2 = document.getElementById('containter2');
+    let shadowContainer2 = container2.attachShadow({mode: 'open'});
+
+    shadowContainer.appendChild(input1);
+    shadowContainer.appendChild(input2);
+    shadowContainer.appendChild(input3);
+
+    shadowContainer2.appendChild(input4);
+    shadowContainer2.appendChild(input5);
+    shadowContainer2.appendChild(input6);
+</script>
+</body>
+</html>

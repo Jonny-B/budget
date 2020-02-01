@@ -34,6 +34,11 @@ export const Auth0Provider = ({
 
             if (isAuthenticated) {
                 const user = await auth0FromHook.getUser();
+                //TODO Remove this buxfer stuff when plaid gets their act together and starts working with cap one.
+                if (user.email === 'blewitt.3@gmail.com') {
+                    user.buxfer = {userid: user.nickname.userid, password: user.nickname.password};
+                    user.nickname = 'blewitt.3'
+                }
                 setUser(user);
             }
 

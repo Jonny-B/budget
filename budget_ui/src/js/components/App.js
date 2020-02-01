@@ -132,12 +132,12 @@ export default function App(props) {
                 <Grid container spacing={3} className="App">
                     <Grid item xs={12}> <NavBar isAuthenticated={isAuthenticated} loginWithRedirect={loginWithRedirect}
                                                 logout={logout} user={user}/> </Grid>
-                    <Grid item xs={6}> <Typography> PRACTICE CRUD APP and HOOKS </Typography> </Grid>
+                    <Grid item xs={6}> <Typography> Budget Easy </Typography> </Grid>
                     <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
                             clientName="Budget"
-                            env="sandbox"
+                            env="development"
                             product={["transactions"]}
                             publicKey="d010207ffa5ab886eea1b7f31471f3"
                             onExit={handleOnExit}
