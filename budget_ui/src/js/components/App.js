@@ -10,6 +10,7 @@ import PlaidLink from 'react-plaid-link'
 import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
 import * as AppHepler from '../helpers/AppHelper'
+import axios from "axios/index";
 
 // TODO look and feel sucks.
 // TODO when hiding a transaction. If it has a category selected that category will be mapped to the transaction that moves into its space. This is just graphical as it doesn't effect totals and is fixed on refresh.
@@ -126,6 +127,15 @@ export default function App(props) {
         AppHepler.update(updatedRowData, data, SetAllowTransactionLookup, SetData, categories, SetCategories)
     };
 
+    const copyBudget = () => {
+        axios.patch('/budgets/copy', {
+            userToken: user.sub,
+            date: data[2].selectedDate
+        }).then(() => {
+            console.log("Successfully Copied")
+        });
+    };
+
     return (
         <MuiThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -134,6 +144,7 @@ export default function App(props) {
                                                 logout={logout} user={user}/> </Grid>
                     <Grid item xs={6}> <Typography> Budget Easy </Typography> </Grid>
                     <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
+                    <Grid item xs={3}> <Button onClick={copyBudget}>Copy Last Months Budget</Button> </Grid>
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
                             clientName="Budget"

@@ -162,15 +162,15 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
         if (incomeIndex !== -1) {
             actual = d[0].budgetData.incomeData[incomeIndex].actual;
             actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
-            d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
+            d[0].budgetData.incomeData[incomeIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
         } else if (expensesIndex !== -1) {
             actual = d[0].budgetData.expensesData[expensesIndex].actual;
             actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
-            d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
+            d[0].budgetData.expensesData[expensesIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
         } else if (savingsIndex !== -1) {
             actual = d[0].budgetData.savingsData[savingsIndex].actual;
             actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
-            d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) + parseInt(transaction.charge)).toString();
+            d[0].budgetData.savingsData[savingsIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
             d[0].budgetData.savingsData[savingsIndex].bucketTotal = d[0].budgetData.savingsData[savingsIndex].bucketTotal - transaction.charge;
         }
         // Subtract from old category
@@ -179,13 +179,13 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
         savingsIndex = d[0].budgetData.savingsData.findIndex(s => s.category === previousCategory);
         if (incomeIndex !== -1) {
             actual = d[0].budgetData.incomeData[incomeIndex].actual;
-            d[0].budgetData.incomeData[incomeIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
+            d[0].budgetData.incomeData[incomeIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
         } else if (expensesIndex !== -1) {
             actual = d[0].budgetData.expensesData[expensesIndex].actual;
-            d[0].budgetData.expensesData[expensesIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
+            d[0].budgetData.expensesData[expensesIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
         } else if (savingsIndex !== -1) {
             actual = d[0].budgetData.savingsData[savingsIndex].actual;
-            d[0].budgetData.savingsData[savingsIndex].actual = (parseInt(actual) - parseInt(transaction.charge)).toString();
+            d[0].budgetData.savingsData[savingsIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
         }
         SetData(d)
     }

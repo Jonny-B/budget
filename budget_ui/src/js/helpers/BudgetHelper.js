@@ -6,13 +6,14 @@ export function seeTotals(props) {
     let eTotal = 0;
     let sTotal = 0;
 
-    if (props.data.incomeData.length > 0) iTotal = props.data.incomeData.map(i => parseInt(i.actual)).reduce((total, num) => total + num, 0);
-    if (props.data.expensesData.length > 0) eTotal = props.data.expensesData.map(e => parseInt(e.actual)).reduce((total, num) => total + num, 0);
-    if (props.data.savingsData.length > 0) sTotal = props.data.savingsData.map(s => parseInt(s.actual)).reduce((total, num) => total + num, 0);
+    if (props.data.incomeData.length > 0) iTotal = props.data.incomeData.map(i => parseFloat(i.actual)).reduce((total, num) => total + num, 0);
+    if (props.data.expensesData.length > 0) eTotal = props.data.expensesData.map(e => parseFloat(e.actual)).reduce((total, num) => total + num, 0);
+    if (props.data.savingsData.length > 0) sTotal = props.data.savingsData.map(s => parseFloat(s.actual)).reduce((total, num) => total + num, 0);
 
-    let transferToSavings = 0;
+    // Set transfer to savings to iTotal out of if statement in case there is no Savings Data.
+    let transferToSavings = iTotal;
     if (props.data.savingsData.length > 0) {
-        let budgetedSavings = props.data.savingsData.map(s => parseInt(s.budget)).reduce((total, num) => total + num, 0);
+        let budgetedSavings = props.data.savingsData.map(s => parseFloat(s.budget)).reduce((total, num) => total + num, 0);
         transferToSavings = (iTotal + budgetedSavings) - (sTotal + eTotal);
     }
 
