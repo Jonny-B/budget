@@ -16,7 +16,8 @@ export default function Budget(props) {
         return BudgetHelper.seeTotals(props)
     };
 
-    const handleEdit = (rowData) => {
+    // Row type = income, expenses, savings
+    const handleEdit = (rowType, rowData) => {
         BudgetHelper.edit(SetOpen, SetRowData, rowData)
     };
 
