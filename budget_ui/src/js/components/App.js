@@ -127,8 +127,9 @@ export default function App(props) {
         AppHepler.update(updatedRowData, data, SetAllowTransactionLookup, SetData, categories, SetCategories)
     };
 
-    const copyBudget = () => {
+    const copyBudget = (month) => {
         axios.patch('/budgets/copy', {
+            month: month,
             userToken: user.sub,
             date: data[2].selectedDate
         }).then(() => {
@@ -143,8 +144,12 @@ export default function App(props) {
                     <Grid item xs={12}> <NavBar isAuthenticated={isAuthenticated} loginWithRedirect={loginWithRedirect}
                                                 logout={logout} user={user}/> </Grid>
                     <Grid item xs={6}> <Typography> Budget Easy </Typography> </Grid>
-                    <Grid item xs={3}> <Button><ShowChart/></Button> </Grid>
-                    <Grid item xs={3}> <Button onClick={copyBudget}>Copy Last Months Budget</Button> </Grid>
+                    <Grid item xs={3}> <Button variant={"contained"}><ShowChart/></Button> </Grid>
+                    <div>
+                        <Typography>Copy Other Month Budget</Typography>
+                        <Grid item xs={3}> <Button onClick={() => copyBudget("last")} variant={"contained"}>Last</Button> </Grid>
+                        <Grid item xs={3}> <Button onClick={() => copyBudget("next")} variant={"contained"}>Next</Button> </Grid>
+                    </div>
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
                             clientName="Budget"

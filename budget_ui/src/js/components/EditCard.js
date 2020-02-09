@@ -35,7 +35,7 @@ export default function EditCard(props) {
             {budgetCol}
             {actual}
             {bucketTotal}
-            <Button onClick={handleUpdate}>Update</Button>
+            <Button onClick={handleUpdate} variant={"contained"}>Update</Button>
         </MuiPickersUtilsProvider>
     )
 }
