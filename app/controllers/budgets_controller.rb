@@ -43,13 +43,30 @@ class BudgetsController < ActionController::API
     user_id = user_token.user_id
     date = params["date"] == "" ? user_token.user.last_viewed : params["date"]
 
-    # Copy previous months categories forward
-    last_month = date.split('/')
-    last_month = Date.new(last_month[0].to_i, last_month[1].to_i - 1, 1).strftime('%Y/%m/%d')
+    # Copy next/last months categories back/forward
+    month = date.split('/')
+    # Matching on != because I want to get everything that could possibly come in.
+    if params["month"] != 'next'
+      # This handles when the month is Jan
+      if (month[1]) == '1'
+        month[1] = '13'
+        month[0] = (month[0].to_i - 1).to_s
+      end
+      # This will find the last month
+      month = Date.new(month[0].to_i, month[1].to_i - 1, 1).strftime('%Y/%m/%d')
+    else
+      # This handles when the month is December
+      if (month[1]) == '12'
+        month[1] = '0'
+        month[0] = (month[0].to_i + 1).to_s
+      end
+      # This will find the next month
+      month = Date.new(month[0].to_i, month[1].to_i + 1, 1).strftime('%Y/%m/%d')
+    end
 
-    income = Category.where(user_id: user_id, category_type: "income").where("effective_date = ?", last_month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
-    expense = Category.where(user_id: user_id, category_type: "expense").where("effective_date = ?", last_month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
-    saving = Category.where(user_id: user_id, category_type: "saving").where("effective_date = ?", last_month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
+    income = Category.where(user_id: user_id, category_type: "income").where("effective_date = ?", month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
+    expense = Category.where(user_id: user_id, category_type: "expense").where("effective_date = ?", month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
+    saving = Category.where(user_id: user_id, category_type: "saving").where("effective_date = ?", month).map {|c| dup = c.dup; dup.update(effective_date: date); dup.save; dup}
 
     budget_data = {
         incomeData: income.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'income', id: i.id}},
