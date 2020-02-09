@@ -74,7 +74,7 @@ class TransactionsController < ActionController::API
         d = transaction['normalizedDate'].split('-')
         transaction_month = d[1][0] == '0' ? d[1][1] : d[1]
         transaction_year = d[0]
-        if transaction_year.to_i < date[0].to_i || transaction_month.to_i < date[1].to_i
+        if (transaction_year.to_i < date[0].to_i) || (transaction_year.to_i == date[0].to_i && transaction_month.to_i < date[1].to_i)
           # Stop looping if you are in last year or in last month.
           current_month = false
         elsif transaction_month != date[1]
