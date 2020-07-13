@@ -26,24 +26,27 @@ ActiveRecord::Schema.define(version: 2019_09_19_004350) do
     t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
-  create_table "remember_charge", force: :cascade do |t|
+  create_table "remember_charges", force: :cascade do |t|
     t.bigint "categories_id"
     t.string "description"
     t.decimal "charge"
-    t.index ["categories_id"], name: "index_remember_charge_on_categories_id"
+    t.index ["categories_id"], name: "index_remember_charges_on_categories_id"
   end
 
-  create_table "savings_bucket", force: :cascade do |t|
-    t.bigint "categories_id"
+  create_table "savings_buckets", force: :cascade do |t|
+    t.bigint "category_id"
+    t.decimal "distributed"
+    t.decimal "distributed_total"
+    t.decimal "budgeted"
     t.decimal "total"
     t.datetime "date"
-    t.index ["categories_id"], name: "index_savings_bucket_on_categories_id"
+    t.index ["category_id"], name: "index_savings_buckets_on_category_id"
   end
 
-  create_table "summary", force: :cascade do |t|
+  create_table "summaries", force: :cascade do |t|
     t.bigint "user_id"
     t.decimal "transfer_to_savings"
-    t.index ["user_id"], name: "index_summary_on_user_id"
+    t.index ["user_id"], name: "index_summaries_on_user_id"
   end
 
   create_table "transactions", id: false, force: :cascade do |t|

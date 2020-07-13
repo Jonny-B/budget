@@ -25,14 +25,14 @@ class BudgetsController < ActionController::API
         expensesData: expense.map { |i| {
             category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'expense', id: i.id}
         },
-        savingsData: saving.map {|i|
-          categories = Category.where(category: i.category).where("effective_date <= ?", date).order('effective_date ASC')
-          bucket = 0
-          categories.each do |c|
-            c.budgeted = c.budgeted.nil? ? 0 : c.budgeted
-            bucket += c.budgeted - c.transactions.sum(:charge).to_f
+        savingData: saving.map {|i|
+          # Get Savings Buckets
+          bucket = SavingsBucket.where(category_id: i.id, date: date).first
+          if bucket.nil?
+            {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucket: {distributed: 0, distributed_total: 0, total: 0, date: date}, type: 'saving', id: i.id}
+          else
+            {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucket: {distributed: bucket.distributed, distributed_total: bucket.distributed_total.to_f, date: date}, type: 'saving', id: i.id}
           end
-          {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge).to_f, bucketTotal: bucket, type: 'saving', id: i.id}
         }
     }
     render json: {budgetData: budget_data, date: date}.to_json
@@ -71,14 +71,15 @@ class BudgetsController < ActionController::API
     budget_data = {
         incomeData: income.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'income', id: i.id}},
         expensesData: expense.map {|i| {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), type: 'expense', id: i.id}},
-        savingsData: saving.map {|i|
-          categories = Category.where(category: i.category).where("effective_date <= ?", date).order('effective_date ASC')
-          bucket = 0
-          categories.each do |c|
-            c.budgeted = c.budgeted.nil? ? 0 : c.budgeted
-            bucket += c.budgeted - c.transactions.sum(:charge)
+        savingData: saving.map {|i|
+
+          # Get Savings Buckets
+          bucket = SavingsBucket.where(category_id: i.id, date: date).first
+          if bucket.nil?
+            {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucket: {distributed: 0, distributedTotal: 0, total: 0, date: date}, type: 'saving', id: i.id}
+          else
+            {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucket: {distributed: bucket.distributed, distributedTotal: bucket.distributed_total.to_f, total: bucket.total}, type: 'saving', id: i.id}
           end
-          {category: i.category, budget: i.budgeted, actual: i.transactions.sum(:charge), bucketTotal: bucket, type: 'saving', id: i.id}
         }
     }
     render json: {budgetData: budget_data, date: date}.to_json

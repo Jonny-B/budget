@@ -37,18 +37,21 @@ class CreateBudgetItems < ActiveRecord::Migration[5.2]
       t.timestamp :created_at
     end
 
-    create_table :summary do |t|
+    create_table :summaries do |t|
       t.belongs_to :user
       t.decimal :transfer_to_savings
     end
 
-    create_table :savings_bucket do |t|
-      t.belongs_to :categories
+    create_table :savings_buckets do |t|
+      t.belongs_to :category
+      t.decimal :distributed
+      t.decimal :distributed_total
+      t.decimal :budgeted
       t.decimal :total
       t.datetime :date
     end
 
-    create_table :remember_charge do |t|
+    create_table :remember_charges do |t|
       t.belongs_to :categories
       t.string :description
       t.decimal :charge

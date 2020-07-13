@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   patch '/categories/patch', to: 'categories#patch'
   patch '/users/update_date', to: 'users#update_date'
   patch '/budgets/copy', to: 'budgets#copy'
+  patch '/buckets/patch', to: 'buckets#patch'
 
   delete '/categories/delete', to: 'categories#delete'
 end

@@ -5,11 +5,11 @@ class CategoriesController < ApplicationController
     user_token = UserToken.find_by(token: params["userToken"])
     user_id = user_token.user_id
     date = params["date"] == "" ? user_token.user.last_viewed : params["date"]
-    category = Category.where(user_id: user_id).where("effective_date = ?", date)
+    categories = Category.where(user_id: user_id, effective_date: date)
 
-    render json: "No Categories found for this user" if category.nil?
+    render json: "No Categories found for this user" if categories.nil?
 
-    render json: category.to_json
+    render json: categories.to_json
   end
 
   def create
@@ -37,13 +37,15 @@ class CategoriesController < ApplicationController
       category.save
       render json: {id: category.id}
     when "saving"
-      #TODO savings bucket will need to be created new every month. Figure that out later.
       saving = Category.find_by(user_id: userToken.user_id, category: category, category_type: "saving", effective_date: date)
 
       render json: "Savings category #{category} already exists.".to_json if saving
 
-      category = Category.new(user_id: userToken.user_id, category_type: "saving", category: category, budgeted: params["budgeted"], effective_date: date)
+      category = Category.new(user_id: userToken.user_id, category_type: "saving", category: category, budgeted: params["budgeted"].to_f, effective_date: date)
       category.save!
+
+      bucket = SavingsBucket.new(category_id: category.id, distributed: 0, distributed_total: params['budgeted'].to_f - 0, total: 0, budgeted: params["budgeted"].to_f, date: date)
+      bucket.save!
 
       render json: {id: category.id}
     else
@@ -53,12 +55,21 @@ class CategoriesController < ApplicationController
 
   def patch
     category = Category.find_by(id: params["id"])
-    category.update(category: params["category"], budgeted: params["budgeted"])
+    category.update(category: params["category"], budgeted: params["budgeted"].to_f)
     category.save
+
+    if category.category_type == 'saving'
+      bucket = SavingsBucket.find_by(categories_id: category.id, date: params["date"])
+      bucket.update(categories_id: category.id, distributed_total: params['budgeted'].to_f - bucket.distributed, total: params["budgeted"].to_f)
+      bucket.save!
+    end
   end
 
   def delete
     category = Category.find_by(id: params["id"].to_i)
     category.delete
+
+    bucket = SavingsBucket.find_by(categories_id: category.id, date: params["date"])
+    bucket.delete
   end
 end
