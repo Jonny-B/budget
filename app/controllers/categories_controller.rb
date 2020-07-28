@@ -69,7 +69,7 @@ class CategoriesController < ApplicationController
     category = Category.find_by(id: params["id"].to_i)
     category.delete
 
-    bucket = SavingsBucket.find_by(categories_id: category.id, date: params["date"])
+    bucket = SavingsBucket.where(id: category.savings_bucket.first.id)
     bucket.delete
   end
 end
