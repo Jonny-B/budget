@@ -43,7 +43,7 @@ class CategoriesController < ApplicationController
 
       category = Category.new(user_id: userToken.user_id, category_type: "saving", category: category, budgeted: params["budgeted"].to_f, effective_date: date)
       category.save!
-
+      byebug
       bucket = SavingsBucket.new(category_id: category.id, distributed: 0, distributed_total: params['budgeted'].to_f - 0, total: 0, budgeted: params["budgeted"].to_f, date: date)
       bucket.save!
 
@@ -57,10 +57,12 @@ class CategoriesController < ApplicationController
     category = Category.find_by(id: params["id"])
     category.update(category: params["category"], budgeted: params["budgeted"].to_f)
     category.save
+    total =  params["budgeted"].to_f - category.transactions.sum(:charge).to_f
 
     if category.category_type == 'saving'
-      bucket = SavingsBucket.find_by(categories_id: category.id, date: params["date"])
-      bucket.update(categories_id: category.id, distributed_total: params['budgeted'].to_f - bucket.distributed, total: params["budgeted"].to_f)
+      bucket = SavingsBucket.find_by(category_id: category.id, date: params["date"])
+      distributed_total = params['budgeted'].to_f - bucket.distributed
+      bucket.update(category_id: category.id, budgeted: params['budgeted'], distributed: bucket.distributed, distributed_total: distributed_total, total: total)
       bucket.save!
     end
   end
@@ -69,7 +71,7 @@ class CategoriesController < ApplicationController
     category = Category.find_by(id: params["id"].to_i)
     category.delete
 
-    bucket = SavingsBucket.where(id: category.savings_bucket.first.id)
-    bucket.delete
+    bucket = SavingsBucket.delete(category_id: category.savings_bucket.first.id)
+    bucket.save!
   end
 end
