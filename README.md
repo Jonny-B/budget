@@ -1,24 +1,15 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Website is hosted on Heroku
+https://hey-budget-ui.herokuapp.com/
 
-Things you may want to cover:
+This is still very much a work in progress. Be kind.
 
-* Ruby version
+It might error the first time you visit. A refresh will fix it. Heroku needs to spin up a new node and it times out. 
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+1. Click "Log in"
+2. Sign up
+3. Click "Link Account Transactions" and continue
+4. Select any bank (it's a test mode so it's fake data)
+5. Username user_good | Password pass_good
+6. If transactions don't appear refresh
