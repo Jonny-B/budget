@@ -43,7 +43,6 @@ class CategoriesController < ApplicationController
 
       category = Category.new(user_id: userToken.user_id, category_type: "saving", category: category, budgeted: params["budgeted"].to_f, effective_date: date)
       category.save!
-      byebug
       bucket = SavingsBucket.new(category_id: category.id, distributed: 0, distributed_total: params['budgeted'].to_f - 0, total: 0, budgeted: params["budgeted"].to_f, date: date)
       bucket.save!
 
@@ -57,7 +56,7 @@ class CategoriesController < ApplicationController
     category = Category.find_by(id: params["id"])
     category.update(category: params["category"], budgeted: params["budgeted"].to_f)
     category.save
-    total =  params["budgeted"].to_f - category.transactions.sum(:charge).to_f
+    total = params["budgeted"].to_f - category.transactions.sum(:charge).to_f
 
     if category.category_type == 'saving'
       bucket = SavingsBucket.find_by(category_id: category.id, date: params["date"])
